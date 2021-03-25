@@ -56,8 +56,8 @@ void main()
 	vec4 mert = texelFetch(TEXTURE_0, ivec2((uv0 - suv1) * TEXTURE_DIMENSIONS.xy), 0);
 	vec3 mer = (mert.r > 0.0 || mert.g > 0.0 || mert.b > 0.0) ? mert.rgb : vec3(0);
 	float met = clamp(mer.g, 0.02, 0.9);
-	float rough = saturate(pow(1.0-dot(mer.rg, vec2(0.9, 0.1)), 2.0));
-	float ref = max0(1.0-clamp(rough * 4.0, 0.0, 1.0));
+	float rough = saturate(pow(1.0-mer.r, 2.0));
+	float ref = saturate(1.0-sqrt(rough));
 
 	vec4 ntex = texture2D(TEXTURE_0, uv0 - suv2);
 	vec3 nmap = (ntex.r > 0.0 || ntex.g > 0.0 || ntex.b > 0.0) ? vec3(ntex) : vec3(0.0, 0.0, 1.0) * 0.5 + 0.5;
