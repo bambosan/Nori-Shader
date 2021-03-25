@@ -1,0 +1,14 @@
+// __multiversion__
+
+#include "fragmentVersionSimple.h"
+
+#include "uniformShaderConstants.h"
+
+void main()
+{
+	gl_FragColor = CURRENT_COLOR;
+
+#if defined(FORCE_DEPTH_ZERO) && __VERSION__ >= 300
+	gl_FragDepth = 0.0;
+#endif
+}

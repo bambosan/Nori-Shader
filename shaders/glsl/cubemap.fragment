@@ -1,0 +1,25 @@
+// __multiversion__
+
+#include "fragmentVersionSimple.h"
+#include "uniformPerFrameConstants.h"
+#include "uniformShaderConstants.h"
+
+#include "functionIncludes.glsl"
+
+varying vec3 pos;
+
+void main(){
+
+	vec3 np = normalize(vec3(pos.x, -pos.y + 0.128, -pos.z));
+ 	vec3 fp = np / np.y;
+	vec3 up = normalize(vec3(0.0, abs(np.y), 0.0));
+
+	vec4 cloud = calcCloudColor(fp, fp);
+	vec3 usc = renderSkyColor(np, up, 1.0);
+
+	float zs = dot(np, up);
+	vec4 color = mix(vec4(usc, pow(1.0-zs, 6.0)), cloud, smoothstep(1.0, 0.95, length(np.xz)) * float(zs > 0.0));
+		color.rgb = colorCorrection(color.rgb);
+
+	gl_FragColor = color;
+}

@@ -1,0 +1,42 @@
+{
+    "format_version": 2,
+    "metadata": {
+        "authors": [
+            "BambooSapling"
+        ],
+        "url": "<your-github-repo-url>",
+        "license": "TBD"
+    },
+    "header": {
+        "name": "Nori Shaders",
+        "description": "Minecraft BE shaders with physically based rendering",
+        "uuid": "01d94948-c17a-d01f-9f78-3735cd9df233",
+        "version": [0, 1, 0],
+        "min_engine_version": [1, 14, 1]
+    },
+    "modules": [
+        {
+            "description": "Minecraft BE shaders with physically based rendering",
+            "type": "resources",
+            "uuid": "2f4c66e5-dbe2-434d-52f5-8e2f5482ed8b",
+            "version": [0, 1, 0]
+        }
+    ],
+    "subpacks": [
+        {
+            "folder_name": "16x",
+            "name": "16x16",
+            "memory_tier": 1
+        },
+        {
+            "folder_name": "32x",
+            "name": "32x32",
+            "memory_tier": 2
+        },
+        {
+            "folder_name": "64x",
+            "name": "64x64",
+            "memory_tier": 3
+        }
+    ]
+}
