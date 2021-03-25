@@ -850,7 +850,7 @@
   },
 
   "overworld_loading_background@world_loading_screen_background": {
-    "texture": "progresss/overworld",
+    "texture": "nui/dirt",
     "controls": [
       {
         "background_gradient": {
@@ -869,7 +869,7 @@
   },
 
   "nether_loading_background@world_loading_screen_background": {
-    "texture": "progresss/nether",
+    "texture": "nui/netherrack",
     "color": [ 0.5, 0.5, 0.5 ],
     "controls": [
       {
@@ -889,7 +889,7 @@
   },
 
   "theend_loading_background@world_loading_screen_background": {
-    "texture": "progresss/endworld",
+    "texture": "nui/end_stone",
     "controls": [
       {
         "background_gradient": {
