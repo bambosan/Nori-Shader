@@ -4,8 +4,8 @@
         "authors": [
             "BambooSapling"
         ],
-        "url": "<your-github-repo-url>",
-        "license": "TBD"
+        "url": "https://github.com/BambooSapling/Nori-Shaders-BE",
+        "license": "GNU General Public License v3.0"
     },
     "header": {
         "name": "Nori Shaders",

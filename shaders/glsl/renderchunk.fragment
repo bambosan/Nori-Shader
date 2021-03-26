@@ -110,7 +110,7 @@ void main()
 	#endif
 		albedo.rgb = toLinear(albedo.rgb);
 
-	vec3 amb = toLinear(FOG_COLOR.rgb) * (0.5 + isRain * 1.8) * uv1.y;
+	vec3 amb = toLinear(FOG_COLOR.rgb) * (0.5 + isRain * 1.8) * uv1.y, abl = albedo.rgb;
 	float alb = smoothstep(tb * uv1.y, 1.0, uv1.x), bls;
 		bls = mix(mix(bls, uv1.x, alb), uv1.x, isRain);
 		amb += vec3(1.0, 0.5, 0.2) * bls + pow(bls * 1.15, 5.0);
@@ -128,7 +128,7 @@ void main()
 	float g = geometrySchlick(rough, ndv, ndl);
 	float att = (1.0 - rough) * g * nd;
 
-		albedo.rgb = (albedo.rgb * amb) + (saturate(mer.b) * albedo.rgb * 5.0);
+		albedo.rgb = (albedo.rgb * amb) + (saturate(mer.b) * abl * 5.0);
 		albedo.rgb = mix(mix(albedo.rgb, albedo.rgb * 0.0, met), scr, vf * max(max(met, ref), isRain * n.y) * sm) + (att * ndl * vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0 * sm * (1.0-isRain));
 	if(FOG_CONTROL.x > 0.5) albedo.rgb = mix(albedo.rgb, fc * vec3(0.4, 0.7, 1.0), max0(length(wpos)/RENDER_DISTANCE) * 0.5);
 		albedo.rgb = mix(albedo.rgb, fc, max0(length(wpos)/100.0) * isRain);
