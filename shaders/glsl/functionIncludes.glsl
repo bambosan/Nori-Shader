@@ -5,7 +5,7 @@ const float sunLightAngle = radians(28.0);
 
 const float gamma = 2.2;
 const float saturation = 1.0;
-const float exposureMult = 1.3;
+const float exposureMult = 1.0;
 
 
 uniform float TOTAL_REAL_WORLD_TIME;
