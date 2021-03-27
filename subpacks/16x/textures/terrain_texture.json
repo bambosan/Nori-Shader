@@ -320,7 +320,12 @@
 "blackstone":{
 "textures":"textures/blocks/blackstone"
 },
-"a_add":{ "textures":"textures/misc/add" },
+"a_add":{
+    "textures":"textures/misc/add"
+},
+"a_add1":{
+    "textures":"textures/misc/add1"
+},
 "nether_gold_ore":{
 "textures":"textures/blocks/nether_gold_ore"
 },

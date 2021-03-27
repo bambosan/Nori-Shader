@@ -10,7 +10,7 @@ varying float sd;
 
 void main(){
 	vec3 sc = calcSkyColor(sd, 2.0, 2.0);
-		sc = colorCorrection(sc);
+		sc = tonemap(sc);
 
 	gl_FragColor = vec4(sc, 1.0);
 }
