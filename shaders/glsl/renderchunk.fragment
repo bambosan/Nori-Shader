@@ -126,7 +126,7 @@ void main()
 	float att = (1.0 - rough) * g * nd;
 
 		albedo.rgb = (albedo.rgb * amb) + (saturate(mer.b) * abl * 5.0);
-		albedo = mix(mix(albedo, vec4(albedo.rgb * 0.0), met), vec4(scr, 1.0), vec4(vf, length(vf)) * max(max(met, ssm), wrain * n.y) * sm) + (att * ndl * vec4(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8, 1.0) * 2.0 * sm * (1.0-wrain));
+		albedo = mix(mix(albedo, vec4(albedo.rgb * 0.0, 1.0), met), vec4(scr, 1.0), vec4(vf, length(vf)) * max(max(met, ssm), wrain * n.y) * sm) + (att * ndl * vec4(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8, 1.0) * 2.0 * sm * (1.0-wrain));
 	if(FOG_CONTROL.x > 0.5) albedo.rgb = mix(albedo.rgb, fc * vec3(0.4, 0.7, 1.0), max0(length(wpos)/RENDER_DISTANCE) * 0.5);
 		albedo.rgb = mix(albedo.rgb, fc, max0(length(wpos)/100.0) * wrain);
 
