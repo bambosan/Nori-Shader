@@ -30,7 +30,7 @@ varying vec4 fogColor;
 void main()
 {
 	vec2 suv = fract(uv * 32.0) * (1.0 / 64.0);
-	bool ismap = (TEXTURE_DIMENSIONS.x == 1024.0 || TEXTURE_DIMENSIONS.x == 2048.0 || TEXTURE_DIMENSIONS.x == 4096.0);
+	bool ismap = (TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) || TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) || TEXTURE_DIMENSIONS.xy == vec2(4096, 4096));
 
 #ifdef EFFECTS_OFFSET
 	vec4 diffuse;

@@ -3,11 +3,6 @@
 const float pi = 3.14159265;
 const float sunLightAngle = radians(28.0);
 
-const float gamma = 2.2;
-const float saturation = 1.0;
-const float exposureMult = 1.0;
-
-
 uniform float TOTAL_REAL_WORLD_TIME;
 
 float max0(float x){ return max(0.0, x); }
@@ -19,73 +14,32 @@ float sqr2x(float x){ return x * x; }
 float sqr4x(float x){ return x * x * x * x; }
 
 vec3 toLinear(vec3 color){
-	return pow(color, vec3(gamma));
+	return pow(color, vec3(2.2));
 }
 
 float luma(vec3 color){
 	return dot(color, vec3(0.2125, 0.7154, 0.0721));
 }
 
-vec3 colorCorrection(vec3 color){
+vec3 tonemap(vec3 color){
+	const float saturation = 1.0;
+	const float exposureMult = 1.0;
+
 	color *= exposureMult;
-	color = color / (0.981354269 * color + 0.15112856);
+	color = color / (0.9813 * color + 0.1511);
 	return mix(vec3(luma(color)), color, saturation);
 }
 
-float rand(vec2 coord){
-	return fract(sin(dot(coord.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
-float rand_step(vec3 coord){ return rand(floor(coord.xz)); }
-
-float drawCubeCloud1(vec3 cloudpos){
-	return floor(rand_step(cloudpos * 2.0 + TOTAL_REAL_WORLD_TIME * 0.1) * 0.6 + rand_step(cloudpos * 2.0 + TOTAL_REAL_WORLD_TIME * 0.1) * 0.6);
-}
-
-#define isRain smoothstep(0.6, 0.3, FOG_CONTROL.x)
+#define wrain smoothstep(0.6, 0.3, FOG_CONTROL.x)
 
 vec3 calcSkyColor(float skyDepth, float height, float atten){
 	vec3 zenithColor = toLinear(vec3(FOG_COLOR.r * 0.3, FOG_COLOR.g * 0.4, FOG_COLOR.b * 0.55));
 
 	vec3 skyColor = mix(zenithColor, vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8), pow(skyDepth * height, atten));
-		skyColor = mix(skyColor, toLinear(FOG_COLOR.rgb), isRain);
+		skyColor = mix(skyColor, toLinear(FOG_COLOR.rgb), wrain);
 
 	if(FOG_CONTROL.x == 0.0) skyColor = toLinear(FOG_COLOR.rgb);
 	return skyColor;
-}
-
-float cloudFadeBorder(vec3 origin, vec3 direction){
-	float totalDensity = 0.0;
-
-	for(int i = 0; i < 10; i++){
-		float cloudDensity1 = drawCubeCloud1(origin);
-		if(cloudDensity1 > 0.0) totalDensity += 0.1;
-		origin += direction * 0.008;
-	}
-	return max0(1.0-totalDensity);
-}
-
-vec4 calcCloudColor(vec3 origin, vec3 direction){
-	float totalThickness = 0.0;
-	float totalDensity = 0.0;
-
-	for(int i = 0; i < 30; i++){
-		float cloudDensity1 = drawCubeCloud1(origin);
-		if(cloudDensity1 > 0.0){
-			totalThickness = origin.y;
-			totalDensity = 1.0;
-			break;
-		}
-		origin += direction * 0.007;
-	}
-
-	float cloudShadow = smoothstep(1.5, 1.0, totalThickness);
-		cloudShadow = pow(cloudShadow, 2.0);
-	float cloudb = cloudFadeBorder(origin, direction);
-		cloudb = cloudb * totalDensity;
-
-	vec3 cloudColor = mix(FOG_COLOR.rgb, toLinear(FOG_COLOR.rgb * 0.5) + FOG_COLOR.rgb * cloudb, cloudShadow);
-return vec4(cloudColor, totalDensity - cloudb);
 }
 
 vec3 renderSkyColor(vec3 nposition, vec3 upPosition, float mstrength){
@@ -97,11 +51,11 @@ vec3 renderSkyColor(vec3 nposition, vec3 upPosition, float mstrength){
 		horizonLine = 1.0-exp(-0.05 / abs(zenithSky));
 	}
 
-	float mieScatter = sqr2x(1.0 - length(nposition.zy));
-		mieScatter += sqr4x(1.0 - length(nposition.zy)) * 1.5;
-		mieScatter *= saturate((FOG_COLOR.r - 0.15) * 1.25) * (1.0 - FOG_COLOR.b);
+	float mies = sqr2x(1.0 - length(nposition.zy));
+		mies += sqr4x(1.0 - length(nposition.zy)) * 1.5;
+		mies *= saturate((FOG_COLOR.r - 0.15) * 1.25) * (1.0 - FOG_COLOR.b);
 
-	float skyLightFactor = horizonLine + mieScatter * mstrength;
+	float skyLightFactor = horizonLine + mies * mstrength;
 	vec3 skyColor = calcSkyColor(skyLightFactor, 1.0, 1.0);
 	return skyColor;
 }
@@ -127,7 +81,7 @@ vec3 getTangentVector(vec3 normal){
 	vec3 tangentVector;
 
 	if(normal.x > 0.5){
-		tangentVector = vec3(0.0,0.0,-1.);
+		tangentVector = vec3(0.0,0.0,-1.0);
 	} else if(normal.x < -0.5){
 		tangentVector = vec3(0.0,0.0,1.0);
 	} else if(normal.y > 0.5){

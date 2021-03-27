@@ -55,14 +55,14 @@ void main()
 
 	vec4 mert = texelFetch(TEXTURE_0, ivec2((uv0 - suv2) * TEXTURE_DIMENSIONS.xy), 0);
 	vec3 mer = (mert.r > 0.0 || mert.g > 0.0 || mert.b > 0.0) ? mert.rgb : vec3(0);
-	float met = clamp(mer.g, 0.02, 0.9);
+	float met = saturate(mer.g);
 	float rough = saturate(pow(1.0-mer.r, 2.0));
-	float ref = saturate(1.0-rough * 5.0);
+	float ssm = saturate(pow(1.0-rough, 0.5));
 
 	vec4 ntex = texture2D(TEXTURE_0, uv0 - suv1);
-	vec3 nmap = (ntex.r > 0.0 || ntex.g > 0.0 || ntex.b > 0.0) ? vec3(ntex) : vec3(0.0, 0.0, 1.0) * 0.5 + 0.5;
+	vec3 nmap = (ntex.r > 0.0 || ntex.g > 0.0 || ntex.b > 0.0) ? ntex.rgb : vec3(0.0, 0.0, 1.0) * 0.5 + 0.5;
 		nmap = nmap * 2.0 - 1.0;
-		nmap.rg *= max0(2.0-isRain * 1.8);
+		nmap.rg *= max0(1.5-wrain * 1.3);
 		nmap = normalize(nmap * tbn);
 
 	vec3 lp = normalize(vec3(cos(sunLightAngle), sin(sunLightAngle), 0.0));
@@ -91,11 +91,11 @@ void main()
 		if(albedo.a < ALPHA_THRESHOLD) discard;
 	#endif
 	#if defined(BLEND)
-		albedo.a *= (ntex.a < 1.0) ? 1.0 : vcolor.a;
+		albedo.a = vcolor.a;
 	#endif
 	#ifndef SEASONS
 		#if !USE_ALPHA_TEST && !defined(BLEND)
-			albedo.a = (ntex.a < 1.0) ? 1.0 : vcolor.a;
+			albedo.a = vcolor.a;
 		#endif
 		vec3 nvcolor = normalize(vcolor.rgb);
 		if(nvcolor.g > nvcolor.b && vcolor.a == 1.0){
@@ -110,17 +110,14 @@ void main()
 	#endif
 		albedo.rgb = toLinear(albedo.rgb);
 
-	vec3 amb = toLinear(FOG_COLOR.rgb) * (0.5 + isRain * 1.8) * uv1.y, abl = albedo.rgb;
+	vec3 amb = toLinear(FOG_COLOR.rgb) * (0.5 + wrain * 1.8) * uv1.y, abl = albedo.rgb;
 	float alb = smoothstep(tb * uv1.y, 1.0, uv1.x), bls;
-		bls = mix(mix(bls, uv1.x, alb), uv1.x, isRain);
+		bls = mix(mix(bls, uv1.x, alb), uv1.x, wrain);
 		amb += vec3(1.0, 0.5, 0.2) * bls + pow(bls * 1.15, 5.0);
-	vec3 dl = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * ndl * 3.0;
-		amb += dl * sm * (1.0-isRain);
-	vec3 sc = renderSkyColor(rv, up, 1.5);
+	vec3 dl = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * pow(ndl, 0.5) * 3.0;
+		amb += dl * sm * (1.0-wrain);
 	vec3 fc = renderSkyColor(normalize(wpos), up, 1.0);
-		rv = rv / rv.y;
-	vec4 cr = calcCloudColor(rv, rv);
-	vec3 scr = mix(sc, cr.rgb, (cr.a * smoothstep(1.0, 0.95, length(-vd.xz)) * float(zs > 0.0)) * max(ref, isRain * n.y));
+	vec3 scr = renderSkyColor(rv, up, 1.5);
 		scr = mix(scr, scr * albedo.rgb, met);
 	vec3 f0 = mix(vec3(0.04), albedo.rgb, met);
 	vec3 vf = fresnelSchlick(f0, ndv);
@@ -129,18 +126,15 @@ void main()
 	float att = (1.0 - rough) * g * nd;
 
 		albedo.rgb = (albedo.rgb * amb) + (saturate(mer.b) * abl * 5.0);
-		albedo.rgb = mix(mix(albedo.rgb, albedo.rgb * 0.0, met), scr, vf * max(max(met, ref), isRain * n.y) * sm) + (att * ndl * vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0 * sm * (1.0-isRain));
+		albedo = mix(mix(albedo, vec4(albedo.rgb * 0.0), met), vec4(scr, 1.0), vec4(vf, length(vf)) * max(max(met, ssm), wrain * n.y) * sm) + (att * ndl * vec4(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8, 1.0) * 2.0 * sm * (1.0-wrain));
 	if(FOG_CONTROL.x > 0.5) albedo.rgb = mix(albedo.rgb, fc * vec3(0.4, 0.7, 1.0), max0(length(wpos)/RENDER_DISTANCE) * 0.5);
-		albedo.rgb = mix(albedo.rgb, fc, max0(length(wpos)/100.0) * isRain);
+		albedo.rgb = mix(albedo.rgb, fc, max0(length(wpos)/100.0) * wrain);
 
-		#ifdef FOG
-			albedo.rgb = mix(albedo.rgb, fc, fca);
-		#endif
+	#ifdef FOG
+		albedo.rgb = mix(albedo.rgb, fc, fca);
+	#endif
 
-		albedo.rgb = colorCorrection(albedo.rgb);
-
-
-
+		albedo.rgb = tonemap(albedo.rgb);
 
 	gl_FragColor = albedo;
 
