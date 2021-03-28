@@ -66,17 +66,21 @@ void main()
 
 #ifndef NO_TEXTURE
 #ifdef USE_OVERLAY
-	if(TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) || TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) || TEXTURE_DIMENSIONS.xy == vec2(4096, 4096)){
-		color = texelFetch(TEXTURE_0,  ivec2((uv - suv) * TEXTURE_DIMENSIONS.xy), 0);
+	if(
+		TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) ||
+		TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) ||
+		TEXTURE_DIMENSIONS.xy == vec2(4096, 4096)
+	){
+		color = textureLod(TEXTURE_0, uv - suv, 0.0);
 	} else {
-		color = texture2D( TEXTURE_0,  uv);
+		color = texture(TEXTURE_0, uv);
 	}
 #else
-	color = texelFetch(TEXTURE_0,  ivec2((uv - suv) * TEXTURE_DIMENSIONS.xy), 0);
+	color = textureLod(TEXTURE_0, uv - suv, 0.0);
 #endif // use overlay
 
 #ifdef MASKED_MULTITEXTURE
-	vec4 tex1 = texture2D( TEXTURE_1, uv );
+	vec4 tex1 = texture( TEXTURE_1, uv );
 
 	// If tex1 has a non-black color and no alpha, use color; otherwise use tex1
 	float maskedTexture = ceil( dot( tex1.rgb, vec3(1.0, 1.0, 1.0) ) * ( 1.0 - tex1.a ) );

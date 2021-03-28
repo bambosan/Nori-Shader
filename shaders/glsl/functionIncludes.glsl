@@ -2,6 +2,8 @@
 
 const float pi = 3.14159265;
 const float sunLightAngle = radians(28.0);
+const float textureDistanceLod = 0.5; // mip levels
+
 
 uniform float TOTAL_REAL_WORLD_TIME;
 
