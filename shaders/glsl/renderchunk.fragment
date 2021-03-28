@@ -110,10 +110,10 @@ void main()
 		albedo.rgb *= vcolor.aaa;
 		albedo.a = 1.0;
 	#endif
-		albedo.rgb = toLinear(albedo.rgb);
+		//albedo.rgb = toLinear(albedo.rgb);
 
 	vec3 amb = toLinear(FOG_COLOR.rgb) * (0.5 + wrain * 1.8) * uv1.y;
-	vec3 abl = albedo.rgb;
+	//vec3 abl = albedo.rgb;
 	float alb = smoothstep(tb * uv1.y, 1.0, uv1.x);
 	float bls;
 		bls = mix(mix(bls, uv1.x, alb), uv1.x, wrain);
@@ -129,6 +129,7 @@ void main()
 	float g = geometrySchlick(rough, ndv, ndl);
 	float att = (1.0 - rough) * g * nd;
 
+/*
 		albedo.rgb = (albedo.rgb * amb) + (saturate(mer.b) * abl * 5.0);
 		albedo.rgb = mix(albedo.rgb, albedo.rgb * 0.0, met);
 		albedo = mix(albedo, vec4(scr, 1.0), vec4(vf, length(vf)) * max(max(met, ssm), wrain * n.y) * sm);
@@ -141,6 +142,8 @@ void main()
 	#endif
 
 		albedo.rgb = tonemap(albedo.rgb);
+*/
+
 
 	gl_FragColor = albedo;
 
