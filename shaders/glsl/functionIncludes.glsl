@@ -82,17 +82,17 @@ float geometrySchlick(float roughness, float normalDotView, float normalDotLight
 vec3 getTangentVector(vec3 normal){
 	vec3 tangentVector;
 
-	if(normal.x > 0.5){
+	if(normal.x > 0.0){
 		tangentVector = vec3(0.0,0.0,-1.0);
-	} else if(normal.x < -0.5){
+	} else if(-normal.x > 0.0){
 		tangentVector = vec3(0.0,0.0,1.0);
-	} else if(normal.y > 0.5){
+	} else if(normal.y > 0.0){
 		tangentVector = vec3(1.0,0.0,0.0);
-	} else if(normal.y < -0.5){
+	} else if(-normal.y > 0.0){
 		tangentVector = vec3(1.0,0.0,0.0);
-	} else if(normal.z > 0.5){
+	} else if(normal.z > 0.0){
 		tangentVector = vec3(1.0,0.0,0.0);
-	} else if(normal.z < -0.5){
+	} else if(-normal.z > 0.0){
 		tangentVector = vec3(-1.0,0.0,0.0);
 	}
 
