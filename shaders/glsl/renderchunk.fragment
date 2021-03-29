@@ -143,8 +143,6 @@ void main()
 
 		albedo.rgb = tonemap(albedo.rgb);
 
-		albedo.rgb = nmap;
-
 	gl_FragColor = albedo;
 
 #endif // !BYPASS_PIXEL_SHADER
