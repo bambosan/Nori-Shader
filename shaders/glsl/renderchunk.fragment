@@ -124,7 +124,7 @@ void main()
 		tangent.y, binormal.y, normalvector.y,
 		tangent.z, binormal.z, normalvector.z);
 
-		normaltexture.rg *= max0(1.5 - wrain * 1.3);
+		normaltexture.rg *= max0(1.5 - wrain * 1.0);
 
 	vec3 normalmap = normaltexture.rgb;
 		normalmap = normalize(normalmap * tbnmatrix);
