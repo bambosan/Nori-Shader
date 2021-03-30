@@ -68,7 +68,7 @@ vec3 calcSkyColor(in fmaterials materials){
 
 	vec3 skyColor = mix(zenithColor, vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) + vec3(0.1, 0.15, 0.2) * fnight, materials.skyhorizon);
 
-		skyColor = mix(skyColor, toLinear(FOG_COLOR.rgb), wrain);
+		skyColor = mix(skyColor, toLinear(FOG_COLOR.rgb) * 2.0, wrain);
 
 	if(FOG_CONTROL.x == 0.0) skyColor = toLinear(FOG_COLOR.rgb);
 	return skyColor;
@@ -76,7 +76,7 @@ vec3 calcSkyColor(in fmaterials materials){
 
 vec3 renderSkyColor(in posvector posvec, in fmaterials materials){
 	float zenithSky = dot(posvec.nworldpos, posvec.upposition);
-	float horizonLine = 1.0-exp(-0.05 / abs(zenithSky));
+	float horizonLine = 1.0-exp(-0.1 / abs(zenithSky));
 
 	float mies = sqr2x(1.0 - length(posvec.nworldpos.zy));
 		mies += sqr4x(1.0 - length(posvec.nworldpos.zy)) * 1.5;
