@@ -39,6 +39,7 @@ struct posvector {
 	vec3 upposition;
 	vec3 normal;
 	vec3 normalv;
+	vec3 albedolinear;
 } posvec;
 
 vec3 toLinear(vec3 color){
