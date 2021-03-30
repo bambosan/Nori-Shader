@@ -84,9 +84,9 @@
 "skyplane":{
 "states":["DisableDepthWrite","DisableAlphaWrite"],
 
-"vertexShader":"shaders/sky.vertex",
+"vertexShader":"shaders/skyplane.vertex",
 "vrGeometryShader":"shaders/sky.geometry",
-"fragmentShader":"shaders/color.fragment",
+"fragmentShader":"shaders/skyplane.fragment",
 "vertexFields":[
 {"field":"Position"},
 {"field":"Color"}

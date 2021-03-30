@@ -1,8 +1,0 @@
-// __multiversion__
-
-#include "fragmentVersionSimple.h"
-
-void main()
-{
-	// TODO: implement this for multisampling
-}

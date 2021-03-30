@@ -1,16 +1,16 @@
-// __multiversion__
-
-#include "vertexVersionCentroidUV.h"
+#version 300 es
 #include "uniformWorldConstants.h"
+#include "uniformShaderConstants.h"
 
-attribute POS4 POSITION;
-attribute vec2 TEXCOORD_0;
+in vec4 POSITION;
+in vec2 TEXCOORD_0;
 
-varying vec3 pos;
+out vec3 worldpos;
+out vec2 uv;
 
 void main()
 {
-    pos = POSITION.xyz * vec3(15.0, 1.0, 15.0);
+    worldpos = POSITION.xyz * vec3(15.0, 1.0, 15.0);
     gl_Position = WORLDVIEWPROJ * (POSITION * vec4(13.0, 1.0, 13.0, 1.0));
 
     uv = TEXCOORD_0;

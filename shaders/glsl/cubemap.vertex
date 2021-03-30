@@ -1,13 +1,11 @@
-// __multiversion__
-
-#include "vertexVersionSimple.h"
+#version 300 es
 #include "uniformWorldConstants.h"
 
-attribute vec4 POSITION;
+in vec4 POSITION;
 
-varying vec3 pos;
+out vec3 worldpos;
 
 void main(){
 	gl_Position = WORLDVIEWPROJ * POSITION;
-	pos = POSITION.xyz;
+	worldpos = POSITION.xyz;
 }

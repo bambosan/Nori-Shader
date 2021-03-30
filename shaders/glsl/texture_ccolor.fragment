@@ -1,26 +1,12 @@
-// __multiversion__
-
-#include "fragmentVersionCentroid.h"
-
-#if __VERSION__ >= 300
-
-#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
-_centroid in highp vec2 uv;
-#else
-_centroid in vec2 uv;
-#endif
-
-#else
-
-varying vec2 uv;
-
-#endif
-
+#version 300 es
 #include "uniformShaderConstants.h"
-#include "util.h"
 
-LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+uniform sampler2D TEXTURE_0;
 
+precision highp float;
+in vec2 uv;
+
+out vec4 gl_FragColor;
 void main()
 {
 	vec2 suv = fract(uv * 32.0) * (1.0 / 64.0);
