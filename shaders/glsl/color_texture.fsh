@@ -29,7 +29,7 @@ in vec2 uv;
 out vec4 fragcolor;
 void main()
 {
-	vec2 suv = fract(uv * 32.0) * (1.0 / 64.0);
+	vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
 	bool ismap = (
 		TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) ||
 		TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) ||
@@ -39,14 +39,14 @@ void main()
 #ifdef EFFECTS_OFFSET
 	vec4 diffuse;
 	if(ismap){
-		diffuse = textureLod(TEXTURE_0, uv - suv, 0.0);
+		diffuse = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
 		diffuse = texture(TEXTURE_0, uv + EFFECT_UV_OFFSET);
 	}
 #else
 	vec4 diffuse;
 	if(ismap){
-		diffuse = textureLod(TEXTURE_0, uv - suv, 0.0);
+		diffuse = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
 		diffuse = texture(TEXTURE_0, uv);
 	}

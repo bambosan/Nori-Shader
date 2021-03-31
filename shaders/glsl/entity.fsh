@@ -59,7 +59,7 @@ out vec4 fragcolor;
 void main()
 {
 	vec4 color = vec4(1.0);
-	vec2 suv = fract(uv * 32.0) * (1.0 / 64.0);
+	vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
 
 #ifndef NO_TEXTURE
 #ifdef USE_OVERLAY
@@ -68,12 +68,12 @@ void main()
 		TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) ||
 		TEXTURE_DIMENSIONS.xy == vec2(4096, 4096)
 	){
-		color = textureLod(TEXTURE_0, uv - suv, 0.0);
+		color = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
 		color = texture(TEXTURE_0, uv);
 	}
 #else
-	color = textureLod(TEXTURE_0, uv - suv, 0.0);
+	color = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 #endif // use overlay
 
 #ifdef MASKED_MULTITEXTURE
