@@ -22,7 +22,7 @@ uniform sampler2D TEXTURE_2;
 #endif
 
 #ifndef BYPASS_PIXEL_SHADER
-#include "util.glsl"
+#include "util.cs.glsl"
 
 void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials materials)
 {

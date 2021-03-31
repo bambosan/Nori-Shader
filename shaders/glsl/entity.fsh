@@ -1,6 +1,5 @@
 #version 300 es
 #include "uniformEntityConstants.h"
-#include "uniformPerFrameConstants.h"
 #include "uniformShaderConstants.h"
 
 uniform sampler2D TEXTURE_0;
@@ -41,7 +40,7 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 	return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
 }
 
-#include "util.glsl"
+#include "util.cs.glsl"
 #ifdef USE_EMISSIVE
 #ifdef USE_ONLY_EMISSIVE
 #define NEEDS_DISCARD(C) (C.a == 0.0 || C.a == 1.0 )

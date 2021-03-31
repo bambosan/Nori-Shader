@@ -1,12 +1,9 @@
 #version 300 es
-#include "uniformPerFrameConstants.h"
-#include "uniformShaderConstants.h"
-
 precision highp float;
 
 in float isskyhorizon;
 
-#include "util.glsl"
+#include "util.cs.glsl"
 
 out vec4 fragcolor;
 void main(){

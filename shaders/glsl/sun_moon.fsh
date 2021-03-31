@@ -6,7 +6,7 @@ uniform sampler2D TEXTURE_0;
 in vec3 worldpos;
 in vec2 uv;
 
-#include "util.glsl"
+#include "util.cs.glsl"
 
 out vec4 fragcolor;
 void main(){

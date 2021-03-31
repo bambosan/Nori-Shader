@@ -3,7 +3,7 @@ precision highp float;
 
 in vec3 worldpos;
 
-#include "util.glsl"
+#include "util.cs.glsl"
 
 out vec4 fragcolor;
 void main(){

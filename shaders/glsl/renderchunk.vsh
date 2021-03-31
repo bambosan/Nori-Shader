@@ -12,6 +12,7 @@ uniform vec2 FOG_CONTROL;
 
 uniform float RENDER_DISTANCE;
 uniform float FAR_CHUNKS_DISTANCE;
+uniform float RENDER_CHUNK_FOG_ALPHA;
 
 in vec4 POSITION;
 in vec4 COLOR;
