@@ -1,7 +1,4 @@
 #version 300 es
-#include "uniformPerFrameConstants.h"
-#include "uniformShaderConstants.h"
-
 precision highp float;
 
 in vec3 worldpos;

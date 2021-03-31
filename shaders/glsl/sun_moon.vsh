@@ -1,6 +1,6 @@
 #version 300 es
-#include "uniformWorldConstants.h"
-#include "uniformShaderConstants.h"
+precision highp float;
+uniform mat4 WORLDVIEWPROJ;
 
 in vec4 POSITION;
 in vec2 TEXCOORD_0;

@@ -1,10 +1,7 @@
 #version 300 es
-#include "uniformPerFrameConstants.h"
-#include "uniformShaderConstants.h"
+precision highp float;
 
 uniform sampler2D TEXTURE_0;
-
-precision highp float;
 
 in vec3 worldpos;
 in vec2 uv;

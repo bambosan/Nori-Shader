@@ -1,9 +1,10 @@
 #version 300 es
-#include "uniformShaderConstants.h"
+precision highp float;
 
+uniform vec3 TEXTURE_DIMENSIONS;
+uniform vec4 CURRENT_COLOR;
 uniform sampler2D TEXTURE_0;
 
-precision highp float;
 in vec2 uv;
 
 out vec4 fragcolor;

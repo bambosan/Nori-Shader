@@ -1,116 +1,116 @@
 {
-"sun_moon":{
-"states":[
-"DisableDepthWrite",
-"DisableAlphaWrite",
-"Blending"
-],
+  "sun_moon": {
+    "states": [
+      "DisableDepthWrite",
+      "DisableAlphaWrite",
+      "Blending"
+    ],
 
-"blendSrc":"SourceAlpha",
-"blendDst":"One",
+    "blendSrc": "SourceAlpha",
+    "blendDst": "One",
 
-"vertexShader":"shaders/sun_moon.vertex",
-"vrGeometryShader":"shaders/uv.geometry",
-"fragmentShader":"shaders/sun_moon.fragment",
-"vertexFields":[
-{"field":"Position"},
-{"field":"UV0"}
-],
+		"vertexShader" : "shaders/sun_moon.vsh",
+		"vrGeometryShader": "shaders/uv.geometry",
+		"fragmentShader" : "shaders/sun_moon.fsh",
+    "vertexFields": [
+      { "field": "Position" },
+      { "field": "UV0" }
+    ],
 
-"samplerStates":[
-{
-"samplerIndex":0,
-"textureFilter":"Point"
-}
-],
+    "samplerStates": [
+      {
+        "samplerIndex": 0,
+        "textureFilter": "Point"
+      }
+    ],
 
-"msaaSupport":"Both"
-},
+    "msaaSupport": "Both"
+  },
 
-"stars":{
-"states":[
-"DisableDepthWrite",
-"DisableAlphaWrite",
-"Blending"
-],
+  "stars": {
+    "states": [
+      "DisableDepthWrite",
+      "DisableAlphaWrite",
+      "Blending"
+    ],
 
-"blendSrc":"OneMinusDestColor",
-"blendDst":"One",
+    "blendSrc": "OneMinusDestColor",
+    "blendDst": "One",
 
-"vertexShader":"shaders/color.vertex",
-"vrGeometryShader":"shaders/color.geometry",
-"fragmentShader":"shaders/stars.fragment",
-"vertexFields":[
-{"field":"Position"},
-{"field":"Color"}
-],
+		"vertexShader" : "shaders/color.vertex",
+		"vrGeometryShader" :  "shaders/color.geometry",
+		"fragmentShader" : "shaders/stars.fragment",
+    "vertexFields": [
+      { "field": "Position" },
+      { "field": "Color" }
+    ],
 
-"samplerStates":[
-{
-"samplerIndex":0,
-"textureFilter":"Point"
-}
-],
+    "samplerStates": [
+      {
+        "samplerIndex": 0,
+        "textureFilter": "Point"
+      }
+    ],
 
-"msaaSupport":"Both"
-},
+    "msaaSupport": "Both"
+  },
 
-"cubemap":{
-"states":[
-"Blending"
-],
+  "cubemap": {
+    "states": [
+      "Blending"
+    ],
 
-"blendSrc":"SourceAlpha",
-"blendDst":"OneMinusSrcAlpha",
+    "blendSrc": "SourceAlpha",
+    "blendDst": "OneMinusSrcAlpha",
 
-"vertexShader":"shaders/cubemap.vertex",
-"vrGeometryShader":"shaders/uv.geometry",
-"fragmentShader":"shaders/cubemap.fragment",
-"samplerStates":[
-{
-"samplerIndex":0,
-"textureFilter":"Bilinear"
-}
-],
-"vertexFields":[
-{"field":"Position"},
-{"field":"UV0"}
-],
+    "vertexShader": "shaders/cubemap.vsh",
+    "vrGeometryShader": "shaders/uv.geometry",
+    "fragmentShader": "shaders/cubemap.fsh",
+    "samplerStates": [
+      {
+        "samplerIndex": 0,
+        "textureFilter": "Bilinear"
+      }
+    ],
+    "vertexFields": [
+      { "field": "Position" },
+      { "field": "UV0" }
+    ],
 
-"msaaSupport":"Both"
+    "msaaSupport": "Both"
 
-},
+  },
 
-"skyplane":{
-"states":["DisableDepthWrite","DisableAlphaWrite"],
+  "skyplane": {
+    "states": [ "DisableDepthWrite", "DisableAlphaWrite" ],
 
-"vertexShader":"shaders/skyplane.vertex",
-"vrGeometryShader":"shaders/sky.geometry",
-"fragmentShader":"shaders/skyplane.fragment",
-"vertexFields":[
-{"field":"Position"},
-{"field":"Color"}
-],
-"msaaSupport":"Both"
-},
+		"vertexShader" : "shaders/skyplane.vsh",
+		"vrGeometryShader" : "shaders/sky.geometry",
+		"fragmentShader" : "shaders/skyplane.fsh",
+    "vertexFields": [
+      { "field": "Position" },
+      { "field": "Color" }
+    ],
+    "msaaSupport": "Both"
+  },
 
-"end_sky":{
-"states":["DisableDepthWrite","DisableAlphaWrite"],
+  "end_sky": {
+    "states":[ "DisableDepthWrite", "DisableAlphaWrite" ],
 
-"msaaSupport":"Both",
+    "msaaSupport": "Both",
 
-"vertexShader":"shaders/uv_repeat.vertex",
-"vrGeometryShader":"shaders/uv.geometry",
-"fragmentShader":"shaders/texture_ccolor.fragment",
+    "vertexShader" : "shaders/uv_repeat.vertex" ,
+    "vrGeometryShader": "shaders/uv.geometry",
+    "fragmentShader" : "shaders/texture_ccolor.fragment",
 
-"vertexFields":[
-{"field":"Position"},
-{"field":"Color"},
-{"field":"UV0"}
-],
+    "vertexFields": [
+      { "field": "Position" },
+      { "field": "Color" },
+      { "field": "UV0" }
+    ],
 
-"samplerStates":[
-{"samplerIndex":0,"textureWrap":"Repeat"}
-]
-}
+    "samplerStates": [
+      { "samplerIndex": 0, "textureWrap": "Repeat" }
+    ]
+  }
 }

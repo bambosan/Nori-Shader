@@ -4,7 +4,9 @@ const float pi = 3.14159265;
 const float sunLightAngle = radians(28.0); // in degrees
 const float textureDistanceLod = 0.5; // mip levels
 
-
+uniform vec4 FOG_COLOR;
+uniform vec2 FOG_CONTROL;
+uniform float RENDER_DISTANCE;
 uniform float TOTAL_REAL_WORLD_TIME;
 
 float max0(float x){ return max(0.0, x); }

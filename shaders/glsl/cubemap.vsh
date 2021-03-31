@@ -1,5 +1,6 @@
 #version 300 es
-#include "uniformWorldConstants.h"
+precision highp float;
+uniform mat4 WORLDVIEWPROJ;
 
 in vec4 POSITION;
 

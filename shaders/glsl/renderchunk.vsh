@@ -1,8 +1,17 @@
 #version 300 es
-#include "uniformWorldConstants.h"
-#include "uniformPerFrameConstants.h"
-#include "uniformShaderConstants.h"
-#include "uniformRenderChunkConstants.h"
+precision highp float;
+
+uniform mat4 WORLDVIEWPROJ;
+uniform mat4 WORLD;
+uniform mat4 WORLDVIEW;
+uniform mat4 PROJ;
+
+uniform vec4 CHUNK_ORIGIN_AND_SCALE;
+uniform vec4 FOG_COLOR;
+uniform vec2 FOG_CONTROL;
+
+uniform float RENDER_DISTANCE;
+uniform float FAR_CHUNKS_DISTANCE;
 
 in vec4 POSITION;
 in vec4 COLOR;
@@ -26,13 +35,11 @@ const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardc
 	out float fogalpha;
 #endif
 
-#include "functionIncludes.glsl"
-
 void main()
 {
-    POS4 worldPos;
+    vec4 worldPos;
 #ifdef AS_ENTITY_RENDERER
-		POS4 pos = WORLDVIEWPROJ * POSITION;
+		vec4 pos = WORLDVIEWPROJ * POSITION;
 		worldPos = pos;
 #else
     worldPos.xyz = (POSITION.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
@@ -41,7 +48,7 @@ void main()
     // Transform to view space before projection instead of all at once to avoid floating point errors
     // Not required for entities because they are already offset by camera translation before rendering
     // World position here is calculated above and can get huge
-    POS4 pos = WORLDVIEW * worldPos;
+    vec4 pos = WORLDVIEW * worldPos;
     pos = PROJ * pos;
 #endif
 	gl_Position = pos;

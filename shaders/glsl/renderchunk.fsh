@@ -1,16 +1,14 @@
 #version 300 es
-#include "uniformPerFrameConstants.h"
-#include "uniformShaderConstants.h"
+
+#ifndef BYPASS_PIXEL_SHADER
+	in mediump vec4 vcolor;
+#endif
+
+precision highp float;
 
 uniform sampler2D TEXTURE_0;
 uniform sampler2D TEXTURE_1;
 uniform sampler2D TEXTURE_2;
-
-#ifndef BYPASS_PIXEL_SHADER
-	in vec4 vcolor;
-#endif
-
-precision highp float;
 
 #ifndef BYPASS_PIXEL_SHADER
 	in vec3 perchunkpos;
@@ -23,6 +21,7 @@ precision highp float;
 	in float fogalpha;
 #endif
 
+#ifndef BYPASS_PIXEL_SHADER
 #include "util.glsl"
 
 void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials materials)
@@ -70,6 +69,7 @@ void reflection(inout vec4 albedoot, in posvector posvec, in fmaterials material
 
 	albedoot += attenuation * materials.normaldotlight * vec4(vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0, 1.0) * materials.shadowm * (1.0 - wrain);
 }
+#endif
 
 out vec4 fragcolor;
 void main()
@@ -200,6 +200,5 @@ void main()
 		albedo.rgb = tonemap(albedo.rgb);
 
 	fragcolor = albedo;
-
 #endif
 }
