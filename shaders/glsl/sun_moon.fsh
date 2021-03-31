@@ -1,6 +1,7 @@
 #version 300 es
 precision highp float;
 
+uniform vec4 CURRENT_COLOR;
 uniform sampler2D TEXTURE_0;
 
 in vec3 worldpos;
