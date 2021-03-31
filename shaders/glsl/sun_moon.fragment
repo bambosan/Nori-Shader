@@ -4,12 +4,14 @@
 
 uniform sampler2D TEXTURE_0;
 
-#include "util.glsl"
+precision highp float;
 
 in vec3 worldpos;
 in vec2 uv;
 
-out vec4 gl_FragColor;
+#include "util.glsl"
+
+out vec4 fragcolor;
 void main(){
 
 	vec4 albedo = texture(TEXTURE_0, uv);
@@ -21,5 +23,5 @@ void main(){
  		color *= exp(0.9 - l) / 5.0;
 		albedo.rgb = color;
 
-	gl_FragColor = albedo * CURRENT_COLOR;
+	fragcolor = albedo * CURRENT_COLOR;
 }

@@ -2,11 +2,13 @@
 #include "uniformPerFrameConstants.h"
 #include "uniformShaderConstants.h"
 
-#include "util.glsl"
+precision highp float;
 
 in vec3 worldpos;
 
-out vec4 gl_FragColor;
+#include "util.glsl"
+
+out vec4 fragcolor;
 void main(){
 
 	vec3 adjustedpos = vec3(worldpos.x, -worldpos.y + 0.128, -worldpos.z);
@@ -21,5 +23,5 @@ void main(){
 	vec4 color = vec4(underscatter, pow(1.0 - iszenith, 6.0));
 		color.rgb = tonemap(color.rgb);
 
-	gl_FragColor = color;
+	fragcolor = color;
 }

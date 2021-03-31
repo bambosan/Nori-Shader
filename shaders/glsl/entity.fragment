@@ -2,7 +2,6 @@
 #include "uniformEntityConstants.h"
 #include "uniformPerFrameConstants.h"
 #include "uniformShaderConstants.h"
-#include "util.glsl"
 
 uniform sampler2D TEXTURE_0;
 uniform sampler2D TEXTURE_1;
@@ -10,6 +9,7 @@ uniform sampler2D TEXTURE_1;
 #ifdef USE_MULTITEXTURE
 	uniform sampler2D TEXTURE_2;
 #endif
+precision highp float;
 
 in vec4 light;
 in vec4 fogColor;
@@ -41,6 +41,7 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 	return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
 }
 
+#include "util.glsl"
 #ifdef USE_EMISSIVE
 #ifdef USE_ONLY_EMISSIVE
 #define NEEDS_DISCARD(C) (C.a == 0.0 || C.a == 1.0 )
@@ -55,7 +56,7 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 #endif
 #endif
 
-out vec4 gl_FragColor;
+out vec4 fragcolor;
 void main()
 {
 	vec4 color = vec4(1.0);
@@ -191,5 +192,5 @@ testColor.a *= alphaTestMultiplier;
 #ifdef UI_ENTITY
 	color.a *= HUD_OPACITY;
 #endif
-	gl_FragColor = color;
+	fragcolor = color;
 }

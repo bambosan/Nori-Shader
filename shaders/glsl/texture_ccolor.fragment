@@ -6,7 +6,7 @@ uniform sampler2D TEXTURE_0;
 precision highp float;
 in vec2 uv;
 
-out vec4 gl_FragColor;
+out vec4 fragcolor;
 void main()
 {
 	vec2 suv = fract(uv * 32.0) * (1.0 / 64.0);
@@ -25,5 +25,5 @@ void main()
 	if(diffuse.a < 0.5) discard;
 #endif
 
-	gl_FragColor = CURRENT_COLOR * diffuse;
+	fragcolor = CURRENT_COLOR * diffuse;
 }

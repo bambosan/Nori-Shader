@@ -10,7 +10,7 @@ uniform sampler2D TEXTURE_2;
 	in vec4 vcolor;
 #endif
 
-#include "util.glsl"
+precision highp float;
 
 #ifndef BYPASS_PIXEL_SHADER
 	in vec3 perchunkpos;
@@ -22,6 +22,8 @@ uniform sampler2D TEXTURE_2;
 #ifdef FOG
 	in float fogalpha;
 #endif
+
+#include "util.glsl"
 
 void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials materials)
 {
@@ -69,7 +71,7 @@ void reflection(inout vec4 albedoot, in posvector posvec, in fmaterials material
 	albedoot += attenuation * materials.normaldotlight * vec4(vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0, 1.0) * materials.shadowm * (1.0 - wrain);
 }
 
-out vec4 gl_FragColor;
+out vec4 fragcolor;
 void main()
 {
 
@@ -197,7 +199,7 @@ void main()
 
 		albedo.rgb = tonemap(albedo.rgb);
 
-	gl_FragColor = albedo;
+	fragcolor = albedo;
 
 #endif
 }

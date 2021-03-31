@@ -1,8 +1,4 @@
-#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
-#else
-precision mediump float;
-#endif
 
 const float pi = 3.14159265;
 const float sunLightAngle = radians(28.0); // in degrees
