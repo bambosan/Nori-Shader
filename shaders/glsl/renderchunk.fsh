@@ -37,7 +37,7 @@ void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials mater
 
 		ambientcolor += vec3(1.0, 0.5, 0.2) * blocklightsource + pow(blocklightsource * 1.15, 5.0);
 
-	vec3 diffuselightcolor = (vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8)  + vec3(0.1, 0.15, 0.2) * fnight) * pow(materials.normaldotlight, 0.5) * 3.0;
+	vec3 diffuselightcolor = (vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8)  + vec3(0.05, 0.1, 0.15) * fnight) * pow(materials.normaldotlight, 0.5) * 3.0;
 		ambientcolor += diffuselightcolor * materials.shadowm * (1.0 - wrain);
 
 	albedoot = albedoot * ambientcolor + (saturate(materials.emissive) * posvec.albedolinear * 5.0);
