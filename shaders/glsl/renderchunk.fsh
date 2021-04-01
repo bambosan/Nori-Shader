@@ -71,7 +71,7 @@ vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials material
 	float skylightbounce = rim * max0(1.0 - materials.normaldotlight) * pow(uv1.y, 3.0);
 		skylightbounce *= max0(1.0-(-posvec.normalv.y));
 
-	albedoot = mix(albedoot, zenithColor, skylightbounce * materials.roughness * 0.2 * (1.0-materials.metallic));
+	albedoot = mix(albedoot, zenithColor, skylightbounce * materials.roughness * 0.15 * (1.0-materials.metallic));
 	return albedoot;
 }
 
@@ -124,7 +124,7 @@ void main()
 	){
 		mertexture = mertexture;
 	} else {
-		mertexture = vec4(0.0, 0, 0, 0);
+		mertexture = vec4(0.1, 0, 0, 0);
 	}
 
 	materials.metallic = saturate(mertexture.g);
