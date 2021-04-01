@@ -49,8 +49,8 @@ float luma(vec3 color){
 }
 
 vec3 tonemap(vec3 color){
-	const float saturation = 1.0;
-	const float exposureMult = 1.0;
+	const float saturation = 1.06;
+	const float exposureMult = 1.5;
 
 	color *= exposureMult;
 	color = color / (0.9813 * color + 0.1511);
@@ -86,39 +86,26 @@ vec3 renderSkyColor(in posvector posvec, in fmaterials materials){
 	return skyColor;
 }
 
-vec3 fresnelSchlick(vec3 f0, in fmaterials materials){
-	return f0 + (1.0 - f0) * pow(1.0 - materials.normaldotview, 5.0);
-}
-
-float ditributionGGX(in fmaterials materials){
-	float roughSquared = sqr4x(materials.roughness);
-	float d = (materials.normaldothalf * roughSquared - materials.normaldothalf) * materials.normaldothalf + 1.0;
-	return roughSquared / (pi * d * d);
-}
-
-float geometrySchlick(in fmaterials materials){
-	float k = sqr2x(materials.roughness) * 0.5;
-	float view = materials.normaldotview * (1.0 - k) + k;
-	float light = materials.normaldotlight * (1.0 - k) + k;
-	return 0.25 / (view * light);
-}
-
 vec3 getTangentVector(in posvector posvec){
 	vec3 tangentVector;
 
 	if(posvec.normalv.x > 0.0){
 		tangentVector = vec3(0.0,0.0,-1.0);
+
 	} else if(-posvec.normalv.x > 0.0){
 		tangentVector = vec3(0.0,0.0,1.0);
+
 	} else if(posvec.normalv.y > 0.0){
 		tangentVector = vec3(1.0,0.0,0.0);
+
 	} else if(-posvec.normalv.y > 0.0){
 		tangentVector = vec3(1.0,0.0,0.0);
+
 	} else if(posvec.normalv.z > 0.0){
 		tangentVector = vec3(1.0,0.0,0.0);
+
 	} else if(-posvec.normalv.z > 0.0){
 		tangentVector = vec3(-1.0,0.0,0.0);
 	}
-
 	return tangentVector;
 }

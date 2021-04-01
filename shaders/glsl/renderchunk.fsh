@@ -10,26 +10,45 @@ uniform sampler2D TEXTURE_0;
 uniform sampler2D TEXTURE_1;
 uniform sampler2D TEXTURE_2;
 
-#ifndef BYPASS_PIXEL_SHADER
-	in vec3 perchunkpos;
-	in vec3 worldpos;
-	in vec2 uv0;
-	in vec2 uv1;
-#endif
-
 #ifdef FOG
 	in float fogalpha;
 #endif
 
 #ifndef BYPASS_PIXEL_SHADER
+	in vec3 perchunkpos;
+	in vec3 worldpos;
+	in vec2 uv0;
+	in vec2 uv1;
+
 #include "util.cs.glsl"
+
+vec3 fresnelSchlick(vec3 f0, in fmaterials materials){
+	return f0 + (1.0 - f0) * pow(1.0 - materials.normaldotview, 5.0);
+}
+
+float ditributionGGX(in fmaterials materials){
+	float roughSquared = sqr4x(materials.roughness);
+
+	float d = (materials.normaldothalf * roughSquared - materials.normaldothalf) * materials.normaldothalf + 1.0;
+	return roughSquared / (pi * d * d);
+}
+
+float geometrySchlick(in fmaterials materials){
+	float k = sqr2x(materials.roughness) * 0.5;
+
+	float view = materials.normaldotview * (1.0 - k) + k;
+	float light = materials.normaldotlight * (1.0 - k) + k;
+
+	return 0.25 / (view * light);
+}
 
 void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials materials)
 {
 
 	float lightmapbrightness = texture(TEXTURE_1, vec2(0, 1)).r;
 
-	vec3 ambientcolor = toLinear(FOG_COLOR.rgb) * (0.5 + wrain * 2.0) * uv1.y;
+	vec3 ambientcolor = vec3(0.3, 0.3, 0.3) * (1.0 - (wrain * 0.5 + fnight * 0.5));
+		ambientcolor *= uv1.y;
 
 	float adaptivebls = smoothstep(lightmapbrightness * uv1.y, 1.0, uv1.x);
 	float blocklightsource;
@@ -37,10 +56,23 @@ void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials mater
 
 		ambientcolor += vec3(1.0, 0.5, 0.2) * blocklightsource + pow(blocklightsource * 1.15, 5.0);
 
-	vec3 diffuselightcolor = (vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8)  + vec3(0.05, 0.1, 0.15) * fnight) * pow(materials.normaldotlight, 0.5) * 3.0;
+	float difflightr = max0(FOG_COLOR.r - fnight * 0.5);
+	float difflightg = FOG_COLOR.g * 0.9;
+	float difflightb = FOG_COLOR.b * (0.8 + fnight * 0.2);
+
+	vec3 diffuselightcolor = vec3(difflightr, difflightg, difflightb) * 3.0 * materials.normaldotlight;
 		ambientcolor += diffuselightcolor * materials.shadowm * (1.0 - wrain);
 
-	albedoot = albedoot * ambientcolor + (saturate(materials.emissive) * posvec.albedolinear * 5.0);
+	albedoot = albedoot * ambientcolor;
+	albedoot += saturate(materials.emissive) * posvec.albedolinear * 5.0;
+
+	vec3 zenithColor = toLinear(vec3(FOG_COLOR.r * 0.3, FOG_COLOR.g * 0.4, FOG_COLOR.b * 0.55));
+
+	float rim = mix(0.5, 1.0, 1.0-materials.normaldotview);
+	float skylightbounce = rim * max0(1.0 - materials.normaldotlight) * pow(uv1.y, 3.0);
+		skylightbounce *= max0(1.0-(-posvec.normalv.y));
+
+	albedoot = mix(albedoot, zenithColor, skylightbounce * materials.roughness * 0.12 * (1.0-materials.metallic));
 }
 
 void reflection(inout vec4 albedoot, in posvector posvec, in fmaterials materials)
@@ -51,7 +83,7 @@ void reflection(inout vec4 albedoot, in posvector posvec, in fmaterials material
 		skyColorReflection = mix(skyColorReflection, skyColorReflection * posvec.albedolinear, materials.metallic);
 
 	vec3 f0 = vec3(0.04);
-		f0 = mix(f0, albedoot.rgb, materials.metallic);
+		f0 = mix(f0, posvec.albedolinear, materials.metallic);
 	vec3 viewFresnel = fresnelSchlick(f0, materials);
 
 	albedoot.rgb = mix(albedoot.rgb, albedoot.rgb * vec3(0.03), materials.metallic);
@@ -91,7 +123,7 @@ void main()
 	){
 		mertexture = mertexture;
 	} else {
-		mertexture = vec4(0, 0, 0, 0);
+		mertexture = vec4(0.1, 0, 0, 0);
 	}
 
 	materials.metallic = saturate(mertexture.g);
@@ -125,7 +157,7 @@ void main()
 		tangent.y, binormal.y, normalvector.y,
 		tangent.z, binormal.z, normalvector.z);
 
-		normaltexture.rg *= max0(1.5 - wrain * 1.0);
+		normaltexture.rg *= max0(1.0 - wrain * 0.5);
 
 	vec3 normalmap = normaltexture.rgb;
 		normalmap = normalize(normalmap * tbnmatrix);
@@ -142,7 +174,7 @@ void main()
 	materials.normaldotlight = max0(dot(normalmap, posvec.lightpos));
 	materials.normaldothalf = max(0.001, dot(normalmap, halfwaydir));
 	materials.normaldotview = max(0.001, dot(normalmap, viewdirection));
-	materials.shadowm = min(pow(uv1.y * 1.15, 128.0), 1.0);
+	materials.shadowm = smoothstep(0.845, 0.87, uv1.y);
 
 
 	vec4 albedo = textureGrad(TEXTURE_0, uv0 - topleftmcoord, dFdx(uv0 * textureDistanceLod), dFdy(uv0 * textureDistanceLod));
@@ -171,7 +203,6 @@ void main()
 		} else {
 			albedo.rgb *= vcolor.a == 0.0 ? vcolor.rgb : sqrt(vcolor.rgb);
 		}
-
 	#else
 		albedo.rgb *= mix(vec3(1.0,1.0,1.0), texture(TEXTURE_2, vcolor.rg).rgb * 2.0, vcolor.b);
 		albedo.rgb *= vcolor.aaa;
