@@ -55,8 +55,8 @@ vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials material
 
 		ambientcolor += vec3(1.0, 0.5, 0.2) * blocklightsource + pow(blocklightsource * 1.15, 5.0);
 
-	float difflightr = max0(FOG_COLOR.r - fnight * 0.5);
-	float difflightg = FOG_COLOR.g * 0.9;
+	float difflightr = FOG_COLOR.r * max0(1.0 - fnight * 0.5);
+	float difflightg = FOG_COLOR.g * max0(0.9 - fnight * 0.1);
 	float difflightb = FOG_COLOR.b * (0.8 + fnight * 0.2);
 
 	vec3 diffuselightcolor = vec3(difflightr, difflightg, difflightb) * 3.0 * materials.normaldotlight;
@@ -65,13 +65,13 @@ vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials material
 	albedoot = albedoot * ambientcolor;
 	albedoot += saturate(materials.emissive) * posvec.albedolinear * 5.0;
 
-	vec3 zenithColor = toLinear(vec3(FOG_COLOR.r * 0.3, FOG_COLOR.g * 0.4, FOG_COLOR.b * 0.55));
+	vec3 zenithColor = toLinear(vec3(FOG_COLOR.r * 0.4, FOG_COLOR.g * 0.5, FOG_COLOR.b * 0.6));
 
 	float rim = mix(0.5, 1.0, 1.0-materials.normaldotview);
 	float skylightbounce = rim * max0(1.0 - materials.normaldotlight) * pow(uv1.y, 3.0);
 		skylightbounce *= max0(1.0-(-posvec.normalv.y));
 
-	albedoot = mix(albedoot, zenithColor, skylightbounce * materials.roughness * 0.12 * (1.0-materials.metallic));
+	albedoot = mix(albedoot, zenithColor, skylightbounce * materials.roughness * 0.2 * (1.0-materials.metallic));
 	return albedoot;
 }
 
@@ -97,7 +97,7 @@ vec4 reflection(in vec4 albedoot, in posvector posvec, in fmaterials materials)
 
 	float normaldistribution = ditributionGGX(materials);
 	float geometylight = geometrySchlick(materials);
-	float attenuation = (1.0 - materials.roughness) * geometylight * normaldistribution;
+	float attenuation = max0(1.0 - materials.roughness * 0.9) * geometylight * normaldistribution;
 
 	albedoot += attenuation * materials.normaldotlight * vec4(vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0, 1.0) * materials.shadowm * (1.0 - wrain);
 	return albedoot;
@@ -124,7 +124,7 @@ void main()
 	){
 		mertexture = mertexture;
 	} else {
-		mertexture = vec4(0.1, 0, 0, 0);
+		mertexture = vec4(0.0, 0, 0, 0);
 	}
 
 	materials.metallic = saturate(mertexture.g);
@@ -136,10 +136,7 @@ void main()
 	vec2 bottomleftmcoord = topleftmcoord - vec2(0.0, 1.0 / 64.0);
 	vec4 normaltexture = textureGrad(TEXTURE_0, uv0 - bottomleftmcoord, dFdx(uv0 * textureDistanceLod), dFdy(uv0 * textureDistanceLod));
 
-	if(normaltexture.r > 0.0 ||
-		normaltexture.g > 0.0 ||
-		normaltexture.b > 0.0
-	){
+	if(normaltexture.r > 0.0 || normaltexture.g > 0.0 || normaltexture.b > 0.0){
 		normaltexture = normaltexture;
 	} else {
 		normaltexture = vec4(vec3(0, 0, 1) * 0.5 + 0.5, 1);
