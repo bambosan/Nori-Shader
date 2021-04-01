@@ -1,8 +1,6 @@
 #version 300 es
 
-#ifndef BYPASS_PIXEL_SHADER
-	in mediump vec4 vcolor;
-#endif
+in mediump vec4 vcolor;
 
 precision highp float;
 
@@ -14,11 +12,10 @@ uniform sampler2D TEXTURE_2;
 	in float fogalpha;
 #endif
 
-#ifndef BYPASS_PIXEL_SHADER
-	in vec3 perchunkpos;
-	in vec3 worldpos;
-	in vec2 uv0;
-	in vec2 uv1;
+in vec3 perchunkpos;
+in vec3 worldpos;
+in vec2 uv0;
+in vec2 uv1;
 
 #include "util.cs.glsl"
 
@@ -102,7 +99,6 @@ vec4 reflection(in vec4 albedoot, in posvector posvec, in fmaterials materials)
 	albedoot += attenuation * materials.normaldotlight * vec4(vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0, 1.0) * materials.shadowm * (1.0 - wrain);
 	return albedoot;
 }
-#endif
 
 out vec4 fragcolor;
 void main()
