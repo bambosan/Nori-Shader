@@ -46,7 +46,7 @@ vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials material
 {
 	float lightmapbrightness = texture(TEXTURE_1, vec2(0, 1)).r;
 
-	vec3 ambientcolor = vec3(0.3, 0.3, 0.3) * (1.0 - (wrain * 0.5 + fnight * 0.5));
+	vec3 ambientcolor = vec3(0.3, 0.3, 0.3) * (1.0 - (wrain * 0.4 + fnight * 0.6));
 		ambientcolor *= uv1.y;
 
 	float adaptivebls = smoothstep(lightmapbrightness * uv1.y, 1.0, uv1.x);
@@ -55,7 +55,7 @@ vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials material
 
 		ambientcolor += vec3(1.0, 0.5, 0.2) * blocklightsource + pow(blocklightsource * 1.15, 5.0);
 
-	float difflightr = FOG_COLOR.r * max0(1.0 - fnight * 0.5);
+	float difflightr = FOG_COLOR.r * max0(1.0 - fnight * 0.4);
 	float difflightg = FOG_COLOR.g * max0(0.9 - fnight * 0.1);
 	float difflightb = FOG_COLOR.b * (0.8 + fnight * 0.2);
 
@@ -97,7 +97,7 @@ vec4 reflection(in vec4 albedoot, in posvector posvec, in fmaterials materials)
 
 	float normaldistribution = ditributionGGX(materials);
 	float geometylight = geometrySchlick(materials);
-	float attenuation = max0(1.0 - materials.roughness * 0.9) * geometylight * normaldistribution;
+	float attenuation = max0(1.0 - materials.roughness) * geometylight * normaldistribution;
 
 	albedoot += attenuation * materials.normaldotlight * vec4(vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0, 1.0) * materials.shadowm * (1.0 - wrain);
 	return albedoot;
