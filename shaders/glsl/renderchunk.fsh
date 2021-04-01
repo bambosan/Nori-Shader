@@ -42,9 +42,8 @@ float geometrySchlick(in fmaterials materials){
 	return 0.25 / (view * light);
 }
 
-void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials materials)
+vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials materials)
 {
-
 	float lightmapbrightness = texture(TEXTURE_1, vec2(0, 1)).r;
 
 	vec3 ambientcolor = vec3(0.3, 0.3, 0.3) * (1.0 - (wrain * 0.5 + fnight * 0.5));
@@ -73,9 +72,10 @@ void illummination(inout vec3 albedoot, in posvector posvec, in fmaterials mater
 		skylightbounce *= max0(1.0-(-posvec.normalv.y));
 
 	albedoot = mix(albedoot, zenithColor, skylightbounce * materials.roughness * 0.12 * (1.0-materials.metallic));
+	return albedoot;
 }
 
-void reflection(inout vec4 albedoot, in posvector posvec, in fmaterials materials)
+vec4 reflection(in vec4 albedoot, in posvector posvec, in fmaterials materials)
 {
 	materials.miestrength = 1.5;
 	posvec.nworldpos = reflect(posvec.nworldpos, posvec.normal);
@@ -100,6 +100,7 @@ void reflection(inout vec4 albedoot, in posvector posvec, in fmaterials material
 	float attenuation = (1.0 - materials.roughness) * geometylight * normaldistribution;
 
 	albedoot += attenuation * materials.normaldotlight * vec4(vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) * 2.0, 1.0) * materials.shadowm * (1.0 - wrain);
+	return albedoot;
 }
 #endif
 
@@ -213,8 +214,8 @@ void main()
 
 	posvec.albedolinear = albedo.rgb;
 
-	illummination(albedo.rgb, posvec, materials);
-	reflection(albedo, posvec, materials);
+		albedo.rgb = illummination(albedo.rgb, posvec, materials);
+		albedo = reflection(albedo, posvec, materials);
 
 	materials.miestrength = 1.0;
 	vec3 newfogcolor = renderSkyColor(posvec, materials);
