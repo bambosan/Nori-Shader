@@ -3,5 +3,4 @@ this is a shader for minecraft be (mobile) for opengl es 3.0 or above, this shad
 
 because this shader is based on pbr, here I will tell you how to create it and how it works
 
-lets see...
-
+### Metallic
