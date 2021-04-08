@@ -5,6 +5,6 @@ The pbr format used is really adapted from the old java edition pbr
 
 ### Texture Mapping
 This shader uses a 1x3 texture mapping so if the texture used is 16px then the size for the shader must be 32px, this is necessary because for the placement of the mer and normal map textures.
-![texture mapping](https://mcbamboo.github.io/mbabo_asset/nori-asset/mapping.png)
+![texture mapping](https://github.com/Mcbamboo/mbabo_asset/blob/ba5f5deb37cee6878137f3707b2337ede505f52f/nori%20asset/mapping.png)
 ### Metallic
 
