@@ -1,9 +1,10 @@
 # Nori-Shaders-BE
 this is a shader for minecraft be (mobile) for opengl es 3.0 or above, this shader has a unique feature which not all shaders have and physical texture-based rendering (PBR) is its own uniqueness but other than that all the coloring on the shader is only based on color minecraft's built-in fog so the resulting color is uncertain.
 
-because this shader is based on pbr, here I will tell you how to create it and how it works
+The pbr format used is really adapted from the old java edition pbr
 
+### Texture Mapping
+This shader uses a 1x3 texture mapping so if the texture used is 16px then the size for the shader must be 32px, this is necessary because for the placement of the mer and normal map textures.
+![texture mapping](https://Mcbamboo.github.com/nori-asset/mapping.jpg)
 ### Metallic
 
-
-wip..... slow
