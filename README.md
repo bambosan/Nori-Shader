@@ -7,7 +7,3 @@ This shader uses a 1x3 texture mapping so if the texture used is 16px then the s
 <img src="https://github.com/Mcbamboo/mbabo_asset/blob/ba5f5deb37cee6878137f3707b2337ede505f52f/nori%20asset/mapping.png" width="300" height="300"><br>
 
 the pbr format used is old pbr for java edition
-this is the result of vanilla pbr texture java edition
-
-#### Metal
-<img src="https://github.com/Mcbamboo/mbabo_asset/blob/ba5f5deb37cee6878137f3707b2337ede505f52f/nori%20asset/metallic.jpg" width="600" height="300"><br>
