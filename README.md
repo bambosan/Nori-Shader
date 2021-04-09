@@ -3,7 +3,8 @@ this is a shader for minecraft be (mobile) for opengl es 3.0 or above, this shad
 
 ### Features
 - Beautiful Fog
-
+- Sun and moon is rounded and looks radiant
+- 
 ### Texture Mapping
 This shader uses a 1x3 texture mapping so if the texture used is 16px then the size for the shader must be 32px, because minecraft be only read one texture for one block then it's a trick for place 3 different textures in one image (texture)
 
