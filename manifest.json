@@ -2,21 +2,21 @@
     "format_version": 2,
     "metadata": {
         "authors": [
-            "BambooSapling"
+            "Mcbamboo"
         ],
         "url": "https://github.com/BambooSapling/Nori-Shaders-BE",
         "license": "GNU General Public License v3.0"
     },
     "header": {
-        "name": "Nori Shaders",
-        "description": "Minecraft BE shaders with physically based rendering",
+        "name": "Nori Shaders BETA",
+        "description": "a shader for minecraft be",
         "uuid": "01d94948-c17a-d01f-9f78-3735cd9df233",
         "version": [0, 1, 0],
         "min_engine_version": [1, 14, 1]
     },
     "modules": [
         {
-            "description": "Minecraft BE shaders with physically based rendering",
+            "description": "a shader for minecraft be",
             "type": "resources",
             "uuid": "2f4c66e5-dbe2-434d-52f5-8e2f5482ed8b",
             "version": [0, 1, 0]
