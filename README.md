@@ -22,4 +22,4 @@ This shader uses a 1x3 texture mapping so if the texture used is 16px then the s
 <img src="https://github.com/Mcbamboo/mbabo_asset/blob/2679374b2cec2a74d84bd7a0b8bdc7444937aade/nori%20asset/mapping.png" width="300" height="300"><br>
 Note : the pbr format used is old pbr for java edition
 
-If the writing here is a lot of mistakes, please correct them by adding comments on the issue :)
+This writing is not completely finished and if there are additions or the writing here is a lot of mistakes, please correct them by adding comments on the issue :)
