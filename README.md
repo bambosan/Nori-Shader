@@ -18,5 +18,5 @@ this is a shader for minecraft be (mobile) for opengl es 3.0 or above, this shad
 ### Texture Mapping
 This shader uses a 1x3 texture mapping so if the texture used is 16px then the size for the shader must be 32px, because minecraft be only read one texture for one block then it's a trick for place 3 different textures in one image (texture)
 
-<img src="https://github.com/Mcbamboo/mbabo_asset/blob/2679374b2cec2a74d84bd7a0b8bdc7444937aade/nori%20asset/mapping.png" width="400" height="400"><br>
+<img src="https://github.com/Mcbamboo/mbabo_asset/blob/2679374b2cec2a74d84bd7a0b8bdc7444937aade/nori%20asset/mapping.png" width="300" height="300"><br>
 Note : the pbr format used is old pbr for java edition
