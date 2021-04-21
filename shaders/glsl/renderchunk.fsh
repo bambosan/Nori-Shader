@@ -135,29 +135,25 @@ void main()
 	if(normaltexture.r > 0.0 || normaltexture.g > 0.0 || normaltexture.b > 0.0){
 		normaltexture = normaltexture;
 	} else {
-		normaltexture = vec4(vec3(0, 0, 1) * 0.5 + 0.5, 1);
+		normaltexture = vec4(vec3(0, 0, 1) * 0.5 + 0.5, 1.0);
 	}
 		normaltexture.rgb = normaltexture.rgb * 2.0 - 1.0;
 
-	vec3 normalvector = normalize(cross(dFdx(perchunkpos.xyz), dFdy(perchunkpos.xyz)));
-
-	posvec.normalv = normalvector;
+	posvec.normalv = normalize(cross(dFdx(perchunkpos.xyz), dFdy(perchunkpos.xyz)));;
 
 	vec3 tangent = getTangentVector(posvec);
 		tangent = normalize(tangent);
-	vec3 binormal = normalize(cross(tangent, normalvector));
+	vec3 binormal = normalize(cross(tangent, posvec.normalv));
 
-	mat3 tbnmatrix = mat3(tangent.x, binormal.x, normalvector.x,
-		tangent.y, binormal.y, normalvector.y,
-		tangent.z, binormal.z, normalvector.z);
+	mat3 tbnmatrix = mat3(tangent.x, binormal.x, posvec.normalv.x,
+		tangent.y, binormal.y, posvec.normalv.y,
+		tangent.z, binormal.z, posvec.normalv.z);
 
 		normaltexture.rg *= max0(1.0 - wrain * 0.5);
-
-	vec3 normalmap = normaltexture.rgb;
-		normalmap = normalize(normalmap * tbnmatrix);
+		normaltexture.rgb = normalize(normaltexture.rgb * tbnmatrix);
 
 
-	posvec.normal = normalmap;
+	posvec.normal = normaltexture.rgb;
 	posvec.lightpos = normalize(vec3(cos(sunLightAngle), sin(sunLightAngle), 0.0));
 	posvec.upposition = normalize(vec3(0.0, abs(worldpos.y), 0.0));
 	posvec.nworldpos = normalize(worldpos);
