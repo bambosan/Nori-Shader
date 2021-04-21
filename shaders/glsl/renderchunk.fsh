@@ -39,8 +39,7 @@ float geometrySchlick(in fmaterials materials){
 	return 0.25 / (view * light);
 }
 
-vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials materials)
-{
+vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials materials){
 	float lightmapbrightness = texture(TEXTURE_1, vec2(0, 1)).r;
 
 	vec3 ambientcolor = vec3(0.3, 0.3, 0.3) * (1.0 - (wrain * 0.4 + fnight * 0.6));
@@ -72,8 +71,7 @@ vec3 illummination(in vec3 albedoot, in posvector posvec, in fmaterials material
 	return albedoot;
 }
 
-vec4 reflection(in vec4 albedoot, in posvector posvec, in fmaterials materials)
-{
+vec4 reflection(in vec4 albedoot, in posvector posvec, in fmaterials materials){
 	materials.miestrength = 1.5;
 	posvec.nworldpos = reflect(posvec.nworldpos, posvec.normal);
 	vec3 skyColorReflection = renderSkyColor(posvec, materials);
