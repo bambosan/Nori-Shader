@@ -159,9 +159,9 @@ void main()
 	vec3 viewdirection = normalize(-worldpos);
 	vec3 halfwaydir = normalize(viewdirection + posvec.lightpos);
 
-	materials.normaldotlight = max0(dot(normalmap, posvec.lightpos));
-	materials.normaldothalf = max(0.001, dot(normalmap, halfwaydir));
-	materials.normaldotview = max(0.001, dot(normalmap, viewdirection));
+	materials.normaldotlight = max0(dot(posvec.normal, posvec.lightpos));
+	materials.normaldothalf = max(0.001, dot(posvec.normal, halfwaydir));
+	materials.normaldotview = max(0.001, dot(posvec.normal, viewdirection));
 	materials.shadowm = smoothstep(0.845, 0.87, uv1.y);
 
 
