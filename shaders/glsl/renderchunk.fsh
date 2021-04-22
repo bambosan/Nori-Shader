@@ -118,7 +118,7 @@ void main()
 	){
 		mertexture = mertexture;
 	} else {
-		mertexture = vec4(0.1, 0, 0, 0);
+		mertexture = vec4(0.05, 0, 0, 0);
 	}
 
 	materials.metallic = saturate(mertexture.g);
