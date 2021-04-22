@@ -4,6 +4,11 @@
 
 base texture mapping method from OSBES see license : https://github.com/jebbyk/OSBES-minecraft-bedrock-edition-shader/blob/develop/LICENSE
 
+reference : 
+https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+https://en.wikipedia.org/wiki/Normal_mapping
+https://learnopengl.com/PBR/Lighting
+
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
