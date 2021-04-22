@@ -1,5 +1,5 @@
 # Nori-Shaders-BE ALPHA 0.1.0
-this is a shader for minecraft be (mobile) for opengl es 3.0 or above, this shader has a unique feature which not all shaders have and physical texture-based rendering (PBR) is its own uniqueness but other than that all the coloring on the shader is only based on color minecraft's built-in fog so the resulting color is uncertain.
+this is a shader for minecraft be (mobile).
 
 ### Features
 for the first beta version I released, this shader has the following features.
@@ -22,4 +22,3 @@ This shader uses a 1x3 texture mapping so if the texture used is 16px then the s
 <img src="https://github.com/Mcbamboo/mbabo_asset/blob/2679374b2cec2a74d84bd7a0b8bdc7444937aade/nori%20asset/mapping.png" width="300" height="300"><br>
 Note : the pbr format used is old pbr for java edition
 
-This writing is not completely finished and if there are additions or the writing here is a lot of mistakes, please correct them by adding comments on the issue :)
