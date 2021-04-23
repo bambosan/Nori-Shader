@@ -1,38 +1,40 @@
-#version 300 es
-#include "uniformEntityConstants.h"
-#include "uniformShaderConstants.h"
+// __multiversion__
 
-uniform sampler2D TEXTURE_0;
-uniform sampler2D TEXTURE_1;
+#include "fragmentVersionCentroidUV.h"
+#include "uniformEntityConstants.h"
+
+#include "uniformShaderConstants.h"
+#include "util.h"
+
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
 
 #ifdef USE_MULTITEXTURE
-	uniform sampler2D TEXTURE_2;
+	LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
 #endif
-precision highp float;
 
-in vec4 light;
-in vec4 fogColor;
-in vec2 uv;
+varying vec4 light;
+varying vec4 fogColor;
 
 #ifdef COLOR_BASED
-	in vec4 vertColor;
+	varying vec4 vertColor;
 #endif
 
 #ifdef USE_OVERLAY
     // When drawing horses on specific android devices, overlay color ends up being garbage data.
     // Changing overlay color to high precision appears to fix the issue on devices tested
-	in vec4 overlayColor;
+	varying highp vec4 overlayColor;
 #endif
 
 #ifdef TINTED_ALPHA_TEST
-	in float alphaTestMultiplier;
+	varying float alphaTestMultiplier;
 #endif
 
 #ifdef GLINT
-	in vec2 layer1UV;
-	in vec2 layer2UV;
-	in vec4 tileLightColor;
-	in vec4 glintColor;
+	varying vec2 layer1UV;
+	varying vec2 layer2UV;
+	varying vec4 tileLightColor;
+	varying vec4 glintColor;
 #endif
 
 vec4 glintBlend(vec4 dest, vec4 source) {
@@ -40,7 +42,6 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 	return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
 }
 
-#include "util.cs.glsl"
 #ifdef USE_EMISSIVE
 #ifdef USE_ONLY_EMISSIVE
 #define NEEDS_DISCARD(C) (C.a == 0.0 || C.a == 1.0 )
@@ -55,11 +56,10 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 #endif
 #endif
 
-out vec4 fragcolor;
 void main()
 {
 	vec4 color = vec4(1.0);
-	vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
+	highp vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
 
 #ifndef NO_TEXTURE
 #ifdef USE_OVERLAY
@@ -70,14 +70,14 @@ void main()
 	){
 		color = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
-		color = texture(TEXTURE_0, uv);
+		color = texture2D(TEXTURE_0, uv);
 	}
 #else
 	color = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 #endif // use overlay
 
 #ifdef MASKED_MULTITEXTURE
-	vec4 tex1 = texture( TEXTURE_1, uv );
+	vec4 tex1 = texture2D( TEXTURE_1, uv );
 
 	// If tex1 has a non-black color and no alpha, use color; otherwise use tex1
 	float maskedTexture = ceil( dot( tex1.rgb, vec3(1.0, 1.0, 1.0) ) * ( 1.0 - tex1.a ) );
@@ -121,7 +121,7 @@ testColor.a *= alphaTestMultiplier;
 	color.rgb = mix(color.rgb, color.rgb*CHANGE_COLOR.rgb, vertColor.a);
 #if defined(MCPE_PLATFORM_NX) && defined(NO_TEXTURE) && defined(GLINT)
 	// TODO(adfairfi): This needs to be properly fixed soon. We have a User Story for it in VSO: 102633
-	vec3 dummyColor = texture(TEXTURE_0, vec2(0.0, 0.0)).rgb;
+	vec3 dummyColor = texture2D(TEXTURE_0, vec2(0.0, 0.0)).rgb;
 	color.rgb += dummyColor * 0.000000001;
 #endif
 #endif // MULTI_COLOR_TINT
@@ -129,8 +129,8 @@ testColor.a *= alphaTestMultiplier;
 #endif
 
 #ifdef USE_MULTITEXTURE
-	vec4 tex1 = texture( TEXTURE_1, uv );
-	vec4 tex2 = texture( TEXTURE_2, uv );
+	vec4 tex1 = texture2D( TEXTURE_1, uv );
+	vec4 tex2 = texture2D( TEXTURE_2, uv );
 	color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
 #ifdef ALPHA_TEST
 	if (color.a < 0.5 && tex1.a == 0.0) {
@@ -148,7 +148,7 @@ testColor.a *= alphaTestMultiplier;
 #endif
 
 #ifdef MULTIPLICATIVE_TINT
-	vec4 tintTex = texture(TEXTURE_1, uv);
+	vec4 tintTex = texture2D(TEXTURE_1, uv);
 #ifdef MULTIPLICATIVE_TINT_COLOR
 	tintTex.rgb = tintTex.rgb * MULTIPLICATIVE_TINT_CHANGE_COLOR.rgb;
 #endif
@@ -173,15 +173,14 @@ testColor.a *= alphaTestMultiplier;
 #else
 	color *= light;
 #endif
-	color.rgb = toLinear(color.rgb);
-	color.rgb = tonemap(color.rgb);
+
 	//apply fog
 	color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
 
 #ifdef GLINT
 	// Applies color mask to glint texture instead and blends with original color
-	vec4 layer1 = texture(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
-	vec4 layer2 = texture(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+	vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+	vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
 	vec4 glint = (layer1 + layer2) * tileLightColor;
 
 	color = glintBlend(color, glint);
@@ -191,5 +190,5 @@ testColor.a *= alphaTestMultiplier;
 #ifdef UI_ENTITY
 	color.a *= HUD_OPACITY;
 #endif
-	fragcolor = color;
+	gl_FragColor = color;
 }

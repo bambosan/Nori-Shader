@@ -1,10 +1,10 @@
-#version 300 es
-precision highp float;
-uniform mat4 WORLDVIEWPROJ;
+// __multiversion__
+#include "vertexVersionSimple.h"
+#include "uniformWorldConstants.h"
 
-in vec4 POSITION;
+attribute mediump vec4 POSITION;
 
-out float isskyhorizon;
+varying highp float isskyhorizon;
 
 void main(){
 

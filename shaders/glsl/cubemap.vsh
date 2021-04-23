@@ -1,12 +1,16 @@
-#version 300 es
-precision highp float;
-uniform mat4 WORLDVIEWPROJ;
+// __multiversion__
+#include "vertexVersionSimple.h"
+#include "uniformWorldConstants.h"
 
-in vec4 POSITION;
+attribute POS4 POSITION;
 
-out vec3 worldpos;
+varying highp vec3 worldpos;
 
-void main(){
-	gl_Position = WORLDVIEWPROJ * POSITION;
-	worldpos = POSITION.xyz;
+void main()
+{
+
+    gl_Position = WORLDVIEWPROJ * POSITION;
+
+    worldpos = POSITION.xyz;
+
 }

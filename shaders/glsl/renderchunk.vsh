@@ -1,46 +1,49 @@
-#version 300 es
-precision highp float;
+// __multiversion__
+// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
 
-uniform mat4 WORLDVIEWPROJ;
-uniform mat4 WORLD;
-uniform mat4 WORLDVIEW;
-uniform mat4 PROJ;
+#include "vertexVersionCentroid.h"
+#if __VERSION__ >= 300
+	#ifndef BYPASS_PIXEL_SHADER
+		_centroid out vec2 uv0;
+		_centroid out vec2 uv1;
+	#endif
+#else
+	#ifndef BYPASS_PIXEL_SHADER
+		varying vec2 uv0;
+		varying vec2 uv1;
+	#endif
+#endif
 
-uniform vec4 CHUNK_ORIGIN_AND_SCALE;
-uniform vec4 FOG_COLOR;
-uniform vec2 FOG_CONTROL;
+#ifndef BYPASS_PIXEL_SHADER
+	varying vec4 vcolor;
+	varying highp vec3 perchunkpos;
+	varying highp vec3 worldpos;
+#endif
 
-uniform float RENDER_DISTANCE;
-uniform float FAR_CHUNKS_DISTANCE;
-uniform float RENDER_CHUNK_FOG_ALPHA;
+#ifdef FOG
+	varying float fogalpha;
+#endif
 
-in vec4 POSITION;
-in vec4 COLOR;
-in vec2 TEXCOORD_0;
-in vec2 TEXCOORD_1;
+#include "uniformWorldConstants.h"
+#include "uniformPerFrameConstants.h"
+#include "uniformShaderConstants.h"
+#include "uniformRenderChunkConstants.h"
+
+attribute POS4 POSITION;
+attribute vec4 COLOR;
+attribute vec2 TEXCOORD_0;
+attribute vec2 TEXCOORD_1;
 
 const float rA = 1.0;
 const float rB = 1.0;
 const vec3 UNIT_Y = vec3(0,1,0);
 const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
 
-#ifndef BYPASS_PIXEL_SHADER
-	out vec4 vcolor;
-	out vec3 perchunkpos;
-	out vec3 worldpos;
-	out vec2 uv0;
-	out vec2 uv1;
-#endif
-
-#ifdef FOG
-	out float fogalpha;
-#endif
-
 void main()
 {
-    vec4 worldPos;
+    POS4 worldPos;
 #ifdef AS_ENTITY_RENDERER
-		vec4 pos = WORLDVIEWPROJ * POSITION;
+		POS4 pos = WORLDVIEWPROJ * POSITION;
 		worldPos = pos;
 #else
     worldPos.xyz = (POSITION.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
@@ -49,17 +52,17 @@ void main()
     // Transform to view space before projection instead of all at once to avoid floating point errors
     // Not required for entities because they are already offset by camera translation before rendering
     // World position here is calculated above and can get huge
-    vec4 pos = WORLDVIEW * worldPos;
+    POS4 pos = WORLDVIEW * worldPos;
     pos = PROJ * pos;
 #endif
-	gl_Position = pos;
+    gl_Position = pos;
 
 #ifndef BYPASS_PIXEL_SHADER
+    uv0 = TEXCOORD_0;
+    uv1 = TEXCOORD_1;
 	vcolor = COLOR;
 	perchunkpos = POSITION.xyz;
 	worldpos = worldPos.xyz;
-	uv0 = TEXCOORD_0;
-	uv1 = TEXCOORD_1;
 #endif
 
 ///// find distance from the camera
@@ -80,13 +83,14 @@ void main()
 	#ifdef ALLOW_FADE
 		len += RENDER_CHUNK_FOG_ALPHA;
 	#endif
+
 	fogalpha = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
 #endif
 
 ///// blended layer (mostly water) magic
 #ifdef BLEND
 	//Mega hack: only things that become opaque are allowed to have vertex-driven transparency in the Blended layer...
-	//to fix this we'd need to find more space for a flag in the vertex format. vcolor.a is the only unused part
+	//to fix this we'd need to find more space for a flag in the vertex format. color.a is the only unused part
 	bool shouldBecomeOpaqueInTheDistance = vcolor.a < 0.95;
 	if(shouldBecomeOpaqueInTheDistance) {
 		#ifdef FANCY  /////enhance water

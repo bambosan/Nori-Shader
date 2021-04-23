@@ -1,17 +1,16 @@
-#version 300 es
-precision highp float;
+// __multiversion__
+// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+#include "fragmentVersionSimple.h"
+#include "uniformPerFrameConstants.h"
 
-in float isskyhorizon;
+varying highp float isskyhorizon;
 
 #include "util.cs.glsl"
 
-out vec4 fragcolor;
 void main(){
 
-	materials.skyhorizon = pow(isskyhorizon * 2.0, 2.0);
-
-	vec3 color = calcSkyColor(materials);
+	vec3 color = calcSkyColor(pow(isskyhorizon * 2.0, 2.0));
  		color = tonemap(color);
 
-	fragcolor = vec4(color, 1.0);
+	gl_FragColor = vec4(color, 1.0);
 }

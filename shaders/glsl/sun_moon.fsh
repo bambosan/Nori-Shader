@@ -1,25 +1,41 @@
-#version 300 es
-precision highp float;
+// __multiversion__
 
-uniform vec4 CURRENT_COLOR;
-uniform sampler2D TEXTURE_0;
+#include "fragmentVersionCentroid.h"
 
-in vec3 worldpos;
-in vec2 uv;
+#if __VERSION__ >= 300
+#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+_centroid in highp vec2 uv;
+#else
+_centroid in vec2 uv;
+#endif
+#else
+varying vec2 uv;
+#endif
+
+#include "uniformShaderConstants.h"
+#include "util.h"
+#include "uniformPerFrameConstants.h"
+
+varying highp vec3 worldpos;
+
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
 
 #include "util.cs.glsl"
 
-out vec4 fragcolor;
 void main(){
 
-	vec4 albedo = texture(TEXTURE_0, uv);
+#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	vec4 diffuse = texture2D( TEXTURE_0, uv );
+#else
+	vec4 diffuse = texture2D_AA(TEXTURE_0, uv );
+#endif
 
-	vec3 color = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.7, FOG_COLOR.b * 0.5) + vec3(0.8, 0.9, 1.0) * fnight;
-
+    vec3 color = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.7, FOG_COLOR.b * 0.5) + vec3(0.8, 0.9, 1.0) * fnight;
 	float l = length(worldpos.xz);
 		color += max0(0.01 / pow(l * (18.0 - fnight * 12.0), 8.0));
  		color *= exp(0.9 - l) / 5.0;
-		albedo.rgb = color;
+		diffuse.rgb = color;
 
-	fragcolor = albedo * CURRENT_COLOR;
+	gl_FragColor = diffuse * CURRENT_COLOR;
+
 }

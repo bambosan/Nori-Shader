@@ -1,12 +1,12 @@
-#version 300 es
-precision highp float;
-uniform mat4 WORLDVIEWPROJ;
+// __multiversion__
 
-in vec4 POSITION;
-in vec2 TEXCOORD_0;
+#include "vertexVersionCentroidUV.h"
+#include "uniformWorldConstants.h"
 
-out vec3 worldpos;
-out vec2 uv;
+attribute POS4 POSITION;
+attribute vec2 TEXCOORD_0;
+
+varying highp vec3 worldpos;
 
 void main()
 {

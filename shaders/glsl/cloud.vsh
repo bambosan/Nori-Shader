@@ -1,19 +1,31 @@
-#version 300 es
-precision highp float;
+// __multiversion__
 
-uniform mat4 WORLDVIEWPROJ;
-uniform mat4 WORLD;
+#include "vertexVersionSimple.h"
 
-in vec4 POSITION;
-in vec4 COLOR;
+#include "uniformWorldConstants.h"
+#include "uniformPerFrameConstants.h"
+#include "uniformShaderConstants.h"
 
-out vec4 color;
+attribute mediump vec4 POSITION;
+attribute vec4 COLOR;
+
+varying vec4 color;
+
+const float fogNear = 0.9;
+
+const vec3 inverseLightDirection = vec3(0.62, 0.78, 0.0);
+const float ambient = 0.7;
 
 void main()
 {
-	vec4 pos = WORLDVIEWPROJ * POSITION;
-	vec4 worldPos = WORLD * POSITION;
+    POS4 pos = WORLDVIEWPROJ * POSITION;
+	POS4 worldPos = WORLD * POSITION;
  	gl_Position = pos;
 
- 	color = vec4(0, 0, 0, 0);
+ 	color = COLOR * CURRENT_COLOR;
+
+ 	float depth = length(worldPos.xyz) / RENDER_DISTANCE;
+ 	float fog = max(depth - fogNear, 0.0);
+
+ 	color.a *= 0.0;
 }

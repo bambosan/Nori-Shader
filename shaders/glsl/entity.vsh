@@ -1,5 +1,7 @@
-#version 300 es
-precision highp float;
+// __multiversion__
+
+#include "vertexVersionCentroidUV.h"
+
 #include "uniformWorldConstants.h"
 #include "uniformEntityConstants.h"
 #include "uniformPerFrameConstants.h"
@@ -9,41 +11,40 @@ precision highp float;
 
 #line 13
 
-in mediump vec4 POSITION;
-in vec2 TEXCOORD_0;
-in vec4 NORMAL;
+attribute mediump vec4 POSITION;
+attribute vec2 TEXCOORD_0;
+attribute vec4 NORMAL;
 #if defined(USE_SKINNING)
 #ifdef MCPE_PLATFORM_NX
-in uint BONEID_0;
+attribute uint BONEID_0;
 #else
-in float BONEID_0;
+attribute float BONEID_0;
 #endif
 #endif
 
 #ifdef COLOR_BASED
-	in vec4 COLOR;
-	out vec4 vertColor;
+	attribute vec4 COLOR;
+	varying vec4 vertColor;
 #endif
 
-out vec4 light;
-out vec4 fogColor;
-out vec2 uv;
+varying vec4 light;
+varying vec4 fogColor;
 
 #ifdef USE_OVERLAY
 	// When drawing horses on specific android devices, overlay color ends up being garbage data.
 	// Changing overlay color to high precision appears to fix the issue on devices tested
-	out highp vec4 overlayColor;
+	varying highp vec4 overlayColor;
 #endif
 
 #ifdef TINTED_ALPHA_TEST
-	out float alphaTestMultiplier;
+	varying float alphaTestMultiplier;
 #endif
 
 #ifdef GLINT
-	out vec2 layer1UV;
-	out vec2 layer2UV;
-	out vec4 tileLightColor;
-	out vec4 glintColor;
+	varying vec2 layer1UV;
+	varying vec2 layer2UV;
+	varying vec4 tileLightColor;
+	varying vec4 glintColor;
 #endif
 
 const float AMBIENT = 0.45;
@@ -125,7 +126,9 @@ void main()
 	overlayColor = OVERLAY_COLOR;
 #endif
 
-uv = TEXCOORD_0;
+#ifndef NO_TEXTURE
+	uv = TEXCOORD_0;
+#endif
 
 #ifdef USE_UV_ANIM
 	uv.xy = UV_ANIM.xy + (uv.xy * UV_ANIM.zw);

@@ -1,16 +1,30 @@
-#version 300 es
-precision highp float;
+// __multiversion__
+// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
 
-uniform vec3 TEXTURE_DIMENSIONS;
-uniform vec4 CURRENT_COLOR;
-uniform sampler2D TEXTURE_0;
+#include "fragmentVersionCentroid.h"
 
-in vec2 uv;
+#if __VERSION__ >= 300
 
-out vec4 fragcolor;
+#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+_centroid in highp vec2 uv;
+#else
+_centroid in highp vec2 uv;
+#endif
+
+#else
+
+varying highp vec2 uv;
+
+#endif
+
+#include "uniformShaderConstants.h"
+#include "util.h"
+
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+
 void main()
 {
-	vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
+	highp vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
 	vec4 diffuse;
 	if(
 		TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) ||
@@ -19,12 +33,12 @@ void main()
 	){
 		diffuse = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
-		diffuse = texture(TEXTURE_0, uv);
+		diffuse = texture2D(TEXTURE_0, uv);
 	}
 
 #ifdef ALPHA_TEST
 	if(diffuse.a < 0.5) discard;
 #endif
 
-	fragcolor = CURRENT_COLOR * diffuse;
+	gl_FragColor = CURRENT_COLOR * diffuse;
 }

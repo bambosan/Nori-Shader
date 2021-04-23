@@ -1,35 +1,35 @@
-#version 300 es
+// __multiversion__
+
+#include "fragmentVersionCentroidUV.h"
+
 #include "uniformEntityConstants.h"
 #include "uniformShaderConstants.h"
 
-uniform sampler2D TEXTURE_0;
-uniform sampler2D TEXTURE_1;
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
 
 #ifdef EFFECTS_OFFSET
 #include "uniformEffectsConstants.h"
 #endif
-precision highp float;
 
-in vec4 color;
-in vec2 uv;
+varying vec4 color;
 
 #ifdef ENABLE_FOG
-	in vec4 fogColor;
+varying vec4 fogColor;
 #endif
 
 #ifdef GLINT
-	in vec2 layer1UV;
-	in vec2 layer2UV;
+	varying vec2 layer1UV;
+	varying vec2 layer2UV;
 
 	vec4 glintBlend(vec4 dest, vec4 source) {
 		return vec4(source.rgb * source.rgb, 0.0) + dest;
 	}
 #endif
 
-out vec4 fragcolor;
 void main()
 {
-	vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
+	highp vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
 	bool ismap = (
 		TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) ||
 		TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) ||
@@ -41,14 +41,14 @@ void main()
 	if(ismap){
 		diffuse = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
-		diffuse = texture(TEXTURE_0, uv + EFFECT_UV_OFFSET);
+		diffuse = texture2D(TEXTURE_0, uv + EFFECT_UV_OFFSET);
 	}
 #else
 	vec4 diffuse;
 	if(ismap){
 		diffuse = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
-		diffuse = texture(TEXTURE_0, uv);
+		diffuse = texture2D(TEXTURE_0, uv);
 	}
 #endif
 
@@ -80,8 +80,8 @@ void main()
 #endif
 
 #ifdef GLINT
-	vec4 layer1 = texture(TEXTURE_1, fract(layer1UV)).rgbr * GLINT_COLOR;
-	vec4 layer2 = texture(TEXTURE_1, fract(layer2UV)).rgbr * GLINT_COLOR;
+	vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * GLINT_COLOR;
+	vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * GLINT_COLOR;
 	vec4 glint = (layer1 + layer2);
 	glint.rgb *= color.a;
 
@@ -113,5 +113,5 @@ void main()
 	diffuse.rgb = mix(diffuse.rgb, fogColor.rgb, fogColor.a);
 #endif
 
-	fragcolor = diffuse;
+	gl_FragColor = diffuse;
 }
