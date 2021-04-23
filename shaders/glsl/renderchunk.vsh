@@ -1,5 +1,4 @@
 // __multiversion__
-// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
 
 #include "vertexVersionCentroid.h"
 #if __VERSION__ >= 300
@@ -83,7 +82,6 @@ void main()
 	#ifdef ALLOW_FADE
 		len += RENDER_CHUNK_FOG_ALPHA;
 	#endif
-
 	fogalpha = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
 #endif
 
