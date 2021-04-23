@@ -4,13 +4,8 @@
 
 #if __VERSION__ >= 300
 	#ifndef BYPASS_PIXEL_SHADER
-		#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
-			_centroid in highp vec2 uv0;
-			_centroid in highp vec2 uv1;
-		#else
-			_centroid in highp vec2 uv0;
-			_centroid in highp vec2 uv1;
-		#endif
+		_centroid in highp vec2 uv0;
+		_centroid in highp vec2 uv1;
 	#endif
 #else
 	#ifndef BYPASS_PIXEL_SHADER
@@ -176,7 +171,6 @@ void main()
 	#ifdef SEASONS_FAR
 		albedo.a = 1.0;
 	#endif
-
 	#ifdef ALPHA_TEST
 		#ifdef ALPHA_TO_COVERAGE
 			#define ALPHA_THRESHOLD 0.05
@@ -190,7 +184,6 @@ void main()
 		#if !defined(ALPHA_TEST) && !defined(BLEND)
 			albedo.a = vcolor.a;
 		#endif
-
 		vec3 normalizedvcolor = normalize(vcolor.rgb);
 		if(normalizedvcolor.g > normalizedvcolor.b && vcolor.a == 1.0){
 			albedo.rgb *= mix(normalizedvcolor, vcolor.rgb, 0.5);
