@@ -1,8 +1,9 @@
 // __multiversion__
+#include "macro.h"
 #include "fragmentVersionSimple.h"
 #include "uniformPerFrameConstants.h"
 
-varying highp float isskyhorizon;
+varying hp float isskyhorizon;
 
 #include "util.cs.glsl"
 

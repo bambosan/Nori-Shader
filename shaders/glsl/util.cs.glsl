@@ -22,22 +22,22 @@ const float cloudShadowEnd = 0.3;
 
 float sqr2x(float x){ return x * x; }
 float sqr4x(float x){ return x * x * x * x; }
-lowp vec3 toLinear(vec3 color){ return pow(color, vec3(2.2)); }
+lp vec3 toLinear(vec3 color){ return pow(color, vec3(2.2)); }
 
 vec3 tonemap(vec3 color){
 	color *= exposureMult;
 	color = color / (0.9813 * color + 0.1511);
 
-	lowp float lum = dot(color, vec3(0.2125, 0.7154, 0.0721));
+	lp float lum = dot(color, vec3(0.2125, 0.7154, 0.0721));
 	color = mix(vec3(lum), color, saturation);
 	return color;
 }
 
 vec3 calcSkyColor(float skyhorizon){
-	lowp vec3 linfogC = toLinear(FOG_COLOR.rgb);
-	lowp vec3 zenithColor = vec3(linfogC.r * 0.15, linfogC.g * 0.2, linfogC.b * 0.25);
+	lp vec3 linfogC = toLinear(FOG_COLOR.rgb);
+	lp vec3 zenithColor = vec3(linfogC.r * 0.15, linfogC.g * 0.2, linfogC.b * 0.25);
 
-	lowp vec3 horColor = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) + vec3(0.1, 0.15, 0.2) * fnight;
+	lp vec3 horColor = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) + vec3(0.1, 0.15, 0.2) * fnight;
 
 		zenithColor = mix(zenithColor, horColor, skyhorizon);
 		zenithColor = mix(zenithColor, linfogC * 2.0, wrain);
@@ -47,7 +47,7 @@ vec3 calcSkyColor(float skyhorizon){
 	return zenithColor;
 }
 
-vec3 renderSkyColor(vec3 nworldpos, vec3 upposition, float miestrength){
+vec3 renderSkyColor(vec3 nworldpos, vec3 upposition, lp float miestrength){
 	float zenithsky = dot(nworldpos, upposition);
 
 	float horizonline = 1.0 - exp(-0.1 / abs(zenithsky));

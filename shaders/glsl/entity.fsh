@@ -1,6 +1,7 @@
 // __multiversion__
 
 #include "fragmentVersionCentroidUV.h"
+#include "macro.h"
 #include "uniformEntityConstants.h"
 
 #include "uniformPerFrameConstants.h"
@@ -17,8 +18,8 @@ LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
 
 varying vec4 light;
 varying vec4 fogColor;
-varying highp vec3 worldpos;
-varying highp float zdepth;
+varying hp vec3 worldpos;
+varying hp float zdepth;
 
 #ifdef COLOR_BASED
 	varying vec4 vertColor;
@@ -27,7 +28,7 @@ varying highp float zdepth;
 #ifdef USE_OVERLAY
     // When drawing horses on specific android devices, overlay color ends up being garbage data.
     // Changing overlay color to high precision appears to fix the issue on devices tested
-	varying highp vec4 overlayColor;
+	varying hp vec4 overlayColor;
 #endif
 
 #ifdef TINTED_ALPHA_TEST
@@ -64,7 +65,7 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 void main()
 {
 	vec4 color = vec4(1.0);
-	highp vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
+	hp vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
 
 #ifndef NO_TEXTURE
 #ifdef USE_OVERLAY
@@ -181,8 +182,7 @@ testColor.a *= alphaTestMultiplier;
 	color.rgb = toLinear(color.rgb);
 
 	vec3 upposition = normalize(vec3(0.0, abs(worldpos.y), 0.0));
-	vec3 nworldpos = normalize(worldpos);
-	vec3 newfogcolor = renderSkyColor(nworldpos, upposition, 1.0);
+	vec3 newfogcolor = renderSkyColor(normalize(worldpos), upposition, 1.0);
 
 	if(zdepth > 0.1){
 		if(FOG_CONTROL.x > 0.5) color.rgb = mix(color.rgb, newfogcolor * vec3(0.4, 0.7, 1.0), max0(length(worldpos) / 200.0) * 0.3);

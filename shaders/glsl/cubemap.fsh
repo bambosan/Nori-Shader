@@ -1,8 +1,9 @@
 // __multiversion__
+#include "macro.h"
 #include "fragmentVersionSimple.h"
 #include "uniformPerFrameConstants.h"
 
-precision highp float;
+precision hp float;
 varying vec3 worldpos;
 
 #include "util.cs.glsl"
@@ -17,7 +18,7 @@ void main(){
 	vec3 underhorizon = renderSkyColor(nworldpos, upposition, 1.0);
 	vec4 cloudcolor = calcCloudColor(divpos, divpos);
 
-	float iszenith = dot(nworldpos, upposition);
+	mp float iszenith = dot(nworldpos, upposition);
 	vec4 color = mix(vec4(underhorizon, pow(1.0 - iszenith, 6.0)), cloudcolor, cloudcolor.a * smoothstep(1.0, 0.95, length(nworldpos.xz)) * float(iszenith > 0.0));
 
 		color.rgb = tonemap(color.rgb);
