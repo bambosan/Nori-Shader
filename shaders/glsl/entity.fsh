@@ -3,6 +3,8 @@
 #include "fragmentVersionCentroidUV.h"
 #include "uniformEntityConstants.h"
 
+#include "uniformPerFrameConstants.h"
+
 #include "uniformShaderConstants.h"
 #include "util.h"
 
@@ -15,6 +17,8 @@ LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
 
 varying vec4 light;
 varying vec4 fogColor;
+varying highp vec3 worldpos;
+varying highp float zdepth;
 
 #ifdef COLOR_BASED
 	varying vec4 vertColor;
@@ -42,6 +46,7 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 	return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
 }
 
+#include "util.cs.glsl"
 #ifdef USE_EMISSIVE
 #ifdef USE_ONLY_EMISSIVE
 #define NEEDS_DISCARD(C) (C.a == 0.0 || C.a == 1.0 )
@@ -173,9 +178,22 @@ testColor.a *= alphaTestMultiplier;
 #else
 	color *= light;
 #endif
+	color.rgb = toLinear(color.rgb);
+
+	vec3 upposition = normalize(vec3(0.0, abs(worldpos.y), 0.0));
+	vec3 nworldpos = normalize(worldpos);
+	vec3 newfogcolor = renderSkyColor(nworldpos, upposition, 1.0);
+
+	if(zdepth > 0.1){
+		if(FOG_CONTROL.x > 0.5) color.rgb = mix(color.rgb, newfogcolor * vec3(0.4, 0.7, 1.0), max0(length(worldpos) / 200.0) * 0.3);
+
+		color.rgb = mix(color.rgb, newfogcolor, max0(length(worldpos) / 100.0) * wrain);
+	}
 
 	//apply fog
-	color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	color.rgb = mix( color.rgb, newfogcolor, fogColor.a );
+
+	color.rgb = tonemap(color.rgb);
 
 #ifdef GLINT
 	// Applies color mask to glint texture instead and blends with original color

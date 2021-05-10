@@ -29,6 +29,8 @@ attribute float BONEID_0;
 
 varying vec4 light;
 varying vec4 fogColor;
+varying vec3 worldpos;
+varying float zdepth;
 
 #ifdef USE_OVERLAY
 	// When drawing horses on specific android devices, overlay color ends up being garbage data.
@@ -117,6 +119,9 @@ void main()
 #endif
 
 	light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+	zdepth = pos.z;
+
+	worldpos = (WORLD * entitySpacePosition).xyz;
 
 #ifdef COLOR_BASED
 	vertColor = COLOR;
