@@ -108,8 +108,8 @@ vec4 calcCloudColor(vec3 origin, vec3 direction){
 	return vec4(cloudColor, totalDensity);
 }
 
-vec3 getTangentVector(vec3 normalv){
-	vec3 tangent = vec3(0, 0, 0);
+vec3 getTangentVector(mp vec3 normalv){
+	mp vec3 tangent = vec3(0, 0, 0);
 	if(normalv.x > 0.0){ tangent = vec3(0, 0, -1);
 	} else if(-normalv.x > 0.0){
 		tangent = vec3(0, 0, 1);
