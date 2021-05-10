@@ -24,7 +24,7 @@ float sqr2x(float x){ return x * x; }
 float sqr4x(float x){ return x * x * x * x; }
 lp vec3 toLinear(vec3 color){ return pow(color, vec3(2.2)); }
 
-vec3 tonemap(vec3 color){
+vec3 tonemap(lp vec3 color){
 	color *= exposureMult;
 	color = color / (0.9813 * color + 0.1511);
 
