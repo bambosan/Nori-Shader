@@ -35,14 +35,14 @@ varying vec3 worldpos;
 
 #include "util.cs.glsl"
 
-float ditributionGGX(float normaldothalf, mp float roughness){
+float ditributionGGX(float normaldothalf, float roughness){
 	float roughSquared = sqr4x(roughness);
 
 	float d = (normaldothalf * roughSquared - normaldothalf) * normaldothalf + 1.0;
 	return roughSquared / (pi * d * d);
 }
 
-float geometrySchlick(float normaldotview, float normaldotlight, mp float roughness){
+float geometrySchlick(float normaldotview, float normaldotlight, float roughness){
 	float k = sqr2x(roughness) * 0.5;
 
 	float view = normaldotview * (1.0 - k) + k;
@@ -51,8 +51,8 @@ float geometrySchlick(float normaldotview, float normaldotlight, mp float roughn
 	return 0.25 / (view * light);
 }
 
-vec4 illummination(lp vec4 albedoot, lp vec3 albedonoem, mp float roughness, float normaldotview, float normaldotlight, float normaldothalf, mp float emission){
-	float lightmapbrightness = texture2D(TEXTURE_1, vec2(0, 1)).r;
+vec4 illummination(lp vec4 albedoot, lp vec3 albedonoem, float roughness, float normaldotview, float normaldotlight, float normaldothalf, mp float emission){
+	mp float lightmapbrightness = texture2D(TEXTURE_1, vec2(0, 1)).r;
 
 	lp vec3 ambientcolor = vec3(0.3, 0.3, 0.3) * mix(1.0, 0.0, (wrain * 0.4) + (fnight * 0.6));
 		ambientcolor *= uv1.y;
@@ -134,6 +134,11 @@ void main()
 	return;
 #else
 
+	mp vec3 normalv = normalize(cross(dFdx(perchunkpos.xyz), dFdy(perchunkpos.xyz)));
+	mp vec3 tangent = getTangentVector(normalv);
+	mp vec3 binormal = normalize(cross(tangent, normalv));
+	mp mat3 tbnmatrix = mat3(tangent.x, binormal.x, normalv.x, tangent.y, binormal.y, normalv.y, tangent.z, binormal.z, normalv.z);
+
 	vec2 topleftmcoord = fract(uv0 * 32.0) * 0.015625;
 	vec2 toprightmcoord = topleftmcoord - vec2(0.015625, 0.0);
 	mp vec3 mertex = textureLod(TEXTURE_0, uv0 - toprightmcoord, 0.0).rgb;
@@ -154,13 +159,6 @@ void main()
 	mp vec3 normal = textureGrad(TEXTURE_0, uv0 - bottomleftmcoord, dFdx(uv0 * textureDistanceLod), dFdy(uv0 * textureDistanceLod)).rgb;
 	if(normal.r > 0.0 || normal.g > 0.0 || normal.b > 0.0){ normal = normal; } else { normal = vec3(0, 0, 1) * 0.5 + 0.5; }
 		normal = normal * 2.0 - 1.0;
-
-	mp vec3 normalv = normalize(cross(dFdx(perchunkpos.xyz), dFdy(perchunkpos.xyz)));
-	mp vec3 tangent = getTangentVector(normalv);
-		tangent = normalize(tangent);
-	mp vec3 binormal = normalize(cross(tangent, normalv));
-	mp mat3 tbnmatrix = mat3(tangent.x, binormal.x, normalv.x, tangent.y, binormal.y, normalv.y, tangent.z, binormal.z, normalv.z);
-
 		normal.rg *= max0(1.0 - wrain * 0.5);
 		normal.rgb = normalize(normal * tbnmatrix);
 
@@ -191,7 +189,7 @@ void main()
 		#if !defined(ALPHA_TEST) && !defined(BLEND)
 			albedo.a = vcolor.a;
 		#endif
-		vec3 normalizedvcolor = normalize(vcolor.rgb);
+		lp vec3 normalizedvcolor = normalize(vcolor.rgb);
 		if(normalizedvcolor.g > normalizedvcolor.b && vcolor.a != 0.0){
 			albedo.rgb *= mix(normalizedvcolor, vcolor.rgb, 0.5);
 		} else {

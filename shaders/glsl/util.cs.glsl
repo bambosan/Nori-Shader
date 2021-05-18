@@ -122,5 +122,5 @@ vec3 getTangentVector(mp vec3 normalv){
 	} else if(-normalv.z > 0.0){
 		tangent = vec3(-1, 0, 0);
 	}
-	return tangent;
+	return normalize(tangent);
 }
