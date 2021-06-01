@@ -15,7 +15,7 @@
 
 #ifndef BYPASS_PIXEL_SHADER
 	varying vec4 vcolor;
-	varying highp vec3 perchunkpos;
+	varying highp vec3 chunkedpos;
 	varying highp vec3 worldpos;
 #endif
 
@@ -60,7 +60,7 @@ void main()
     uv0 = TEXCOORD_0;
     uv1 = TEXCOORD_1;
 	vcolor = COLOR;
-	perchunkpos = POSITION.xyz;
+	chunkedpos = POSITION.xyz;
 	worldpos = worldPos.xyz;
 #endif
 

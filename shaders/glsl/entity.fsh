@@ -1,7 +1,6 @@
 // __multiversion__
 
 #include "fragmentVersionCentroidUV.h"
-#include "macro.h"
 #include "uniformEntityConstants.h"
 
 #include "uniformPerFrameConstants.h"
@@ -18,8 +17,8 @@ LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
 
 varying vec4 light;
 varying vec4 fogColor;
-varying hp vec3 worldpos;
-varying hp float zdepth;
+varying highp vec3 worldpos;
+varying highp float zdepth;
 
 #ifdef COLOR_BASED
 	varying vec4 vertColor;
@@ -28,7 +27,7 @@ varying hp float zdepth;
 #ifdef USE_OVERLAY
     // When drawing horses on specific android devices, overlay color ends up being garbage data.
     // Changing overlay color to high precision appears to fix the issue on devices tested
-	varying hp vec4 overlayColor;
+	varying highp vec4 overlayColor;
 #endif
 
 #ifdef TINTED_ALPHA_TEST
@@ -65,15 +64,11 @@ vec4 glintBlend(vec4 dest, vec4 source) {
 void main()
 {
 	vec4 color = vec4(1.0);
-	hp vec2 topleftmcoord = fract(uv * 32.0) * (1.0 / 64.0);
+	highp vec2 topleftmcoord = fract(uv * 32.0) * 0.015625;
 
 #ifndef NO_TEXTURE
 #ifdef USE_OVERLAY
-	if(
-		TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) ||
-		TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) ||
-		TEXTURE_DIMENSIONS.xy == vec2(4096, 4096)
-	){
+	if(TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) || TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) || TEXTURE_DIMENSIONS.xy == vec2(4096, 4096)){
 		color = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
 	} else {
 		color = texture2D(TEXTURE_0, uv);
@@ -181,8 +176,8 @@ testColor.a *= alphaTestMultiplier;
 #endif
 	color.rgb = toLinear(color.rgb);
 
-	vec3 upposition = normalize(vec3(0.0, abs(worldpos.y), 0.0));
-	vec3 newfogcolor = renderSkyColor(normalize(worldpos), upposition, 1.0);
+	vec3 upPosition = normalize(vec3(0.0, abs(worldpos.y), 0.0));
+	vec3 newfogcolor = renderSkyColor(normalize(worldpos), upPosition, 1.0);
 
 	if(zdepth > 0.1){
 		if(FOG_CONTROL.x > 0.5) color.rgb = mix(color.rgb, newfogcolor * vec3(0.4, 0.7, 1.0), max0(length(worldpos) / 200.0) * 0.3);
@@ -193,7 +188,7 @@ testColor.a *= alphaTestMultiplier;
 	//apply fog
 	color.rgb = mix( color.rgb, newfogcolor, fogColor.a );
 
-	color.rgb = tonemap(color.rgb);
+	color.rgb = colorCorrection(color.rgb);
 
 #ifdef GLINT
 	// Applies color mask to glint texture instead and blends with original color

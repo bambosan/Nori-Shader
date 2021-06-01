@@ -1,27 +1,32 @@
 // __multiversion__
-#include "macro.h"
+
 #include "fragmentVersionSimple.h"
 #include "uniformPerFrameConstants.h"
 
-precision hp float;
-varying vec3 worldpos;
+precision highp float;
+
+varying vec3 cubepos;
 
 #include "util.cs.glsl"
 
 void main(){
 
-	vec3 adjustedpos = vec3(worldpos.x, -worldpos.y + 0.128, -worldpos.z);
-	vec3 upposition = normalize(vec3(0.0, abs(adjustedpos.y), 0.0));
-	vec3 nworldpos = normalize(adjustedpos);
-	vec3 divpos = nworldpos / nworldpos.y;
+	vec3 adjustpos = vec3(cubepos.x, -cubepos.y + 0.128, -cubepos.z);
+	vec3 upPos = normalize(vec3(0.0, abs(adjustpos.y), 0.0));
+	vec3 nPos = normalize(adjustpos);
 
-	vec3 underhorizon = renderSkyColor(nworldpos, upposition, 1.0);
-	vec4 cloudcolor = calcCloudColor(divpos, divpos);
+	vec3 underHorizon = renderSkyColor(nPos, upPos, 1.0);
+	float zenith = max0(dot(nPos, upPos));
 
-	mp float iszenith = dot(nworldpos, upposition);
-	vec4 color = mix(vec4(underhorizon, pow(1.0 - iszenith, 6.0)), cloudcolor, cloudcolor.a * smoothstep(1.0, 0.95, length(nworldpos.xz)) * float(iszenith > 0.0));
+	vec4 color = vec4(underHorizon, pow(1.0 - zenith, 6.0));
 
-		color.rgb = tonemap(color.rgb);
+	#ifdef ENABLE_CLOUD
+		vec3 dPos = nPos / nPos.y;
+		vec4 cloud = calcCloudColor(dPos, dPos);
+		color = mix(color, cloud, cloud.a * smoothstep(1.0, 0.95, length(nPos.xz)) * float(zenith > 0.0));
+	#endif
+
+		color.rgb = colorCorrection(color.rgb);
 
 	gl_FragColor = color;
 }

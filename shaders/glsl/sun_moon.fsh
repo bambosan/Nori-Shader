@@ -1,11 +1,10 @@
 // __multiversion__
 
 #include "fragmentVersionCentroid.h"
-#include "macro.h"
 
 #if __VERSION__ >= 300
 #if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
-_centroid in hp vec2 uv;
+_centroid in highp vec2 uv;
 #else
 _centroid in vec2 uv;
 #endif
@@ -19,7 +18,7 @@ varying vec2 uv;
 
 LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
 
-varying hp vec3 worldpos;
+varying highp vec3 worldpos;
 
 #include "util.cs.glsl"
 
@@ -31,9 +30,9 @@ void main(){
 	vec4 diffuse = texture2D_AA(TEXTURE_0, uv );
 #endif
 
-	lp vec3 color = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.7, FOG_COLOR.b * 0.5) + vec3(0.8, 0.9, 1.0) * fnight;
+	vec3 color = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.7, FOG_COLOR.b * 0.5) + vec3(0.8, 0.9, 1.0) * fnight;
 
-	mp float centerr = length(worldpos.xz);
+	float centerr = length(worldpos.xz);
 		color += max0(0.01 / pow(centerr * (18.0 - fnight * 12.0), 8.0));
  		color *= exp(0.9 - centerr) / 5.0;
 

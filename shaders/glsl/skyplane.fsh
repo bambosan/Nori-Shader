@@ -1,16 +1,15 @@
 // __multiversion__
-#include "macro.h"
 #include "fragmentVersionSimple.h"
 #include "uniformPerFrameConstants.h"
 
-varying hp float isskyhorizon;
+varying highp float isskyhorizon;
 
 #include "util.cs.glsl"
 
 void main(){
 
 	vec3 color = calcSkyColor(pow(isskyhorizon * 2.0, 2.0));
- 		color = tonemap(color);
+ 		color = colorCorrection(color);
 
 	gl_FragColor = vec4(color, 1.0);
 }
