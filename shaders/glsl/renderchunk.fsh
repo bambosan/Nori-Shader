@@ -166,10 +166,11 @@ void main()
 
 	vec3 rawNormal = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv)), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP)).rgb;
 
-	if(rawNormal.r > 0.0 || rawNormal.g > 0.0 || rawNormal.b > 0.0) normal = rawNormal * 2.0 - 1.0;
+	if(rawNormal.r > 0.0 || rawNormal.g > 0.0 || rawNormal.b > 0.0){
+		normal = rawNormal * 2.0 - 1.0;
 		normal.rg *= max0(1.0 - wrain * 0.5);
 		normal.rgb = normalize(normal * tbnMatrix);
-
+	}
 
 	vec3 lightpos = normalize(vec3(cos(SUN_LIGHT_ANGLE), sin(SUN_LIGHT_ANGLE), 0.0));
 	vec3 upPosition = normalize(vec3(0.0, abs(worldpos.y), 0.0));
