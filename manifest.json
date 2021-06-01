@@ -8,18 +8,18 @@
         "license": "GNU General Public License v3.0"
     },
     "header": {
-        "name": "Nori Shaders ALPHA",
+        "name": "Nori Shaders BETA",
         "description": "a shader for minecraft be",
-        "uuid": "bccf4129-5496-a4cd-9590-31f86b29caef",
-        "version": [0, 1, 2],
+        "uuid": "bcfe4129-5496-a6cd-9590-31f86b25caef",
+        "version": [0, 1, 3],
         "min_engine_version": [1, 14, 1]
     },
     "modules": [
         {
             "description": "a shader for minecraft be",
             "type": "resources",
-            "uuid": "f18694e4-dcf9-4e88-147c-f3219602a9ae",
-            "version": [0, 1, 2]
+            "uuid": "f18694e4-2cf9-4e88-147c-f3219d02a9ae",
+            "version": [0, 1, 3]
         }
     ],
     "subpacks": [

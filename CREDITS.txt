@@ -1,21 +1,6 @@
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 
-Thanks for test!
-
-@McbeEringi
-Device : iPad Air3 (terrain bug)
-
-@GLshading
-Device : iPhone 6s (terrain bug)
-
-@lalalalamiren02
-Device : iPhone 8 (invisible)
-
-
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-
 
 base texture mapping method from OSBES see license : https://github.com/jebbyk/OSBES-minecraft-bedrock-edition-shader/blob/develop/LICENSE
 
