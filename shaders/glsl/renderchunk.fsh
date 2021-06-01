@@ -164,14 +164,14 @@ void main()
 	float ssmooth = saturate(1.0 - roughness * 3.0);
 
 
-	vec3 rawNormal = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv)), dFdx(uv0 * textureDistanceLod), dFdy(uv0 * textureDistanceLod)).rgb;
+	vec3 rawNormal = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv)), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP)).rgb;
 
 	if(rawNormal.r > 0.0 || rawNormal.g > 0.0 || rawNormal.b > 0.0) normal = rawNormal * 2.0 - 1.0;
 		normal.rg *= max0(1.0 - wrain * 0.5);
 		normal.rgb = normalize(normal * tbnMatrix);
 
 
-	vec3 lightpos = normalize(vec3(cos(sunLightAngle), sin(sunLightAngle), 0.0));
+	vec3 lightpos = normalize(vec3(cos(SUN_LIGHT_ANGLE), sin(SUN_LIGHT_ANGLE), 0.0));
 	vec3 upPosition = normalize(vec3(0.0, abs(worldpos.y), 0.0));
 	vec3 viewDir = normalize(-worldpos);
 	vec3 halfDir = normalize(viewDir + lightpos);
@@ -182,7 +182,7 @@ void main()
 	float NdotV = max(0.001, dot(normal, viewDir));
 
 
-	vec4 albedo = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(albedoUv, normaltUv)), dFdx(uv0 * textureDistanceLod), dFdy(uv0 * textureDistanceLod));
+	vec4 albedo = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(albedoUv, normaltUv)), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP));
 
 	#ifdef SEASONS_FAR
 		albedo.a = 1.0;

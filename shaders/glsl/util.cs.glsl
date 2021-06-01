@@ -5,6 +5,11 @@
 //////////////////////////////////////////////////////////////
 
 //#define ENABLE_CLOUD
+#define CLOUD_SHADOW_START 0.0 // from bottom
+#define CLOUD_SHADOW_END 0.2 // to top
+#define CLOUD_STEP 20
+#define CLOUD_THICNESS 0.016 // layer space
+
 //#define ENABLE_REFLECTION
 
 ////// wip
@@ -17,19 +22,21 @@
 #define PSHADOW_STEP 10
 #define PSHADOW_OFFSET 0.00015
 
+////// terrain texture
+#define ADJUST_MIPMAP 0.5
 
+////// lighting
+#define SUN_LIGHT_ANGLE radians(28.0) // all lighting angle (bump map, parallax shadow and diffuse lighting) set value in degrees 0 - 180
+
+#define SATURATION 1.05
+#define EXPOSURE_MULTIPLICATION 1.2
+
+/// debugging section
 //#define LOOK_NORMALS
 //#define LOOK_ATLAS_TERRAIN
 //#define LOOK_METALLIC
 //#define LOOK_EMISSION
 //#define LOOK_ROUGHNESS
-
-const float sunLightAngle = radians(28.0); // in degrees 0 - 180
-const float textureDistanceLod = 0.5; // mip levels
-const float saturation = 1.05;
-const float exposureMult = 1.2;
-const float cloudShadowStart = 0.0;
-const float cloudShadowEnd = 0.2;
 
 ///////////////////////////////////////////////////////////////
 ////////////// END OF ADJUSTABLE VARIABLE /////////////////////
@@ -46,11 +53,11 @@ float sqr4x(float x){ return x * x * x * x; }
 vec3 toLinear(vec3 color){ return pow(color, vec3(2.2)); }
 
 vec3 colorCorrection(vec3 color){
-	color *= exposureMult;
+	color *= EXPOSURE_MULTIPLICATION;
 	color = color / (0.9813 * color + 0.1511);
 
 	float lum = dot(color, vec3(0.2125, 0.7154, 0.0721));
-	color = mix(vec3(lum), color, saturation);
+	color = mix(vec3(lum), color, SATURATION);
 	return color;
 }
 
@@ -100,17 +107,17 @@ vec4 calcCloudColor(vec3 origin, vec3 direction){
 	float numSteps = 0.0;
 	float totalDensity = 0.0;
 
-	for(int i = 0; i < 20; i++){
+	for(int i = 0; i < CLOUD_STEP; i++){
 		float cloudDen = randomStep(origin);
 		if(cloudDen > 0.0){
 			numSteps = origin.y;
 			totalDensity = 1.0;
 			break;
 		}
-		origin += direction * 0.016;
+		origin += direction * CLOUD_THICNESS;
 	}
 
-	float cloudShadow = smoothstep(1.0 + cloudShadowStart, 1.0 + cloudShadowEnd, numSteps);
+	float cloudShadow = smoothstep(1.0 + CLOUD_SHADOW_START, 1.0 + CLOUD_SHADOW_END, numSteps);
 		cloudShadow = pow(cloudShadow, 2.0);
 	vec3 cloudColor = calcSkyColor(cloudShadow);
 
