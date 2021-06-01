@@ -98,7 +98,7 @@ vec4 illummination(vec4 albedoot, vec3 albedonoem, float pshadow, float roughnes
 	albedoot.rgb += emission * albedonoem * 5.0;
 
 	float atten = max0(1.0 - roughness) * geometrySchlick(NdotV, NdotL, roughness) * ditributionGGX(NdotH, roughness);
-	albedoot += atten * NdotL * vec4(FOG_COLOR.r * 2.0, FOG_COLOR.g * 1.8, FOG_COLOR.b * 1.6, 1.0) * shadowm * (1.0 - wrain);
+	albedoot += atten * pshadow * NdotL * vec4(FOG_COLOR.r * 2.0, FOG_COLOR.g * 1.8, FOG_COLOR.b * 1.6, 1.0) * shadowm * (1.0 - wrain);
 
 	return albedoot;
 }
