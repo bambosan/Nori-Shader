@@ -64,6 +64,7 @@ vec3 colorCorrection(vec3 color){
 
 	float lum = dot(color, vec3(0.2125, 0.7154, 0.0721));
 	color = mix(vec3(lum), color, SATURATION);
+
 	return color;
 }
 
@@ -115,16 +116,19 @@ vec4 calcCloudColor(vec3 origin, vec3 direction){
 
 	for(int i = 0; i < CLOUD_STEP; i++){
 		float cloudDen = randomStep(origin);
+
 		if(cloudDen > 0.0){
 			numSteps = origin.y;
 			totalDensity = 1.0;
 			break;
 		}
+
 		origin += direction * CLOUD_THICNESS;
 	}
 
 	float cloudShadow = smoothstep(1.0 + CLOUD_SHADOW_START, 1.0 + CLOUD_SHADOW_END, numSteps);
 		cloudShadow = pow(cloudShadow, 2.0);
+
 	vec3 cloudColor = calcSkyColor(cloudShadow);
 
 	return vec4(cloudColor, totalDensity);
@@ -132,15 +136,24 @@ vec4 calcCloudColor(vec3 origin, vec3 direction){
 #endif
 
 vec3 getTangent(vec3 normal){
+
 	vec3 tangent = vec3(0, 0, 0);
-	if(normal.x > 0.0){ tangent = vec3(0, 0, -1);
-	} else if(-normal.x > 0.0){ tangent = vec3(0, 0, 1);
 
-	} else if(normal.y > 0.0){ tangent = vec3(1, 0, 0);
-	} else if(-normal.y > 0.0){ tangent = vec3(1, 0, 0);
+	if(normal.x > 0.0){
+		tangent = vec3(0, 0, -1);
+	} else if(-normal.x > 0.0){
+		tangent = vec3(0, 0, 1);
 
-	} else if(normal.z > 0.0){ tangent = vec3(1, 0, 0);
-	} else if(-normal.z > 0.0){ tangent = vec3(-1, 0, 0);
+	} else if(normal.y > 0.0){
+		tangent = vec3(1, 0, 0);
+	} else if(-normal.y > 0.0){
+		tangent = vec3(1, 0, 0);
+
+	} else if(normal.z > 0.0){
+		tangent = vec3(1, 0, 0);
+	} else if(-normal.z > 0.0){
+		tangent = vec3(-1, 0, 0);
 	}
+
 	return tangent;
 }

@@ -61,7 +61,9 @@ vec2 calcpcoord(vec2 viewvec, vec2 ppos, mat2 texcoord, bool isnormal){
 
 float calcpshadow(vec3 lightpos, vec2 ptcoord){
 	float totallight = 1.0;
+
 	#if defined(ENABLE_PARALLAX_SHADOW) && defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
+
 	float originsample = texture2D(TEXTURE_0, ptcoord).a;
 
 	for(int i = 0; i < PSHADOW_STEP; i++){
@@ -98,12 +100,16 @@ vec4 illummination(vec4 albedoot, vec3 albedonoem, float pshadow, float roughnes
 	float bvalue = smoothstep(texture2D(TEXTURE_1, vec2(0, 1)).r * uv1.y, 1.0, uv1.x);
 	float blocklights = mix(mix(0.0, uv1.x, bvalue), uv1.x, wrain);
 		blocklights = blocklights * (NdotU * 0.5 + 0.5);
+
+
 		ambientColor += vec3(1.0, 0.5, 0.2) * blocklights + pow(blocklights * 1.15, 5.0);
 
 
 	vec3 diffuseColor = vec3(FOG_COLOR.r * max0(1.0 - fnight * 0.4), FOG_COLOR.g * max0(0.9 - fnight * 0.1), FOG_COLOR.b * (0.8 + fnight * 0.2)) * 3.0 * NdotL;
-	float shadowm = smoothstep(0.845, 0.87, uv1.y);
-		ambientColor += pshadow * diffuseColor * shadowm * (1.0 - wrain);
+
+	float outdoor = smoothstep(0.845, 0.87, uv1.y);
+
+		ambientColor += pshadow * diffuseColor * outdoor * (1.0 - wrain);
 
 
 	albedoot.rgb = albedoot.rgb * ambientColor;
@@ -111,7 +117,8 @@ vec4 illummination(vec4 albedoot, vec3 albedonoem, float pshadow, float roughnes
 
 
 	float atten = max0(1.0 - roughness) * geometrySchlick(NdotV, NdotL, roughness) * ditributionGGX(NdotH, roughness);
-	albedoot += atten * pshadow * NdotL * vec4(FOG_COLOR.r * 2.0, FOG_COLOR.g * 1.8, FOG_COLOR.b * 1.6, 1.0) * shadowm * (1.0 - wrain);
+
+	albedoot += atten * pshadow * NdotL * vec4(FOG_COLOR.r * 2.0, FOG_COLOR.g * 1.8, FOG_COLOR.b * 1.6, 1.0) * outdoor * (1.0 - wrain);
 
 	return albedoot;
 }
@@ -124,7 +131,9 @@ vec3 fresnelSchlick(vec3 f0, float NdotV){
 vec4 reflection(vec4 albedoot, vec3 normal, vec3 upPosition, vec3 albedonoem, float NdotV, float metallic, float roughness, float ssmooth){
 
 	vec3 nworldpos = normalize(worldpos);
+
 	vec3 reflectedvector = reflect(nworldpos, normal);
+
 	vec3 skyReflection = renderSkyColor(reflectedvector, upPosition, 1.5);
 
 	float cloudF = smoothstep(1.0, 0.95, length(nworldpos.xz)) * float(dot(reflectedvector, upPosition) > 0.0);
@@ -132,12 +141,14 @@ vec4 reflection(vec4 albedoot, vec3 normal, vec3 upPosition, vec3 albedonoem, fl
 		reflectedvector /= reflectedvector.y;
 
 	vec4 cloudReflection = calcCloudColor(reflectedvector, reflectedvector);
+
 		skyReflection = mix(skyReflection, cloudReflection.rgb, cloudReflection.a * cloudF);
 		skyReflection = mix(skyReflection, skyReflection * albedonoem, metallic);
 
 	vec3 f0 = vec3(0.04);
 		f0 = mix(f0, albedonoem, metallic);
 	vec3 fresnel = fresnelSchlick(f0, NdotV);
+
 
 	albedoot.rgb = mix(albedoot.rgb, albedoot.rgb * vec3(0.03), metallic);
 
@@ -158,6 +169,7 @@ void main()
 	vec3 normal = normalize(cross(dFdx(chunkedpos.xyz), dFdy(chunkedpos.xyz)));
 	vec3 tangent = getTangent(normal);
 	vec3 binormal = normalize(cross(tangent, normal));
+
 	mat3 tbnMatrix = mat3(tangent.x, binormal.x, normal.x, tangent.y, binormal.y, normal.y, tangent.z, binormal.z, normal.z);
 
 
@@ -166,6 +178,7 @@ void main()
 
 
 	vec2 topleftmUV = fract(uv0 * 32.0) * 0.015625;
+
 	vec2 albedoUv = uv0 - topleftmUV;
 	vec2 merUv = uv0 - (topleftmUV - vec2(0.015625, 0.0));
 	vec2 normaltUv = uv0 - (topleftmUV - vec2(0.0, 0.015625));
@@ -177,7 +190,9 @@ void main()
 
 	////// get and separate of value from mer/specularity texture for surcace materials
 	vec3 smat = vec3(0, 0, 0);
+
 	vec4 mertex = textureLod(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(merUv, normaltUv), isnormal), 0.0);
+
 	if((mertex.r > 0.0 || mertex.g > 0.0 || mertex.b > 0.0) && mertex.a > 0.0) smat = mertex.rgb;
 
 	float metallic = saturate(smat.g);
@@ -188,6 +203,7 @@ void main()
 
 	/////// get raw normal map texture (range 0 - 1)
 	vec3 rawNormal = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv), isnormal), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP)).rgb;
+
 	if(isnormal){
 		normal = rawNormal * 2.0 - 1.0; // change the normal texture range from 0 - 1 to -1 - 1
 		normal.rg *= max0(1.0 - wrain * 0.5);
@@ -229,6 +245,7 @@ void main()
 
 		///// modifi for reduce default ambient occlusion
 		lowp vec3 normalizedvcolor = normalize(vcolor.rgb);
+
 		if(normalizedvcolor.g > normalizedvcolor.b && vcolor.a != 0.0){
 			albedo.rgb *= mix(normalizedvcolor, vcolor.rgb, 0.5);
 		} else {
@@ -262,7 +279,10 @@ void main()
 	vec3 newfogcolor = renderSkyColor(normalize(worldpos), upPosition, 1.0);
 
 	if(FOG_CONTROL.x > 0.5) albedo.rgb = mix(albedo.rgb, newfogcolor * vec3(0.4, 0.7, 1.0), max0(length(worldpos) / 200.0) * 0.3);
+
 		albedo.rgb = mix(albedo.rgb, newfogcolor, max0(length(worldpos) / 100.0) * wrain);
+
+
 	#ifdef FOG
 		albedo.rgb = mix(albedo.rgb, newfogcolor, fogalpha);
 	#endif

@@ -23,6 +23,7 @@ void main(){
 	#ifdef ENABLE_CLOUD
 		vec3 dPos = nPos / nPos.y;
 		vec4 cloud = calcCloudColor(dPos, dPos);
+
 		color = mix(color, cloud, cloud.a * smoothstep(1.0, 0.95, length(nPos.xz)) * float(zenith > 0.0));
 	#endif
 
