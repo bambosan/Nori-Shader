@@ -37,6 +37,7 @@
 //#define LOOK_METALLIC
 //#define LOOK_EMISSION
 //#define LOOK_ROUGHNESS
+//#define LOOK_LINEAR_SPACE
 
 ///////////////////////////////////////////////////////////////
 ////////////// END OF ADJUSTABLE VARIABLE /////////////////////
@@ -54,7 +55,12 @@ vec3 toLinear(vec3 color){ return pow(color, vec3(2.2)); }
 
 vec3 colorCorrection(vec3 color){
 	color *= EXPOSURE_MULTIPLICATION;
+
+	#ifdef LOOK_LINEAR_SPACE
+	color = color;
+	#else
 	color = color / (0.9813 * color + 0.1511);
+	#endif
 
 	float lum = dot(color, vec3(0.2125, 0.7154, 0.0721));
 	color = mix(vec3(lum), color, SATURATION);
