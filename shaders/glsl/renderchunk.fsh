@@ -39,9 +39,10 @@ vec2 mrcoord(vec2 texcoord, vec2 offset, vec2 ppos){
 }
 
 vec2 calcpcoord(vec2 viewvec, vec2 ppos, mat2 texcoord){
-	#if defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
 	vec2 pcoordn = texcoord[1].xy;
 	if(dot(textureLod(TEXTURE_0, pcoordn, 0.0).rgb, vec3(1.0, 1.0, 1.0)) > 0.0){
+
+	#if defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
 		vec2 spcoord = vec2(0.0, 0.0);
 		for(int i = 0; i < PARALLAX_STEP && texture2D(TEXTURE_0, pcoordn).a < 1.0 - float(i) / PARALLAX_RES; ++i){
 			spcoord += viewvec * PARALLAX_DEPTH;
@@ -49,10 +50,11 @@ vec2 calcpcoord(vec2 viewvec, vec2 ppos, mat2 texcoord){
 		}
 		vec2 pcoord = mrcoord(texcoord[0].xy, spcoord, ppos);
 		return pcoord;
+	#endif
+
 	} else {
 		return texcoord[0].xy;
 	}
-	#endif
 }
 
 float calcpshadow(vec3 lightpos, vec2 ptcoord){
@@ -182,7 +184,7 @@ void main()
 
 		ambientColor += vec3(1.0, 0.5, 0.2) * blocklights + pow(blocklights * 1.15, 5.0);
 
-	vec2 dispcoord = calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv), isnormal);
+	vec2 dispcoord = calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv));
 	float pselfshadow = calcpshadow(tbnMatrix * lightpos, dispcoord);
 
 	vec3 diffuseColor = vec3(FOG_COLOR.r * max0(1.0 - fnight * 0.4), FOG_COLOR.g * max0(0.9 - fnight * 0.1), FOG_COLOR.b * (0.8 + fnight * 0.2)) * 3.0 * NdotL;
