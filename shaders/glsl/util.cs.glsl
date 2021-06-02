@@ -43,6 +43,10 @@
 ////////////// END OF ADJUSTABLE VARIABLE /////////////////////
 ///////////////////////////////////////////////////////////////
 
+
+
+
+
 #define pi 3.14159265
 #define max0(x) max(0.0, x)
 #define saturate(x) clamp(x, 0.0, 1.0)
@@ -55,45 +59,36 @@ vec3 toLinear(vec3 color){ return pow(color, vec3(2.2)); }
 
 vec3 colorCorrection(vec3 color){
 	color *= EXPOSURE_MULTIPLICATION;
-
 	#ifdef LOOK_LINEAR_SPACE
 	color = color;
 	#else
 	color = color / (0.9813 * color + 0.1511);
 	#endif
-
 	float lum = dot(color, vec3(0.2125, 0.7154, 0.0721));
 	color = mix(vec3(lum), color, SATURATION);
-
 	return color;
 }
 
 vec3 calcSkyColor(float skyhorizon){
-
 	vec3 linfogC = toLinear(FOG_COLOR.rgb);
 	vec3 zenithColor = vec3(linfogC.r * 0.15, linfogC.g * 0.2, linfogC.b * 0.25);
 
 	vec3 horColor = vec3(FOG_COLOR.r, FOG_COLOR.g * 0.9, FOG_COLOR.b * 0.8) + vec3(0.1, 0.15, 0.2) * fnight;
-
 		zenithColor = mix(zenithColor, horColor, skyhorizon);
 		zenithColor = mix(zenithColor, linfogC * 2.0, wrain);
 
 	if(FOG_CONTROL.x == 0.0) zenithColor = linfogC;
-
 	return zenithColor;
 }
 
 vec3 renderSkyColor(vec3 nworldpos, vec3 upPosition, float miestrength){
-
 	float horizonLine = 1.0 - exp(-0.1 / abs(dot(nworldpos, upPosition)));
-
 	float mies = sqr2x(1.0 - length(nworldpos.zy));
 		mies += sqr4x(1.0 - length(nworldpos.zy)) * 1.5;
 		mies *= saturate((FOG_COLOR.r - 0.15) * 1.25) * (1.0 - FOG_COLOR.b);
 
 	float skyHor = horizonLine + (mies * miestrength);
 	vec3 skyColor = calcSkyColor(skyHor);
-
 	return skyColor;
 }
 
@@ -116,44 +111,35 @@ vec4 calcCloudColor(vec3 origin, vec3 direction){
 
 	for(int i = 0; i < CLOUD_STEP; i++){
 		float cloudDen = randomStep(origin);
-
 		if(cloudDen > 0.0){
 			numSteps = origin.y;
 			totalDensity = 1.0;
 			break;
 		}
-
 		origin += direction * CLOUD_THICNESS;
 	}
 
 	float cloudShadow = smoothstep(1.0 + CLOUD_SHADOW_START, 1.0 + CLOUD_SHADOW_END, numSteps);
 		cloudShadow = pow(cloudShadow, 2.0);
-
 	vec3 cloudColor = calcSkyColor(cloudShadow);
-
 	return vec4(cloudColor, totalDensity);
 }
 #endif
 
 vec3 getTangent(vec3 normal){
-
 	vec3 tangent = vec3(0, 0, 0);
-
 	if(normal.x > 0.0){
 		tangent = vec3(0, 0, -1);
 	} else if(-normal.x > 0.0){
 		tangent = vec3(0, 0, 1);
-
 	} else if(normal.y > 0.0){
 		tangent = vec3(1, 0, 0);
 	} else if(-normal.y > 0.0){
 		tangent = vec3(1, 0, 0);
-
 	} else if(normal.z > 0.0){
 		tangent = vec3(1, 0, 0);
 	} else if(-normal.z > 0.0){
 		tangent = vec3(-1, 0, 0);
 	}
-
 	return tangent;
 }
