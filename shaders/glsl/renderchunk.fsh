@@ -186,19 +186,20 @@ void main()
 
 	vec2 dispcoord = calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv));
 	float pselfshadow = calcpshadow(tbnMatrix * lightpos, dispcoord);
+		pselfshadow *= NdotL;
 
-	vec3 diffuseColor = vec3(FOG_COLOR.r * max0(1.0 - fnight * 0.4), FOG_COLOR.g * max0(0.9 - fnight * 0.1), FOG_COLOR.b * (0.8 + fnight * 0.2)) * 3.0 * NdotL;
+	vec3 diffuseColor = vec3(FOG_COLOR.r * max0(1.0 - fnight * 0.4), FOG_COLOR.g * max0(0.9 - fnight * 0.1), FOG_COLOR.b * (0.8 + fnight * 0.2)) * 3.0;
 
 	float outdoor = smoothstep(0.845, 0.87, uv1.y);
 
-		ambientColor += pselfshadow * diffuseColor * outdoor * (1.0 - wrain);
+		ambientColor += diffuseColor * pselfshadow * outdoor * (1.0 - wrain);
 
 		albedo.rgb = albedo.rgb * ambientColor;
 		albedo.rgb += emission * albedonoem * 5.0;
 
 	float atten = max0(1.0 - roughness) * geometrySchlick(NdotV, NdotL, roughness) * ditributionGGX(NdotH, roughness);
 
-		albedo += atten * pselfshadow * NdotL * vec4(FOG_COLOR.r * 2.0, FOG_COLOR.g * 1.8, FOG_COLOR.b * 1.6, 1.0) * outdoor * (1.0 - wrain);
+		albedo += atten * pselfshadow * vec4(FOG_COLOR.r * 2.0, FOG_COLOR.g * 1.8, FOG_COLOR.b * 1.6, 1.0) * outdoor * (1.0 - wrain);
 
 	#ifdef ENABLE_REFLECTION
 
