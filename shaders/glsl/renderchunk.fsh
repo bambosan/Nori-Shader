@@ -256,7 +256,6 @@ void main()
 		albedo = vec4(roughness);
 	#endif
 
-                albedo = texture2D(TEXTURE_0, position.xz / 8.0);
 	gl_FragColor = albedo;
 
 #endif
