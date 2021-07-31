@@ -4,7 +4,7 @@
 
 varying highp float isskyhorizon;
 
-#include "util.cs.glsl"
+#include "common.glsl"
 
 void main(){
 

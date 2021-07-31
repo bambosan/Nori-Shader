@@ -27,6 +27,7 @@
 
 ////// lighting
 #define SUN_LIGHT_ANGLE radians(28.0) // all lighting angle (bump map, parallax shadow and diffuse lighting) set value in degrees 0 - 180
+#define SUN_PATH_ROTATION radians(-40.0)
 
 #define SATURATION 1.05
 #define EXPOSURE_MULTIPLICATION 1.2
@@ -44,14 +45,12 @@
 ///////////////////////////////////////////////////////////////
 
 
-
-
-
 #define pi 3.14159265
 #define max0(x) max(0.0, x)
 #define saturate(x) clamp(x, 0.0, 1.0)
 #define wrain smoothstep(0.6, 0.3, FOG_CONTROL.x)
 #define fnight pow(saturate(1.0 - FOG_COLOR.r * 1.5), 1.2)
+#define rotate2d(x) mat2(cos(x), sin(x), -sin(x), cos(x))
 
 float sqr2x(float x){ return x * x; }
 float sqr4x(float x){ return x * x * x * x; }
@@ -125,21 +124,3 @@ vec4 calcCloudColor(vec3 origin, vec3 direction){
 	return vec4(cloudColor, totalDensity);
 }
 #endif
-
-vec3 getTangent(vec3 normal){
-	vec3 tangent = vec3(0, 0, 0);
-	if(normal.x > 0.0){
-		tangent = vec3(0, 0, -1);
-	} else if(-normal.x > 0.0){
-		tangent = vec3(0, 0, 1);
-	} else if(normal.y > 0.0){
-		tangent = vec3(1, 0, 0);
-	} else if(-normal.y > 0.0){
-		tangent = vec3(1, 0, 0);
-	} else if(normal.z > 0.0){
-		tangent = vec3(1, 0, 0);
-	} else if(-normal.z > 0.0){
-		tangent = vec3(-1, 0, 0);
-	}
-	return tangent;
-}

@@ -7,7 +7,7 @@ precision highp float;
 
 varying vec3 cubepos;
 
-#include "util.cs.glsl"
+#include "common.glsl"
 
 void main(){
 

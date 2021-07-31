@@ -15,8 +15,9 @@
 
 #ifndef BYPASS_PIXEL_SHADER
 	varying vec4 vcolor;
-	varying highp vec3 chunkedpos;
-	varying highp vec3 worldpos;
+	varying vec3 chunkedpos;
+	varying vec3 worldpos;
+	varying vec3 sunPos;
 #endif
 
 #ifdef FOG
@@ -37,6 +38,8 @@ const float rA = 1.0;
 const float rB = 1.0;
 const vec3 UNIT_Y = vec3(0,1,0);
 const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+
+#include "common.glsl"
 
 void main()
 {
@@ -62,6 +65,11 @@ void main()
 	vcolor = COLOR;
 	chunkedpos = POSITION.xyz;
 	worldpos = worldPos.xyz;
+
+	highp float t = TOTAL_REAL_WORLD_TIME * pi;
+		t /= 12.0;
+	sunPos = normalize(vec3(cos(t), sin(t)), 0.0));
+	sunPos.yz *= rotate2d(SUN_PATH_ROTATION);
 #endif
 
 ///// find distance from the camera
