@@ -1,16 +1,12 @@
 // __multiversion__
 #include "vertexVersionSimple.h"
 #include "uniformWorldConstants.h"
+#include "uniformPerFrameConstants.h"
 
 attribute POS4 POSITION;
+varying vec3 cPos;
 
-varying highp vec3 cubepos;
-
-void main()
-{
-
-    gl_Position = WORLDVIEWPROJ * POSITION;
-
-    cubepos = POSITION.xyz;
-
+void main(){
+	gl_Position = WORLDVIEWPROJ * POSITION;
+	cPos = POSITION.xyz;
 }

@@ -29,20 +29,20 @@ varying vec4 fogColor;
 
 void main()
 {
-	highp vec2 topleftmcoord = fract(uv * 32.0) * 0.015625;
+	highp vec2 tmCoord = fract(uv * 32.0) * 0.015625;
 	bool ismap = (TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) || TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) || TEXTURE_DIMENSIONS.xy == vec2(4096, 4096));
 
-#ifdef EFFECTS_OFFSET
 	vec4 diffuse = vec4(0, 0, 0, 0);
+
+#ifdef EFFECTS_OFFSET
 	if(ismap){
-		diffuse = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
+		diffuse = textureLod(TEXTURE_0, uv - tmCoord, 0.0);
 	} else {
 		diffuse = texture2D(TEXTURE_0, uv + EFFECT_UV_OFFSET);
 	}
 #else
-	vec4 diffuse = vec4(0, 0, 0, 0);
 	if(ismap){
-		diffuse = textureLod(TEXTURE_0, uv - topleftmcoord, 0.0);
+		diffuse = textureLod(TEXTURE_0, uv - tmCoord, 0.0);
 	} else {
 		diffuse = texture2D(TEXTURE_0, uv);
 	}

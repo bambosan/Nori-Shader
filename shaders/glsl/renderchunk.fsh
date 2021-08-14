@@ -1,6 +1,7 @@
 // __multiversion__
-
 #include "fragmentVersionCentroid.h"
+#include "uniformShaderConstants.h"
+#include "uniformPerFrameConstants.h"
 
 #if __VERSION__ >= 300
 	#ifndef BYPASS_PIXEL_SHADER
@@ -13,225 +14,189 @@
 		varying highp vec2 uv1;
 	#endif
 #endif
-
-varying vec4 vcolor;
-
 #ifdef FOG
-	varying float fogalpha;
+	varying float hFogd;
 #endif
-
-#include "uniformShaderConstants.h"
-#include "uniformPerFrameConstants.h"
 
 LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
 LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
 LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
 
 precision highp float;
-
-varying vec3 chunkedpos;
-varying vec3 worldpos;
-varying vec3 sunPos;
+varying vec4 vcolor;
+varying vec3 nFogC;
+varying vec3 sunCol;
+varying vec3 moonCol;
+varying vec3 szCol;
+varying vec3 cPos;
+varying vec3 wPos;
+varying vec3 nWPos;
+varying vec3 lPos;
+varying vec3 tlPos;
+varying vec3 uPos;
+varying float sunVis;
+varying float moonVis;
 
 #include "common.glsl"
 
-vec2 calcpcoord(vec2 viewvec, vec2 ppos, mat2 texcoord){
-	vec2 pcoordn = texcoord[1].xy;
-	if(dot(textureLod(TEXTURE_0, pcoordn, 0.0).rgb, vec3(1.0, 1.0, 1.0)) > 0.0){
+float getleaao(vec3 color){
+	const vec3 O = vec3(0.682352941176471, 0.643137254901961, 0.164705882352941);
+	const vec3 N = vec3(0.195996912842436, 0.978673548072766, -0.061508507207520);
+	return length(color) / dot(O, N) * dot(normalize(color), N);
+}
 
-	#if defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
-		vec2 spcoord = vec2(0.0, 0.0);
-		for(int i = 0; i < PARALLAX_STEP && texture2D(TEXTURE_0, pcoordn).a < 1.0 - float(i) / PARALLAX_RES; ++i){
-			spcoord += viewvec * PARALLAX_DEPTH;
-			pcoordn += viewvec * (PARALLAX_DEPTH / PARALLAX_RES);
-		}
-		vec2 pcoord = texcoord[0].xy - fract(ppos) * 0.015625 + fract(ppos + spcoord) * 0.015625;
-		return pcoord;
-	#endif
+float getgraao(vec3 color){
+	const vec3 O = vec3(0.745098039215686, 0.713725490196078, 0.329411764705882);
+	const vec3 N = vec3(0.161675377098328, 0.970052262589970, 0.181272392504186);
+	return length(color) / dot(O, N) * dot(normalize(color), N);
+}
 
+vec4 calcVco(vec4 color){
+	if(abs(color.x - color.y) < 2e-5 && abs(color.y - color.z) < 2e-5){
+		color.a = color.r; color.rgb = vec3(1.0);
 	} else {
-		return texcoord[0].xy;
+		color.a = color.a < 0.001 ? getleaao(color.rgb) : getgraao(color.rgb); color.rgb = color.rgb / color.a;
 	}
+	return color;
 }
 
-float calcpshadow(vec3 lightpos, vec2 ptcoord){
-	float totallight = 1.0;
+vec2 mrCo(vec2 tCoord, vec2 mPos, vec2 oCoord){
+	return tCoord - fract(mPos) * 0.015625 + fract(oCoord) * 0.015625;
+}
 
+vec2 calcPC(vec2 vVec, vec2 mPos, vec2 tCoord, vec2 nCoord){
+	#if defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
+	vec4 nSamp = textureLod(TEXTURE_0, nCoord, 0.0);
+	if((nSamp.r > 0.0 || nSamp.g > 0.0 || nSamp.b > 0.0) && nSamp.a < 1.0){
+		vec2 spCoord = mPos + vVec * bayer64(gl_FragCoord.xy) * 0.01;
+		for(int i = 0; i < PARALLAX_STEP && texture2D(TEXTURE_0, mrCo(nCoord, mPos, spCoord)).a < 1.0 - float(i) / PARALLAX_RES; i++) spCoord += vVec * PARALLAX_DEPTH;
+		return mrCo(tCoord, mPos, spCoord);
+	} else return tCoord;
+	#endif
+	return tCoord;
+}
+
+float calcPsha(vec3 tLPos, vec2 pCoord){
+	float tLight = 1.0;
 	#if defined(ENABLE_PARALLAX_SHADOW) && defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
-	float originsample = texture2D(TEXTURE_0, ptcoord).a;
-	for(int i = 0; i < PSHADOW_STEP; i++){
-		ptcoord += lightpos.xy * PSHADOW_OFFSET;
-		if(texture2D(TEXTURE_0, ptcoord).a - float(i) / PARALLAX_RES > originsample) totallight *= 0.2;
+	vec2 npCoord = pCoord + tLPos.xy * bayer64(gl_FragCoord.xy) * 4e-4;
+	for(int i = 0; i < PSHADOW_STEP; i++, npCoord += tLPos.xy * PSHADOW_OFFSET){
+		float dSample = textureLod(TEXTURE_0, npCoord, 0.0).a - float(i) / PARALLAX_RES;
+		if(dSample > textureLod(TEXTURE_0, pCoord, 0.0).a) tLight *= 0.2;
 	}
 	#endif
-
-	return totallight;
+	return tLight;
 }
 
-vec3 getTangent(vec3 normal){
-	vec3 tangent = vec3(0, 0, 0);
-	if(normal.x > 0.0){ tangent = vec3(0, 0, -1);
-	} else if(normal.x < -0.5){ tangent = vec3(0, 0, 1);
-
-	} else if(normal.y > 0.0){ tangent = vec3(1, 0, 0);
-	} else if(normal.y < -0.5){ tangent = vec3(1, 0, 0);
-
-	} else if(normal.z > 0.0){ tangent = vec3(1, 0, 0);
-	} else if(normal.z < -0.5){ tangent = vec3(-1, 0, 0);
-	}
-	return tangent;
+float specGGX(vec3 N, float nDotL, float nDotV, float nDotH, float roughness){
+	float rs = pow(roughness, 4.0);
+	float d = (nDotH * rs - nDotH) * nDotH + 1.0;
+	float nd = rs / (pi * d * d);
+	float k = (roughness * roughness) * 0.5;
+	float v = nDotV * (1.0 - k) + k, l = nDotL * (1.0 - k) + k;
+	return max0(nd * (0.25 / (v * l)));
 }
 
-float ditributionGGX(float NdotH, float roughness){
-	float roughSquared = sqr4x(roughness);
-	float d = (NdotH * roughSquared - NdotH) * NdotH + 1.0;
-	return roughSquared / (pi * d * d);
+#ifdef ENABLE_REFLECTION
+vec4 reflection(vec4 albedo, vec3 abl, vec3 N, float met, float ssm, float outD, float nDotV){
+	vec3 rVector = reflect(normalize(wPos), N);
+	vec3 skyRef = calcSky(rVector, lPos);
+		skyRef = mix(skyRef, skyRef * abl, met);
+	vec3 F0 = mix(vec3(0.04), abl, met);
+	vec3 fSchlick = F0 + (1.0 - F0) * pow(1.0 - nDotV, 5.0);
+	albedo.rgb = mix(albedo.rgb, albedo.rgb * 0.03, met * outD);
+	albedo = mix(albedo, vec4(skyRef, 1.0), vec4(fSchlick, length(fSchlick)) * max(ssm, wrain * N.y) * outD);
+	return albedo;
 }
+#endif
 
-float geometrySchlick(float NdotV, float NdotL, float roughness){
-	float k = sqr2x(roughness) * 0.5;
-	float view = NdotV * (1.0 - k) + k;
-	float light = NdotL * (1.0 - k) + k;
-	return 0.25 / (view * light);
-}
-
-void main()
-{
+void main(){
 #ifdef BYPASS_PIXEL_SHADER
-	gl_FragColor = vec4(0, 0, 0, 0);
+	gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
 	return;
 #else
 
-	vec3 normal = normalize(cross(dFdx(chunkedpos.xyz), dFdy(chunkedpos.xyz)));
-	vec3 tangent = getTangent(normal);
-	vec3 binormal = normalize(cross(tangent, normal));
-	mat3 tbnMatrix = transpose(mat3(tangent, binormal, normal));
+	vec3 N = normalize(cross(dFdx(cPos.xyz), dFdy(cPos.xyz)));
+	vec3 T = toTangent(N), B = normalize(cross(T, N));
+	mat3 TBN = transpose(mat3(T, B, N));
+	vec3 vVec = normalize(TBN * wPos), mPos = TBN * cPos;
 
-	vec3 viewvec = normalize(tbnMatrix * worldpos);
-	vec3 ppos = tbnMatrix * chunkedpos;
+	vec2 frUV = fract(uv0 * 32.0) * 0.015625;
+	vec2 aUV = uv0 - frUV, mUV = uv0 - (frUV - vec2(0.015625, 0.0)), nUV = uv0 - (frUV - vec2(0.0, 0.015625));
 
-	vec2 topleftmUV = fract(uv0 * 32.0) * 0.015625;
-	vec2 albedoUv = uv0 - topleftmUV;
-	vec2 merUv = uv0 - (topleftmUV - vec2(0.015625, 0.0));
-	vec2 normaltUv = uv0 - (topleftmUV - vec2(0.0, 0.015625));
-
-	vec3 smat = vec3(0, 0, 0);
-	vec4 mertex = textureLod(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(merUv, normaltUv)), 0.0);
-	if((mertex.r > 0.0 || mertex.g > 0.0 || mertex.b > 0.0) && mertex.a > 0.0) smat = mertex.rgb;
-	float metallic = saturate(smat.g);
-	float emission = saturate(smat.b);
-	float roughness = saturate(pow(1.0 - smat.r, 2.0));
-	float ssmooth = saturate(1.0 - roughness * 3.0);
-
-	vec3 rawNormal = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv)), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP)).rgb;
-	if(rawNormal.r > 0.0 || rawNormal.g > 0.0 || rawNormal.b > 0.0){
-		normal = rawNormal * 2.0 - 1.0;
-		normal.rg *= max0(1.0 - wrain * 0.5);
-		normal.rgb = normalize(normal * tbnMatrix);
+	vec4 stex = textureLod(TEXTURE_0, calcPC(vVec.xy, mPos.xy, mUV, nUV), 0.0);
+	float met = 0.0, rough = 0.0, ems = 0.0, ssm = 0.0;
+	if((stex.r > 0.0 || stex.g > 0.0 || stex.b > 0.0) && stex.a > 0.0){
+		met = saturate(stex.g);
+		ems = saturate(stex.b);
+		rough = saturate(pow(1.0 - stex.r, (2.0 + ROUGHNESS_TRESHOLD)));
+		ssm = saturate(1.0 - rough * (2.0 + SMOOTHNESS_TRESHOLD));
 	}
 
-	vec3 lightpos = normalize(vec3(cos(SUN_LIGHT_ANGLE), sin(SUN_LIGHT_ANGLE), 0.0));
-	vec3 upPosition = vec3(0.0, 1.0, 0.0);
-	vec3 viewDir = normalize(-worldpos);
-	vec3 halfDir = normalize(viewDir + lightpos);
+	vec3 nTex = textureGrad(TEXTURE_0, calcPC(vVec.xy, mPos.xy, nUV, nUV), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP)).rgb;
+	if(nTex.r > 0.0 || nTex.g > 0.0 || nTex.b > 0.0){
+		N = nTex * 2.0 - 1.0;
+		N.rg *= max0(1.2 - wrain * 0.5);
+		N = normalize(N * TBN);
+	}
 
-	float NdotL = max0(dot(normal, lightpos)); // diffuse lighting / bump map
-	float NdotU = max0(dot(normal, upPosition));
-	float NdotH = max(0.001, dot(normal, halfDir)); // specular lighting ( blinn phong model )
-	float NdotV = max(0.001, dot(normal, viewDir));
+	vec3 vDir = normalize(-wPos), hDir = normalize(vDir + slPos);
+	float nDotL = max0(dot(N, slPos)), nDotV = max(0.001, dot(N, vDir)), nDotU = max0(dot(N, uPos)), nDotH = max(0.001, dot(N, hDir));
 
-	vec4 albedo = textureGrad(TEXTURE_0, calcpcoord(viewvec.xy, ppos.xy, mat2(albedoUv, normaltUv)), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP));
-
+	vec4 albedo = textureGrad(TEXTURE_0, calcPC(vVec.xy, mPos.xy, aUV, nUV), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP));
 	#ifdef SEASONS_FAR
 		albedo.a = 1.0;
 	#endif
-
 	#ifdef ALPHA_TEST
 		#ifdef ALPHA_TO_COVERAGE
-			#define ALPHA_THRESHOLD 0.05
+			if(albedo.a < 0.05) discard;
 		#else
-			#define ALPHA_THRESHOLD 0.5
+			if(albedo.a < 0.5) discard;
 		#endif
-		if(albedo.a < ALPHA_THRESHOLD) discard;
 	#endif
-
 	#ifndef SEASONS
 		#if !defined(ALPHA_TEST) && !defined(BLEND)
 			albedo.a = vcolor.a;
 		#endif
-
-		albedo.rgb *= vcolor.g > vcolor.r ? normalize(vcolor.rgb) * sqrt(length(vcolor.rgb)) : sqrt(vcolor.rgb);
+		albedo.rgb *= calcVco(vcolor).rgb;
 	#else
-		albedo.rgb *= mix(vec3(1.0,1.0,1.0), texture2D(TEXTURE_2, vcolor.rg).rgb * 2.0, vcolor.b);
+		albedo.rgb *= mix(vec3(1.0), texture2D(TEXTURE_2, vcolor.rg).rgb * 2.0, vcolor.b);
 		albedo.rgb *= vcolor.aaa;
 		albedo.a = 1.0;
 	#endif
-
 		albedo.rgb = toLinear(albedo.rgb);
 
-	vec3 albedonoem = albedo.rgb;
-	vec3 ambientColor = vec3(0.3, 0.3, 0.3) * saturate(1.0 - wrain * 0.3 + fnight * 0.6);
-		ambientColor *= uv1.y;
+	float blSource = uv1.x * max(smoothstep(sunVis * uv1.y, 1.0, uv1.x), wrain * uv1.y), outD = smoothstep(0.845, 0.87, uv1.y);
+	vec3 ambCol = szCol * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * blSource + pow(blSource, 5.0) * 1.2, abl = albedo.rgb;
 
-	float bvalue = smoothstep(texture2D(TEXTURE_1, vec2(0, 1)).r * uv1.y, 1.0, uv1.x);
-	float blocklights = mix(mix(0.0, uv1.x, bvalue), uv1.x, wrain);
-		blocklights = blocklights * (NdotU * 0.5 + 0.5);
-		ambientColor += vec3(1.0, 0.5, 0.2) * blocklights + pow(blocklights * 1.15, 5.0);
-
-	vec2 dispcoord = calcpcoord(viewvec.xy, ppos.xy, mat2(normaltUv, normaltUv));
-	float pselfshadow = calcpshadow(tbnMatrix * lightpos, dispcoord);
-		pselfshadow *= NdotL;
-
-	vec3 diffuseColor = vec3(FOG_COLOR.r * max0(1.0 - fnight * 0.4), FOG_COLOR.g * max0(0.9 - fnight * 0.1), FOG_COLOR.b * (0.8 + fnight * 0.2)) * 3.0;
-	float outdoor = smoothstep(0.845, 0.87, uv1.y);
-		ambientColor += diffuseColor * pselfshadow * outdoor * (1.0 - wrain);
-		albedo.rgb = albedo.rgb * ambientColor;
-		albedo.rgb += emission * albedonoem * 5.0;
-
-	float atten = max0(1.0 - roughness) * geometrySchlick(NdotV, NdotL, roughness) * ditributionGGX(NdotH, roughness);
-		albedo += atten * pselfshadow * vec4(FOG_COLOR.r * 2.0, FOG_COLOR.g * 1.8, FOG_COLOR.b * 1.6, 1.0) * outdoor * (1.0 - wrain);
+	float pShadow = calcPsha(TBN * slPos, calcPC(vVec.xy, mPos.xy, nUV, nUV)) * nDotL;
+		ambCol += (sunCol + moonCol) * pShadow * outD * (1.0 - wrain);
+		albedo.rgb = (albedo.rgb * ambCol) + (ems * abl * tau);
 
 	#ifdef ENABLE_REFLECTION
-	vec3 reflectedvector = reflect(normalize(worldpos), normal);
-	vec3 skyReflection = renderSkyColor(reflectedvector, upPosition, 1.5);
-	float cloudF = smoothstep(1.0, 0.95, length(nworldpos.xz)) * float(dot(reflectedvector, upPosition) > 0.0);
-
-		reflectedvector /= reflectedvector.y;
-
-	vec4 cloudReflection = calcCloudColor(reflectedvector, reflectedvector);
-		skyReflection = mix(skyReflection, cloudReflection.rgb, cloudReflection.a * cloudF);
-		skyReflection = mix(skyReflection, skyReflection * albedonoem, metallic);
-
-	vec3 f0 = vec3(0.04);
-		f0 = mix(f0, albedonoem, metallic);
- 	vec3 fresnel = f0 + (1.0 - f0) * pow(1.0 - NdotV, 5.0);
-	 	albedo.rgb= mix(albedo.rgb, albedo.rgb * vec3(0.03), metallic);
-	 	albedo = mix(albedo, vec4(skyReflection, 1.0), vec4(fresnel, length(fresnel)) * max(ssmooth, wrain * normal.y) * outdoor);
+		albedo = reflection(albedo, abl, N, met, ssm, outD, nDotV);
 	#endif
 
-	vec3 newfogcolor = renderSkyColor(normalize(worldpos), upPosition, 1.0);
-		albedo.rgb = mix(albedo.rgb, newfogcolor, max0(length(worldpos) / 100.0) * wrain);
-	#ifdef FOG
-		albedo.rgb = mix(albedo.rgb, newfogcolor, fogalpha);
+	float specL = specGGX(N, nDotL, nDotV, nDotH, rough), fdist = max0(length(wPos) / SECONDARY_FOG_DISTANCE);
+		albedo += vec4(sunCol + moonCol, 1.0) * specL * pShadow * outD * (1.0 - wrain);
+
+	#ifdef ENABLE_SECONDARY_FOG
+		albedo.rgb = mix(albedo.rgb, szCol, fdist * mix(mix(SS_FOG_INTENSITY, NOON_FOG_INTENSITY, sunVis), RAIN_FOG_INTENSITY, wrain));
+		albedo.rgb += sunCol * mPhase(max0(1.0 - distance(nWPos, lPos)), FOG_MIE_G) * fdist * FOG_MIE_COEFF;
+	#endif
+
+	#if defined(FOG) && defined(PRIMARY_FOG)
+		albedo.rgb = mix(albedo.rgb, nFogC, hFogd);
 	#endif
 		albedo.rgb = colorCorrection(albedo.rgb);
 
-	/// debugging section
-	#ifdef LOOK_NORMALS
-		albedo = vec4(normal, 1.0);
-	#endif
-	#ifdef LOOK_ATLAS_TERRAIN
-		albedo = texture2D(TEXTURE_0, chunkedpos.xz / 8.0);
-	#endif
-	#ifdef LOOK_METALLIC
-		albedo = vec4(metallic);
-	#endif
-	#ifdef LOOK_EMISSION
-		albedo = vec4(emission);
-	#endif
-	#ifdef LOOK_ROUGHNESS
-		albedo = vec4(roughness);
-	#endif
+	switch(showvalue){
+		case 2: albedo = vec4(N, 1.0); break;
+		case 3: albedo = texture2D(TEXTURE_0, cPos.xz * 0.125); break;
+		case 4: albedo = vec4(met); break;
+		case 5: albedo = vec4(ems); break;
+		case 6: albedo = vec4(rough); break;
+	}
 
 	gl_FragColor = albedo;
 
