@@ -1,9 +1,10 @@
 //////////////////////////////////////////////////////////////
 ///////////////// ADJUSTABLE VARIABLE ////////////////////////
 //////////////////////////////////////////////////////////////
+
 #define DYNAMIC_LIGHT_ANGLE
 #define DYNAMIC_L_ANGLE_SPEED 0.008
-#define SUN_LIGHT_ANGLE radians(40.0)
+#define SUN_LIGHT_ANGLE radians(40.0) // will affected when disabling DYNAMIC_LIGHT_ANGLE
 #define SUN_PATH_ROTATION radians(-30.0)
 
 #define SKY_COEFF_R 0.03
@@ -41,18 +42,21 @@
 #define ADJUST_MIPMAP 0.5
 #define SATURATION 1.1
 #define EXPOSURE_MULTIPLICATION 1.0
+
 ///////////////////////////////////////////////////////////////
 ////////////// END OF ADJUSTABLE VARIABLE /////////////////////
 ///////////////////////////////////////////////////////////////
 
-uniform float TOTAL_REAL_WORLD_TIME;
+uniform highp float TOTAL_REAL_WORLD_TIME;
 
 const float pi = 3.14159265;
 const float hpi = 1.57079633;
 const float invpi = 0.31830989;
 const float tau = 6.28318531;
 const float invtau = 0.15915494;
-const int showvalue = 0;
+
+// debugging
+const int showvalue = 0; // 0 off, 1 show linear, 2 show normal, 3 show atlas terrain, 4 show metallic, 5 show emission, 6 show roughness.
 
 #define max0(x) max(0.0, x)
 #define saturate(x) clamp(x, 0.0, 1.0)
@@ -63,37 +67,46 @@ float bayer2(vec2 coord){
 	coord = floor(coord);
 	return fract(dot(coord, vec2(0.5, coord.y * 0.75)));
 }
+
 float bayer4(vec2 coord){
 	return bayer2(0.5 * coord) * 0.25 + bayer2(coord);
 }
+
 float bayer8(vec2 coord){
 	return bayer4(0.5 * coord) * 0.25 + bayer2(coord);
 }
+
 float bayer64(vec2 coord){
 	return bayer8(0.125 * coord) * 0.015625 + bayer8(coord);
 }
+
 vec3 toLinear(vec3 color){
 	return mix(color / 12.92, pow(0.947867 * color + 0.0521327, vec3(2.4)), step(0.04045, color));
 }
+
 vec3 toSrgb(vec3 color){
 	return mix(color * 12.92, pow(color, vec3(1.0 / 2.4)) * 1.055 - 0.055, step(0.0031308, color));
 }
+
 float luma(vec3 color){
 	return dot(color, vec3(0.2125, 0.7154, 0.0721));
 }
+
 float pDens(vec3 pos){
 	float d = -2.0 * dot(pos, vec3(0, 700, 0));
 	return sqrt(365e3 + d * d - 36e4) + d;
 }
+
 float rPhase(float cosT){
 	return 0.375 * (cosT * cosT + 1.0);
 }
+
 float mPhase(float cosT, float g){
 	float g2 = g * g;
 	return (1.0 / 4.0 * pi) * ((1.0 - g2) / pow(1.0 + g2 - 2.0 * g * cosT, 1.5));
 }
 
-//https://github.com/TheRealMJP/BakingLab/blob/master/LICENSE
+// aces approxmiation https://github.com/TheRealMJP/BakingLab/blob/master/LICENSE
 vec3 RRTandODTFit(vec3 color){
 	vec3 a = color * (color + 0.0245786) - 0.000090537;
 	vec3 b = color * (0.983729 * color + 0.4329510) + 0.238081;
@@ -119,6 +132,7 @@ vec3 colorCorrection(vec3 color){
 	return color;
 }
 
+// atmospheric scattering https://www.shadertoy.com/view/4llfDS
 vec3 calcAtmospScatter(vec3 nWPos, vec3 sunPos, out vec3 sabsorb, out vec3 mabsorb, out vec3 vabsorb){
 	const vec3 rCoeff = vec3(SKY_COEFF_R, SKY_COEFF_G, SKY_COEFF_B);
 	float mCoeff = mix(FAKE_MIE_COEFF, 0.5, wrain), mieg = mix(FAKE_MIE_G, 0.3, wrain);
@@ -169,7 +183,7 @@ void lirradiance(vec3 sunPos, out vec3 sunC, out vec3 moonC, out vec3 szColor){
 
 void calcLpos(out vec3 tlPos, out vec3 lPos){
 	#ifdef DYNAMIC_LIGHT_ANGLE
-		float ang = TOTAL_REAL_WORLD_TIME * DYNAMIC_L_ANGLE_SPEED;
+		highp float ang = TOTAL_REAL_WORLD_TIME * DYNAMIC_L_ANGLE_SPEED;
 		lPos = normalize(vec3(cos(ang), sin(ang), 0.0));
 	#else
 		lPos = normalize(vec3(cos(SUN_LIGHT_ANGLE), sin(SUN_LIGHT_ANGLE), 0.0));

@@ -39,6 +39,7 @@ varying float moonVis;
 
 #include "common.glsl"
 
+// vanilla ao hardcoded https://github.com/origin0110/OriginShader/blob/main/shaders/glsl/shaderfunction.lin
 float getleaao(vec3 color){
 	const vec3 O = vec3(0.682352941176471, 0.643137254901961, 0.164705882352941);
 	const vec3 N = vec3(0.195996912842436, 0.978673548072766, -0.061508507207520);
@@ -53,9 +54,11 @@ float getgraao(vec3 color){
 
 vec4 calcVco(vec4 color){
 	if(abs(color.x - color.y) < 2e-5 && abs(color.y - color.z) < 2e-5){
-		color.a = color.r; color.rgb = vec3(1.0);
+		color.a = color.r;
+		color.rgb = vec3(1.0);
 	} else {
-		color.a = color.a < 0.001 ? getleaao(color.rgb) : getgraao(color.rgb); color.rgb = color.rgb / color.a;
+		color.a = color.a < 0.001 ? getleaao(color.rgb) : getgraao(color.rgb);
+		color.rgb = color.rgb / color.a;
 	}
 	return color;
 }
@@ -66,12 +69,12 @@ vec2 mrCo(vec2 tCoord, vec2 mPos, vec2 oCoord){
 
 vec2 calcPC(vec2 vVec, vec2 mPos, vec2 tCoord, vec2 nCoord){
 	#if defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
-	vec4 nSamp = textureLod(TEXTURE_0, nCoord, 0.0);
-	if((nSamp.r > 0.0 || nSamp.g > 0.0 || nSamp.b > 0.0) && nSamp.a < 1.0){
-		vec2 spCoord = mPos + vVec * bayer64(gl_FragCoord.xy) * 0.01;
-		for(int i = 0; i < PARALLAX_STEP && texture2D(TEXTURE_0, mrCo(nCoord, mPos, spCoord)).a < 1.0 - float(i) / PARALLAX_RES; i++) spCoord += vVec * PARALLAX_DEPTH;
-		return mrCo(tCoord, mPos, spCoord);
-	} else return tCoord;
+		vec4 nSamp = textureLod(TEXTURE_0, nCoord, 0.0);
+		if((nSamp.r > 0.0 || nSamp.g > 0.0 || nSamp.b > 0.0) && nSamp.a < 1.0){
+			vec2 spCoord = mPos + vVec * bayer64(gl_FragCoord.xy) * 0.01;
+			for(int i = 0; i < PARALLAX_STEP && texture2D(TEXTURE_0, mrCo(nCoord, mPos, spCoord)).a < 1.0 - float(i) / PARALLAX_RES; i++) spCoord += vVec * PARALLAX_DEPTH;
+			return mrCo(tCoord, mPos, spCoord);
+		} else return tCoord;
 	#endif
 	return tCoord;
 }
@@ -79,11 +82,11 @@ vec2 calcPC(vec2 vVec, vec2 mPos, vec2 tCoord, vec2 nCoord){
 float calcPsha(vec3 tLPos, vec2 pCoord){
 	float tLight = 1.0;
 	#if defined(ENABLE_PARALLAX_SHADOW) && defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
-	vec2 npCoord = pCoord + tLPos.xy * bayer64(gl_FragCoord.xy) * 4e-4;
-	for(int i = 0; i < PSHADOW_STEP; i++, npCoord += tLPos.xy * PSHADOW_OFFSET){
-		float dSample = textureLod(TEXTURE_0, npCoord, 0.0).a - float(i) / PARALLAX_RES;
-		if(dSample > textureLod(TEXTURE_0, pCoord, 0.0).a) tLight *= 0.2;
-	}
+		vec2 npCoord = pCoord + tLPos.xy * bayer64(gl_FragCoord.xy) * 4e-4;
+		for(int i = 0; i < PSHADOW_STEP; i++, npCoord += tLPos.xy * PSHADOW_OFFSET){
+			float dSample = textureLod(TEXTURE_0, npCoord, 0.0).a - float(i) / PARALLAX_RES;
+			if(dSample > textureLod(TEXTURE_0, pCoord, 0.0).a) tLight *= 0.2;
+		}
 	#endif
 	return tLight;
 }
@@ -140,8 +143,8 @@ void main(){
 		N = normalize(N * TBN);
 	}
 
-	vec3 vDir = normalize(-wPos), hDir = normalize(vDir + slPos);
-	float nDotL = max0(dot(N, slPos)), nDotV = max(0.001, dot(N, vDir)), nDotU = max0(dot(N, uPos)), nDotH = max(0.001, dot(N, hDir));
+	vec3 vDir = normalize(-wPos), hDir = normalize(vDir + tlPos);
+	float nDotL = max0(dot(N, tlPos)), nDotV = max(0.001, dot(N, vDir)), nDotU = max0(dot(N, uPos)), nDotH = max(0.001, dot(N, hDir));
 
 	vec4 albedo = textureGrad(TEXTURE_0, calcPC(vVec.xy, mPos.xy, aUV, nUV), dFdx(uv0 * ADJUST_MIPMAP), dFdy(uv0 * ADJUST_MIPMAP));
 	#ifdef SEASONS_FAR
@@ -169,7 +172,7 @@ void main(){
 	float blSource = uv1.x * max(smoothstep(sunVis * uv1.y, 1.0, uv1.x), wrain * uv1.y), outD = smoothstep(0.845, 0.87, uv1.y);
 	vec3 ambCol = szCol * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * blSource + pow(blSource, 5.0) * 1.2, abl = albedo.rgb;
 
-	float pShadow = calcPsha(TBN * slPos, calcPC(vVec.xy, mPos.xy, nUV, nUV)) * nDotL;
+	float pShadow = calcPsha(TBN * tlPos, calcPC(vVec.xy, mPos.xy, nUV, nUV)) * nDotL;
 		ambCol += (sunCol + moonCol) * pShadow * outD * (1.0 - wrain);
 		albedo.rgb = (albedo.rgb * ambCol) + (ems * abl * tau);
 

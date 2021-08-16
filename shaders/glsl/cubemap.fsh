@@ -1,6 +1,7 @@
 // __multiversion__
 #include "fragmentVersionSimple.h"
 #include "uniformPerFrameConstants.h"
+
 precision highp float;
 #include "common.glsl"
 

@@ -3,6 +3,9 @@
    "padding" : 0,
    "resource_pack_name" : "vanilla",
    "texture_data" : {
+			"additional" : {
+				"textures" : "textures/misc/add"
+			},
       "acacia_planks" : {
          "textures" : "textures/blocks/planks_acacia"
       },
@@ -2442,6 +2445,21 @@
       },
       "scaffolding_top" : {
          "textures" : "textures/blocks/scaffolding_top"
+      },
+	  "sculk_sensor_top": {
+        "textures": "textures/blocks/sculk_sensor_top"
+      },
+      "sculk_sensor_side": {
+        "textures": "textures/blocks/sculk_sensor_side"
+      },
+      "sculk_sensor_bottom": {
+        "textures": "textures/blocks/sculk_sensor_bottom"
+      },
+      "sculk_sensor_tendril_inactive": {
+        "textures": "textures/blocks/sculk_sensor_tendril_inactive"
+      },
+      "sculk_sensor_tendril_active": {
+        "textures": "textures/blocks/sculk_sensor_tendril_active"
       },
       "sea_lantern" : {
          "textures" : "textures/blocks/sea_lantern"
