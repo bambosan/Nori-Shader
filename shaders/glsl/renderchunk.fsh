@@ -188,9 +188,12 @@ void main(){
 		albedo.rgb += sunCol * mPhase(max0(1.0 - distance(nWPos, lPos)), FOG_MIE_G) * fdist * FOG_MIE_COEFF;
 	#endif
 
-	#if defined(FOG) && defined(PRIMARY_FOG)
-		albedo.rgb = mix(albedo.rgb, nFogC, hFogd);
+	#ifdef ENABLE_PRIMARY_FOG
+		#ifdef FOG
+			albedo.rgb = mix(albedo.rgb, nFogC, hFogd);
+		#endif
 	#endif
+
 		albedo.rgb = colorCorrection(albedo.rgb);
 
 	switch(showvalue){
