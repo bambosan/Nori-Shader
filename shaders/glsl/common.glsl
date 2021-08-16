@@ -93,8 +93,8 @@ float luma(vec3 color){
 }
 
 float pDens(vec3 pos){
-	float d = -2.0 * dot(pos, vec3(0, 700, 0));
-	return sqrt(365e3 + d * d - 36e4) + d;
+	float d = -2.0 * dot(pos, vec3(0, 1e3, 0));
+	return sqrt(366e3 + d * d - 36e4) + d;
 }
 
 float rPhase(float cosT){
@@ -154,7 +154,7 @@ vec3 calcAtmospScatter(vec3 nWPos, vec3 sunPos, out vec3 sabsorb, out vec3 mabso
 
 	vec3 dscatter = (abs(sabsorb - vabsorb) / abs(sc(rCoeff, mCoeff, suOD) - sc(rCoeff, mCoeff, vOD))) * dPhase;
 	vec3 nscatter = (abs(mabsorb - vabsorb) / abs(sc(rCoeff, mCoeff, moOD) - sc(rCoeff, mCoeff, vOD))) * nPhase;
-	return dscatter * tau + mix(vec3(luma(nscatter)), nscatter, SKY_NIGHT_SATURATION) * invpi;
+	return dscatter * (2.0 + tau * exp2(-vOD * 0.01)) + mix(vec3(luma(nscatter)), nscatter, SKY_NIGHT_SATURATION) * invpi;
 #undef sc
 }
 
