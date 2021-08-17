@@ -3,9 +3,9 @@
    "padding" : 0,
    "resource_pack_name" : "vanilla",
    "texture_data" : {
-			"additional" : {
-				"textures" : "textures/misc/add"
-			},
+      "additional" : {
+         "textures" : "textures/misc/add"
+      },
       "acacia_planks" : {
          "textures" : "textures/blocks/planks_acacia"
       },

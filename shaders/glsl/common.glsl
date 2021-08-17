@@ -11,8 +11,8 @@
 #define SKY_COEFF_G 0.047
 #define SKY_COEFF_B 0.09
 #define SKY_NIGHT_SATURATION 0.6
-#define FAKE_MIE_COEFF 0.003
-#define FAKE_MIE_G 0.05
+#define SKY_MIE_COEFF 0.004
+#define SKY_MIE_G 0.75
 
 #define BLOCK_LIGHT_C_R 1.0
 #define BLOCK_LIGHT_C_G 0.45
@@ -28,7 +28,7 @@
 #define FOG_MIE_G 0.75
 
 //#define ENABLE_REFLECTION
-#define ROUGHNESS_TRESHOLD 0.2
+#define ROUGHNESS_POWER 2.2
 #define SMOOTHNESS_TRESHOLD 1.0
 
 //#define ENABLE_PARALLAX
@@ -92,9 +92,9 @@ float luma(vec3 color){
 	return dot(color, vec3(0.2125, 0.7154, 0.0721));
 }
 
-float pDens(vec3 pos){
-	float d = -2.0 * dot(pos, vec3(0, 1e3, 0));
-	return sqrt(366e3 + d * d - 36e4) + d;
+vec2 pDens(vec3 pos){
+	float d = -2.0 * dot(pos, vec3(0, 900, 0));
+	return vec2(sqrt(365e3 + d * d - 36e4) + d, sqrt(375e3 + d * d - 36e4) + d);
 }
 
 float rPhase(float cosT){
@@ -135,15 +135,18 @@ vec3 colorCorrection(vec3 color){
 // atmospheric scattering https://www.shadertoy.com/view/4llfDS
 vec3 calcAtmospScatter(vec3 nWPos, vec3 sunPos, out vec3 sabsorb, out vec3 mabsorb, out vec3 vabsorb){
 	const vec3 rCoeff = vec3(SKY_COEFF_R, SKY_COEFF_G, SKY_COEFF_B);
-	float mCoeff = mix(FAKE_MIE_COEFF, 0.5, wrain), mieg = mix(FAKE_MIE_G, 0.3, wrain);
+	float mCoeff = mix(SKY_MIE_COEFF, 0.5, wrain);
+	float mieg = mix(SKY_MIE_G, 0.3, wrain);
 	float scdist = max0(1.0 - distance(nWPos, sunPos)), mcdist = max0(1.0 - distance(nWPos, sunPos));
-	float vOD = pDens(nWPos), suOD = pDens(sunPos), moOD = pDens(-sunPos);
+	float vOD = pDens(nWPos).x;
+	float suOD = pDens(sunPos).y;
+	float moOD = pDens(-sunPos).y;
 
 #define sc(coeff, coeff2, d) (coeff * d + coeff2 * d)
-	float dRPhase = rPhase(scdist), dMPhase = mPhase(scdist, exp2(-vOD * mieg));
+	float dRPhase = rPhase(scdist), dMPhase = mPhase(scdist, 0.0 + mieg * exp2(-vOD * 0.005));
 	vec3 dPhase = sc(rCoeff * dRPhase, mCoeff * dMPhase, vOD);
 
-	float nRPhase = rPhase(mcdist), nMPhase = mPhase(mcdist, exp2(-vOD * mieg));
+	float nRPhase = rPhase(mcdist), nMPhase = mPhase(mcdist, 0.0 + mieg * exp2(-vOD * 0.005));
 	vec3 nPhase = sc(rCoeff * nRPhase, mCoeff * nMPhase, vOD);
 
 #define ab(coeff, coeff2, d) exp2(-sc(coeff, coeff2, d))
@@ -152,9 +155,12 @@ vec3 calcAtmospScatter(vec3 nWPos, vec3 sunPos, out vec3 sabsorb, out vec3 mabso
 	vabsorb = ab(rCoeff, mCoeff, vOD);
 #undef ab
 
-	vec3 dscatter = (abs(sabsorb - vabsorb) / abs(sc(rCoeff, mCoeff, suOD) - sc(rCoeff, mCoeff, vOD))) * dPhase;
-	vec3 nscatter = (abs(mabsorb - vabsorb) / abs(sc(rCoeff, mCoeff, moOD) - sc(rCoeff, mCoeff, vOD))) * nPhase;
-	return dscatter * (2.0 + tau * exp2(-vOD * 0.01)) + mix(vec3(luma(nscatter)), nscatter, SKY_NIGHT_SATURATION) * invpi;
+#define tsc(a, a2, s, s2, p) (abs(a - a2) / abs(s - s2)) * p
+	vec3 dscatter = tsc(sabsorb, vabsorb, sc(rCoeff, mCoeff, suOD), sc(rCoeff, mCoeff, vOD), dPhase) * (2.0 + tau * exp2(-vOD * 0.01));
+	vec3 nscatter = tsc(mabsorb, vabsorb, sc(rCoeff, mCoeff, moOD), sc(rCoeff, mCoeff, vOD), nPhase) * (0.0 + 1.0 * exp2(-vOD * 0.01));
+#undef tsc
+		nscatter = mix(vec3(luma(nscatter)), nscatter, SKY_NIGHT_SATURATION) * invpi;
+	return dscatter + nscatter;
 #undef sc
 }
 
@@ -167,7 +173,7 @@ vec3 calcSky(vec3 nWPos, vec3 sunPos){
 	vec3 useless = vec3(0.0), absorbc = vec3(0.0);
 	vec3 totalSky = calcAtmospScatter(nWPos, sunPos, useless, useless, absorbc);
 
-	float vOD = pDens(nWPos);
+	float vOD = pDens(nWPos).x;
 		absorbc = mix(vec3(0.0), absorbc, exp2(-vOD * 0.1));
 		totalSky += absorbc * 1e3 * getdisk(nWPos, sunPos, 3e3);
 		totalSky += absorbc * 5e2 * getdisk(nWPos, -sunPos, 6e3);
