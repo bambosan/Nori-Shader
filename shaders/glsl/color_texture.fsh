@@ -30,7 +30,7 @@ varying vec4 fogColor;
 void main()
 {
 	highp vec2 tmCoord = fract(uv * 32.0) * 0.015625;
-	bool ismap = (TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) || TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) || TEXTURE_DIMENSIONS.xy == vec2(4096, 4096));
+	bool ismap = (TEXTURE_DIMENSIONS.xy == vec2(1024, 1024) || TEXTURE_DIMENSIONS.xy == vec2(2048, 2048) || TEXTURE_DIMENSIONS.xy == vec2(4096, 4096) || TEXTURE_DIMENSIONS.xy == vec2(8192, 8192));
 
 	vec4 diffuse = vec4(0, 0, 0, 0);
 

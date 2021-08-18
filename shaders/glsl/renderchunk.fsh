@@ -132,7 +132,7 @@ void main(){
 	if((stex.r > 0.0 || stex.g > 0.0 || stex.b > 0.0) && stex.a > 0.0){
 		met = saturate(stex.g);
 		ems = saturate(stex.b);
-		rough = saturate(pow(1.0 - stex.r, ROUGHNESS_POWER));
+		rough = saturate(pow(1.0 - stex.r, ROUGHNESS_POW));
 		ssm = saturate(1.0 - rough * (2.0 + SMOOTHNESS_TRESHOLD));
 	}
 
