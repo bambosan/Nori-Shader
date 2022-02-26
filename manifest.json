@@ -1,0 +1,23 @@
+{
+	"format_version": 2,
+	"metadata": {
+		"authors": [ "bambosan" ],
+		"url": "https://github.com/Mcbamboo/Nori-Shaders-BE",
+		"license": "GNU General Public License v3.0"
+	},
+	"header": {
+		"name": "Nori Shaders BETA",
+		"description": "a shader for minecraft be",
+		"uuid": "6d9c0980-ad4b-4951-ae69-e0ab02449d12",
+		"version": [0, 1, 4],
+		"min_engine_version": [1, 14, 1]
+	},
+	"modules": [
+		{
+			"description": "a shader for minecraft be",
+			"type": "resources",
+			"uuid": "fa8489c7-9f68-4e22-8015-276e1a92f0d4",
+			"version": [0, 1, 4]
+		}
+	]
+}

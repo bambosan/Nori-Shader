@@ -1,0 +1,5 @@
+//you don't need to change this file because it will be replaced with the file brought by the installed pbr texture
+#define PBR_FORMAT 1
+#define NORMAL_MAP_STRENGTH 1.0
+#define ROUGHNESS_STRENGTH 1.0
+#define SMOOTHNESS_STRENGTH 1.0
