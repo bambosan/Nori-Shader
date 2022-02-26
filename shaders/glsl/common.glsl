@@ -1,22 +1,3 @@
-/************************************************
-
-Copyright (C) 2022 bambosan
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*********************************************/
-
 precision highp float;
 uniform float TOTAL_REAL_WORLD_TIME;
 
@@ -118,7 +99,7 @@ float gdi(vec3 spos, vec3 dpos, float size){
 }
 vec3 csky(vec3 pos, vec3 spos, vec3 sc, vec3 mc){
 	vec3 res = catm(pos, spos);
-		res += sc * 100.0 * gdi(pos, spos, 3e3);
+		res += sc * 50.0 * gdi(pos, spos, 3e3);
 		res += mc * 10.0 * gdi(pos, -spos, 6e3);
 	return res;
 }
@@ -133,7 +114,7 @@ float ccd(vec3 pos){
 	if(pos.y < cminh || pos.y > cmaxh) return 0.0;
 	float hf = (pos.y - cminh) / CLOUD_THICKNESS;
 	float ha = saturate(map(hf, 0.0, 0.1, 0.0, 1.0) * map(hf, 0.9, 1.0, 1.0, 0.0));
-	return saturate(step(0.86, hash21(floor(pos.xz * 2e-3 + TOTAL_REAL_WORLD_TIME * 0.05))) * ha - 0.5) * 0.03;
+	return saturate(step(0.9, hash21(floor(pos.xz * 1.8e-3 + TOTAL_REAL_WORLD_TIME * 0.05))) * ha - 0.5) * 0.03;
 }
 float mpc(float cost){
 	float mie1 = mp(cost, CLOUD_MIE_DIRECTIONAL_G), mie2 = mp(cost, -0.05);
@@ -144,7 +125,7 @@ vec2 ccl(vec3 rpos, vec3 spos, float cdens, float cost, float cod, float tr){
 	float cl = 0.0;
 	for(int i = 0; i < CLOUD_LIGHT_STEPS; i++, rpos += spos * ss) cl += ccd(rpos) * ss;
 	float ph = mpc(cost), pd = 1.0 - exp(-cdens * 2.0);
-	return vec2((1.0 - cod) * exp(-cl * 0.5) * tr * pd * ph, (1.0 - cod) * tr);
+	return vec2((1.0 - cod) * exp(-cl) * tr * pd * ph, (1.0 - cod) * tr);
 }
 float sint(float yalt, float h){
 	float r = 6371e3 + h, ds = yalt * 6371e3;
@@ -163,7 +144,7 @@ vec4 ccv(vec3 pos, vec3 spos, vec3 sc, vec3 mc, vec3 zc, float dither){
 		tclsc += ccl(ro, spos, cdens, cost, cod, tr);
 		tr *= cod;
     }
-	return mix(vec4(tclsc.x * (sc + mc) + (tclsc.y * zc * 0.3), tr), vec4(0.0, 0.0, 0.0, 1.0), saturate(length(ro) * 6e-5));
+	return mix(vec4(tclsc.x * (sc + mc) + (tclsc.y * zc * 0.3), tr), vec4(0.0, 0.0, 0.0, 1.0), saturate(length(ro) * 7e-5));
 }
 #endif
 void clig(vec3 spos, out vec3 sc, out vec3 monc, out vec3 szcol){

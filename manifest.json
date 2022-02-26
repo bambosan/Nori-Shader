@@ -3,7 +3,7 @@
 	"metadata": {
 		"authors": [ "bambosan" ],
 		"url": "https://github.com/bambosan/Nori-Shaders-BE",
-		"license": "GNU General Public License v3.0"
+		"license": "MIT License"
 	},
 	"header": {
 		"name": "Nori Shaders BE",

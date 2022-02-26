@@ -16,7 +16,7 @@ this is disabled
 
 //#define ENABLE_DYNAMIC_LIGHT_ANGLE
 #define ENABLE_CLOUD
-#define ENABLE_REFLECTION
+//#define ENABLE_REFLECTION
 //#define ENABLE_PARALLAX
 //#define ENABLE_PARALLAX_SHADOW
 
@@ -30,14 +30,14 @@ this is disabled
 // set the static light angle with range 0 - 360 (degrees)
 // will affected when disabling DYNAMIC_LIGHT_ANGLE
 // 0 - 180 is full daytime and 180 - 360 is full night time
-#define SUN_LIGHT_ANGLE 170.0
+#define SUN_LIGHT_ANGLE 90.0
 
 // rotation of the sun in z direction
 #define SUN_PATH_ROTATION -40.0
 
 // adjust sky color
 #define SKY_COEFF_R 0.025
-#define SKY_COEFF_G 0.045
+#define SKY_COEFF_G 0.043
 #define SKY_COEFF_B 0.1
 #define SKY_NIGHT_SATURATION 0.6
 #define SKY_MIE_COEFF 0.005
@@ -50,7 +50,7 @@ this is disabled
 #define CLOUD_THICKNESS 160.0
 
 // cloud steps (voxel), this is the main value of quality. bigger is better, smaller will be more dither
-#define CLOUD_STEPS 6
+#define CLOUD_STEPS 8
 
 // cloud light steps, affected on the thickness of light absorbed by cloud
 #define CLOUD_LIGHT_STEPS 10
@@ -67,7 +67,7 @@ this is disabled
 #define BLOCK_LIGHT_C_B 0.0
 
 // set the number of layers for parallax mapping
-#define PARALLAX_STEP 18
+#define PARALLAX_STEP 16
 
 // set the depth of the step parallax mapping
 // if the value is too high, it will cause the visible distance of each layer
@@ -78,7 +78,7 @@ this is disabled
 #define PSHADOW_STEP 10
 
 // the explanation is almost the same as step parallax
-#define PSHADOW_OFFSET 0.00013
+#define PSHADOW_OFFSET 0.0001
 
 // misc
 #define SATURATION 1.1

@@ -20,48 +20,6 @@ in vec2 uv1;
 in float fogd;
 #endif
 
-// https://github.com/origin0110/OriginShader/blob/main/shaders/glsl/shaderfunction.lin
-float getleaao(vec3 color){
-	const vec3 O = vec3(0.682352941176471, 0.643137254901961, 0.164705882352941);
-	const vec3 n = vec3(0.195996912842436, 0.978673548072766, -0.061508507207520);
-	return length(color) / dot(O, n) * dot(normalize(color), n);
-}
-float getgraao(vec3 color){
-	const vec3 O = vec3(0.745098039215686, 0.713725490196078, 0.329411764705882);
-	const vec3 n = vec3(0.161675377098328, 0.970052262589970, 0.181272392504186);
-	return length(color) / dot(O, n) * dot(normalize(color), n);
-}
-vec4 calcVco(vec4 color){
-	if(abs(color.x - color.y) < 2e-5 && abs(color.y - color.z) < 2e-5){
-		color.a = color.r;
-		color.rgb = vec3(1.0);
-	} else {
-		color.a = color.a < 0.001 ? getleaao(color.rgb) : getgraao(color.rgb);
-		color.rgb = color.rgb / color.a;
-	}
-	return color;
-}
-///////////////////////////
-
-/************************************************
-
-Copyright (C) 2022 bambosan
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-*********************************************/
-
 #include "shader_settings.txt"
 #include "pbr_set.txt"
 #include "common.glsl"
@@ -182,16 +140,14 @@ void main(){
 #if !defined(ALPHA_TEST) && !defined(BLEND)
 	fragcol.a = vcolor.a;
 #endif
-	fragcol.rgb *= calcVco(vcolor).rgb;
+	fragcol.rgb *= vcolor.rgb;
 #else
 	fragcol.rgb *= mix(vec3(1.0), texture(seasons, vcolor.rg).rgb * 2.0, vcolor.b);
-	fragcol.rgb *= vcolor.aaa;
-	fragcol.a = 1.0;
 #endif
 	fragcol.rgb = pow(fragcol.rgb, vec3(2.2));
 	float alm = uv1.x * max(smoothstep(saturate(lpos.y) * uv1.y, 1.0, uv1.x), wrain * uv1.y), oud = smoothstep(0.845, 0.87, uv1.y);
 	float bl = saturate(dot(tl, n)) * alm + pow(alm, 5.0) * 2.0;
-	vec3 ambc = zcol * 1.5 * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * bl, abl = fragcol.rgb;
+	vec3 ambc = zcol * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * bl, abl = fragcol.rgb;
 	float psh = cpsh(tbn * tlpos, cpuv(vvec, nuv, nuv));
 		psh *= ndl;
 		ambc += (sunc + moonc) * psh * oud * (1.0 - wrain);

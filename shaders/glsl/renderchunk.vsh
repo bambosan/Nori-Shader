@@ -41,6 +41,12 @@ void main(){
 	uv0 = TEXCOORD_0;
 	uv1 = TEXCOORD_1;
 	vcolor = COLOR;
+	// thanks @GFPCoder for ao separator
+	vec3 ncol = normalize(COLOR.rgb);
+	float ao = dot(vcolor.rgb, vec3(0.3333));
+	vcolor.rgb /= ao;
+		ao = max(ao, saturate((ncol.r + ncol.g + ncol.b) / 3.0 + float(ncol.r < 0.59 && ncol.g < 0.59 && ncol.b < 0.59)));
+	vcolor.rgb = vcolor.rgb / (dot(vcolor.rgb, vec3(0.3333)) / ao);
 	cpos = POSITION.xyz;
 	wpos = worldPos.xyz;
 	clpos(tlpos, lpos);
