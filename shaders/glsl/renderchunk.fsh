@@ -30,7 +30,7 @@ vec2 cpuv(vec3 vvec, vec2 uv, vec2 nuv){
 	if(textureLod(atlast, nuv, 0.0).a < 1.0){
 		vec2 suv = vec2(0.0);
 		vvec.xy = vvec.xy / (-vvec.z) * PARALLAX_DEPTH;
-		for(int i = 0; i < PARALLAX_STEP && textureLod(atlast, ruv(nuv, suv), 0.0).a < 1.0 - float(i) * 0.01; i++) suv += vvec.xy;
+		for(int i = 0; i < PARALLAX_STEP && textureLod(atlast, ruv(nuv, suv), 0.0).a < 1.0 - float(i) * invtres; i++) suv += vvec.xy;
 		return ruv(uv, suv);
 	} else { return uv; }
 #endif
@@ -41,7 +41,7 @@ float cpsh(vec3 alp, vec2 puv){
 	float lo = 1.0;
 #if defined(ENABLE_PARALLAX_SHADOW) && defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
 	vec2 sof = vec2(0.0);
-	for(int i = 0; i < PSHADOW_STEP; i++, sof += alp.xy * PSHADOW_OFFSET) lo *= step(textureLod(atlast, ruv(puv, sof), 0.0).a - float(i) * 0.01, textureLod(atlast, puv, 0.0).a);
+	for(int i = 0; i < PSHADOW_STEP; i++, sof += alp.xy * PSHADOW_OFFSET) lo *= step(textureLod(atlast, ruv(puv, sof), 0.0).a - float(i) * invtres, textureLod(atlast, puv, 0.0).a);
 #endif
 	return lo;
 }
