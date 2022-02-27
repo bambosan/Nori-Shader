@@ -1,17 +1,25 @@
 {
-  "cubemap": {
-    "states": [
-      "Blending"
-    ],
-    "blendSrc": "SourceAlpha",
-    "blendDst": "OneMinusSrcAlpha",
-    "vertexShader": "shaders/cubemap.vsh",
-    "vrGeometryShader": "shaders/uv.geometry",
-    "fragmentShader": "shaders/cubemap.fsh",
-    "vertexFields": [
-      { "field": "Position" },
-      { "field": "UV0" }
-    ],
-    "msaaSupport": "Both"
-  }
+"cubemap": {
+"states": [
+"Blending"
+],
+
+  "blendSrc": "SourceAlpha",
+  "blendDst": "OneMinusSrcAlpha",
+
+  "vertexShader": "shaders/cubemap.vsh",
+  "vrGeometryShader": "shaders/uv.geometry",
+  "fragmentShader": "shaders/cubemap.fsh",
+  "samplerStates": [
+	{
+	  "samplerIndex": 0,
+	  "textureFilter": "Bilinear",
+	  "textureWrap": "Repeat"
+	}
+  ],
+  "vertexFields": [
+	{ "field": "Position" }
+  ],
+  "msaaSupport": "Both"
+}
 }
