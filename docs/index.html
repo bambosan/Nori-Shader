@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Mirai Shaders BE</title>
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+		<script src="https://kit.fontawesome.com/1bdb927010.js"></script>
+		<link href="https://unpkg.com/swiper/swiper-bundle.min.css" rel="stylesheet">
+		<style media="screen">
+			*{margin: 0; padding: 0}
+			a{color: #BBBBBB; text-decoration: none}
+			a:hover{color: #C70500}
+			body{
+				font-family:Open Sans;
+				color: #BBBBBB;
+				background: black;
+				-webkit-tap-highlight-color: transparent;
+				margin: auto;
+			}
+			header{
+				padding: 46vh 15% 0 15%;
+				text-align: left;
+				font-size: 4em;
+				text-shadow: 0 0 10px black
+			}
+			footer{
+				padding: 60px;
+				text-align: center;
+				font-size: 1em
+			}
+			p{
+				font-size: 1.1em;
+				text-align: justify;
+				line-height: 30px;
+				padding: 2px
+			}
+			ul{padding: 15px}
+			ul li{line-height: 28px}
+			.name{
+				padding: 10px 15% 0 15%;
+				text-align: left;
+				font-size: 1.5em
+			}
+			.col{
+				padding: 0 15% 0 15%;
+			}
+			.colbg{
+				background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./pic/ss2.jpg');
+				background-repeat: no-repeat;
+				background-size: cover;
+			}
+			.infpack{padding: 0 15% 0 15%; font-size: 0.7em; text-shadow: 0 0 5px black}
+			@media (max-width: 1000px){header{font-size: 3.5em}}
+			@media (max-width: 900px){header{padding: 35vh 15% 0 15%}}
+			@media (max-width: 720px){
+				header{font-size: 3em; padding: 30vh 5% 0 5%}
+				p{font-size: 1.1em}
+				.name{font-size: 1.3em; padding: 10px 5% 0 5%}
+				.col{padding: 0 5% 0 5%}
+				.infpack{font-size: 0.6em; padding: 0 5% 0 5%}
+			}
+			@media (max-width: 512px){
+				header{font-size: 2.3em; padding: 20vh 2% 0 2%}
+				p{font-size: 1em}
+				.name{font-size: 1.3em; padding: 10px 2% 0 2%}
+				.col{padding: 0 2% 0 2%}
+				.infpack{font-size: 0.6em; padding: 0 2% 0 2%}
+			}
+			.swiper-slide img{
+				display: block;
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			.imh{padding: inherit}
+			.imh img{
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+		</style>
+		<script>
+			async function load(url, sel){
+				const obj = await (await fetch(url)).json();
+				if(obj == 0){ return "not released"; } else {
+					switch(sel){
+						case 1: let uval = obj[0].assets[0].updated_at;
+							return uval.slice(0,10); break;
+						case 2: let fsval = obj[0].assets[0].size;
+							return (Math.round((fsval/1e6)*1000)/1000)+" MB"; break;
+						case 3: return obj[0].assets[0].download_count; break;
+					}
+				}
+			}
+			const mirai = 'https://api.github.com/repos/bambosan/Mirai-Shaders-BE/releases';
+			load(mirai,1).then(val => { mirai_lu.innerHTML = val});
+			load(mirai,2).then(val => { mirai_sf.innerHTML = val});
+			load(mirai,3).then(val => { mirai_td.innerHTML = val});
+		</script>
+	</head>
+	<body>
+		<div class="colbg">
+			<p class="name"><a href="https://github.com/bambosan/Mirai-Shaders-BE"><i class="fab fa-github"></i> bambosan repositories</a></p>
+			<header><b>Nori Shaders BE</b></header>
+			<p class="infpack">
+				&nbsp;&nbsp;<i class="far fa-calendar-check"></i>&nbsp;<span id="mirai_lu"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-file"></i>&nbsp;<span id="mirai_sf"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-download"></i>&nbsp;<span id="mirai_td"></span>
+			</p>
+		</div>
+		<div class="col"><br>
+			<p>Nori shader is one of the Minecraft be shaders that have PBR features and blocky clouds because it uses(have) PBR it is certain this shader also has a feature like the reflection on the block, bump map and also I added a step parallax mapping along with the self shadow<br>
+			This shader is not related to minecraft default time because all the lighting elements in this shader use atmospheric scattering, so an accurate value of the sun's position is needed. Here I tricked it by creating a fake position (value) that can be set by the user.<p><br>
+			<div class="swiper mySwiper">
+				<div class="swiper-wrapper">
+					<div class="swiper-slide"><img src="./pic/ss1.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss2.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss3.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss4.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss5.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss6.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss7.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss8.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss9.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss10.jpg" alt="nori-shaders-be"></div>
+				</div>
+				<div class="swiper-button-next" style="color: #BBBBBB"></div>
+				<div class="swiper-button-prev" style="color: #BBBBBB"></div>
+			</div><br><br>
+			<h2>Changelog</h2>
+			<p>coming soon.. maybe</p><br>
+			<h2>Shader Settings</h2>
+			<p>to make some changes in the shader go to <b>root directory of this shader > shaders > glsl > common.glsl</b><br>You can also change the time cycle or position of sun</p><br>
+			<h2>PBR</h2>
+			<p>by default the PBR feature in this shader is off / nonactive and to activate it requires an additional resource pack, here the resource pack is specially made for nori shader to activate it and as become base texture of PBR mapping in nori shader<br>
+			this resource pack is installed on top of the shader and then above it is installed a resource pack that has the PBR feature<br><br>
+			<div class="imh"><img src="./pic/ss11.jpg" alt="nori-shaders-be"></div></p><br><br>
+			<h3>for texture pack creator</h3>
+			<p>This shader use minecraft Java edition PBR with oldPBR or labPBR format and here are the requirements:</p>
+			<ul><li>each texture pack must have a PBR configuration file for nori shaders and be stored in the <b>root directory texture pack > shaders > glsl > nori_pbr_set.txt</b></li></ul>
+			<div class="imh"><img src="./pic/ss15.jpg" alt="nori-shaders-be"></div><br>
+			<ul><li>each texture pack must have a PBR configuration file for nori shaders and be stored in the <b>root directory texture pack > shaders > glsl > nori_pbr_set.txt</b></li></ul>
+			<div class="imh"><img src="./pic/ss14.jpg" alt="nori-shaders-be"></div><br>
+			<ul><li>each texture pack must have a PBR configuration file for nori shaders and be stored in the <b>root directory texture pack > shaders > glsl > nori_pbr_set.txt</b></li></ul>
+			<div class="imh"><img src="./pic/ss13.jpg" alt="nori-shaders-be"></div><br>
+			<h2>Note !</h2>
+			<ul>
+				<li>This shader is only recommended for high-end devices</li>
+				<li>This shader is not playable and the time cycle is not matched with minecraft default time, so this shader is not survival friendly.</li>
+				<li>Don't reupload the shader file, if you want to share it, just use this github page link</li>
+				<li>Don't make this github page link or download link as a shortlink and activate some payment method on the shortlink</li>
+			</ul><br><br>
+			<h2>Download</h2><br>
+			<a href="https://github.com/bambosan/Mirai-Shaders-BE/releases/download/v0.0.1/Mirai-Shaders-BE.mcpack" style="padding: 15px; background: black">Mirai Shaders BE 0.0.1</a>
+			<br><br><br><br>
+			<h2>Support Me</h2><br>
+			<a href="https://www.buymeacoffee.com/bambosan" style="padding: 15px; background: black">buy me a coffee</a><br><br><br>
+			<a href="https://saweria.co/bambosan" style="padding: 15px; background: black">saweria</a>
+			<br><br>
+			<footer style="background-color: rgba(0,0,0,0.7)">&copy; 2021 <a href="https://github.com/bambosan">bambosan</a></footer>
+		</div>
+		<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+		<script>
+			var swiper = new Swiper(".mySwiper", {
+				loop: true,
+				centeredSlides: true,
+				autoplay: {
+					delay: 2000,
+					disableOnInteraction: true,
+				},
+				navigation: {
+					nextEl: ".swiper-button-next",
+					prevEl: ".swiper-button-prev",
+				},
+				slidesPerView: 1,
+				spaceBetween: 10,
+				breakpoints: {
+          720: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          }
+				}
+			});
+		</script>
+	</body>
+</html>
