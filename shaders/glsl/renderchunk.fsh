@@ -145,6 +145,7 @@ void main(){
 	fragcol.rgb *= mix(vec3(1.0), texture(seasons, vcolor.rg).rgb * 2.0, vcolor.b);
 #endif
 	fragcol.rgb = pow(fragcol.rgb, vec3(2.2));
+	if(vcolor.a > 0.54 && vcolor.a < 0.67){ met = 0.3, rough = 0.04, ssm = 1.0, por = 1.0; }
 	float alm = uv1.x * max(smoothstep(saturate(lpos.y) * uv1.y, 1.0, uv1.x), wrain * uv1.y), oud = smoothstep(0.845, 0.87, uv1.y);
 	float bl = saturate(dot(tl, n)) * alm + pow(alm, 5.0) * 2.0;
 	vec3 ambc = zcol * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * bl, abl = fragcol.rgb;
