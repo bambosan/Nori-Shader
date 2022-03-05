@@ -9,11 +9,11 @@
 		<link href="https://unpkg.com/swiper/swiper-bundle.min.css" rel="stylesheet">
 		<style media="screen">
 			*{margin: 0; padding: 0}
-			a{color: #BBBBBB; text-decoration: none}
+			a{color: #bbb; text-decoration: none}
 			a:hover{color: #C70500}
 			body{
 				font-family:Open Sans;
-				color: #BBBBBB;
+				color: #bbb;
 				background: black;
 				-webkit-tap-highlight-color: transparent;
 				margin: auto;
@@ -27,7 +27,7 @@
 			footer{
 				padding: 60px;
 				text-align: center;
-				font-size: 1em
+				font-size: 0.9em
 			}
 			p{
 				font-size: 1.1em;
@@ -36,7 +36,7 @@
 				padding: 2px
 			}
 			ul{padding: 15px}
-			ul li{line-height: 28px}
+			ul li{font-size: 1.1em; line-height: 28px}
 			.name{
 				padding: 10px 15% 0 15%;
 				text-align: left;
@@ -50,7 +50,7 @@
 				background-repeat: no-repeat;
 				background-size: cover;
 			}
-			.infpack{padding: 0 15% 0 15%; font-size: 0.7em; text-shadow: 0 0 5px black}
+			.infpack{font-size: 0.8em}
 			@media (max-width: 1000px){header{font-size: 3.5em}}
 			@media (max-width: 900px){header{padding: 35vh 15% 0 15%}}
 			@media (max-width: 720px){
@@ -58,26 +58,25 @@
 				p{font-size: 1.1em}
 				.name{font-size: 1.3em; padding: 10px 5% 0 5%}
 				.col{padding: 0 5% 0 5%}
-				.infpack{font-size: 0.6em; padding: 0 5% 0 5%}
 			}
 			@media (max-width: 512px){
 				header{font-size: 2.3em; padding: 20vh 2% 0 2%}
 				p{font-size: 1em}
+				ul li{font-size: 1em}
 				.name{font-size: 1.3em; padding: 10px 2% 0 2%}
 				.col{padding: 0 2% 0 2%}
-				.infpack{font-size: 0.6em; padding: 0 2% 0 2%}
 			}
 			.swiper-slide img{
 				display: block;
 				width: 100%;
 				height: 100%;
-				object-fit: cover;
+				object-fit: cover
 			}
 			.imh{padding: inherit}
 			.imh img{
 				width: 100%;
 				height: 100%;
-				object-fit: cover;
+				object-fit: cover
 			}
 		</style>
 		<script>
@@ -103,13 +102,9 @@
 		<div class="colbg">
 			<p class="name"><a href="https://github.com/bambosan/Mirai-Shaders-BE"><i class="fab fa-github"></i> bambosan repositories</a></p>
 			<header><b>Nori Shaders BE</b></header>
-			<p class="infpack">
-				&nbsp;&nbsp;<i class="far fa-calendar-check"></i>&nbsp;<span id="mirai_lu"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-file"></i>&nbsp;<span id="mirai_sf"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-download"></i>&nbsp;<span id="mirai_td"></span>
-			</p>
 		</div>
 		<div class="col"><br>
-			<p>Nori shader is one of the Minecraft be shaders that have PBR features and blocky clouds because it uses(have) PBR it is certain this shader also has a feature like the reflection on the block, bump map and also I added a step parallax mapping along with the self shadow<br>
-			This shader is not related to minecraft default time because all the lighting elements in this shader use atmospheric scattering, so an accurate value of the sun's position is needed. Here I tricked it by creating a fake position (value) that can be set by the user.<p><br>
+			<p>Nori shader is one of the Minecraft be shaders that have PBR features and blocky clouds because it uses(have) PBR it is certain this shader also has a feature like the reflection on the block, bump map and also I added a step parallax mapping with self shadow<p><br>
 			<div class="swiper mySwiper">
 				<div class="swiper-wrapper">
 					<div class="swiper-slide"><img src="./pic/ss1.jpg" alt="nori-shaders-be"></div>
@@ -123,40 +118,54 @@
 					<div class="swiper-slide"><img src="./pic/ss9.jpg" alt="nori-shaders-be"></div>
 					<div class="swiper-slide"><img src="./pic/ss10.jpg" alt="nori-shaders-be"></div>
 				</div>
-				<div class="swiper-button-next" style="color: #BBBBBB"></div>
-				<div class="swiper-button-prev" style="color: #BBBBBB"></div>
+				<div class="swiper-button-next" style="color: #bbb"></div>
+				<div class="swiper-button-prev" style="color: #bbb"></div>
 			</div><br><br>
 			<h2>Changelog</h2>
-			<p>coming soon.. maybe</p><br>
+			<p>here are some changes from the previous beta version</p>
+			<ul>
+				<li>some updates on the sky</li>
+				<li>new tonemap</li>
+				<li>new ray marching blocky clouds</li>
+				<li>new pbr mapping method</li>
+				<li>support PBR with LabPBR format</li>
+				<li>improve step parallax mapping</li>
+				<li>improve ggx specular</li>
+				<li>more..</li>
+			</ul>
+			<br>
 			<h2>Shader Settings</h2>
-			<p>to make some changes in the shader go to <b>root directory of this shader > shaders > glsl > common.glsl</b><br>You can also change the time cycle or position of sun</p><br>
+			<p>to make some changes in the shader go to <b>root directory of this shader > shaders > glsl > shader_settings.txt</b><br>You can also change the time cycle or position of sun</p><br>
 			<h2>PBR</h2>
 			<p>by default the PBR feature in this shader is off / nonactive and to activate it requires an additional resource pack, here the resource pack is specially made for nori shader to activate it and as become base texture of PBR mapping in nori shader<br>
 			this resource pack is installed on top of the shader and then above it is installed a resource pack that has the PBR feature<br><br>
-			<div class="imh"><img src="./pic/ss11.jpg" alt="nori-shaders-be"></div></p><br><br>
+			<div class="imh"><img src="./pic/ss11.jpg" alt="nori-shaders-be"></div><br>don't forget to set the texture resolution on the nori pbr base resource pack according to the pbr texture resolution used on it<br><br><div class="imh"><img src="./pic/ss12.jpg" alt="nori-shaders-be"></div></p><br><br>
 			<h3>for texture pack creator</h3>
-			<p>This shader use minecraft Java edition PBR with oldPBR or labPBR format and here are the requirements:</p>
+			<p>This shader use minecraft Java edition PBR with oldPBR or labPBR format and don't create or add terrain_texture.json in the texture pack<br>here are the requirements:</p>
 			<ul><li>each texture pack must have a PBR configuration file for nori shaders and be stored in the <b>root directory texture pack > shaders > glsl > nori_pbr_set.txt</b></li></ul>
 			<div class="imh"><img src="./pic/ss15.jpg" alt="nori-shaders-be"></div><br>
-			<ul><li>each texture pack must have a PBR configuration file for nori shaders and be stored in the <b>root directory texture pack > shaders > glsl > nori_pbr_set.txt</b></li></ul>
+			<ul><li>texture grass_side_n and grass_side_s must be duplicated 16x and starting from grass_side0_n/_s, no grass_side_n/_s<br>and also if there is grass_side_snowed.tga and grass_side_snowed.png in this one directory, delete one of them</b></li></ul>
 			<div class="imh"><img src="./pic/ss14.jpg" alt="nori-shaders-be"></div><br>
-			<ul><li>each texture pack must have a PBR configuration file for nori shaders and be stored in the <b>root directory texture pack > shaders > glsl > nori_pbr_set.txt</b></li></ul>
-			<div class="imh"><img src="./pic/ss13.jpg" alt="nori-shaders-be"></div><br>
+			<ul><li>each texture flipbook must have the same resolution (frame) as the normal texture map and specularity</b></li></ul>
+			<div class="imh"><img src="./pic/ss13.jpg" alt="nori-shaders-be"></div><br><br>
 			<h2>Note !</h2>
 			<ul>
 				<li>This shader is only recommended for high-end devices</li>
+				<li>This shader is not support minecraft bedrock windows 10 32bit (not renderdragon version)</li>
 				<li>This shader is not playable and the time cycle is not matched with minecraft default time, so this shader is not survival friendly.</li>
 				<li>Don't reupload the shader file, if you want to share it, just use this github page link</li>
 				<li>Don't make this github page link or download link as a shortlink and activate some payment method on the shortlink</li>
 			</ul><br><br>
-			<h2>Download</h2><br>
-			<a href="https://github.com/bambosan/Mirai-Shaders-BE/releases/download/v0.0.1/Mirai-Shaders-BE.mcpack" style="padding: 15px; background: black">Mirai Shaders BE 0.0.1</a>
-			<br><br><br><br>
+			<h2>Download</h2>
+			<p class="infpack">
+				<i class="far fa-calendar-check"></i>&nbsp;<span id="mirai_lu"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-file"></i>&nbsp;<span id="mirai_sf"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-download"></i>&nbsp;<span id="mirai_td"></span>
+			</p><br>
+			<a href="https://github.com/bambosan/Mirai-Shaders-BE/releases/download/v0.0.1/Mirai-Shaders-BE.mcpack" style="padding: 8px; border: 1px solid #888">Nori Shaders BE 1.0.0</a>
+			<br><br><br>
 			<h2>Support Me</h2><br>
-			<a href="https://www.buymeacoffee.com/bambosan" style="padding: 15px; background: black">buy me a coffee</a><br><br><br>
-			<a href="https://saweria.co/bambosan" style="padding: 15px; background: black">saweria</a>
+			<a href="" style="padding: 8px; border: 1px solid #888">patreon</a>&nbsp;&nbsp;<a href="https://saweria.co/bambosan" style="padding: 8px; border: 1px solid #888">saweria</a>
 			<br><br>
-			<footer style="background-color: rgba(0,0,0,0.7)">&copy; 2021 <a href="https://github.com/bambosan">bambosan</a></footer>
+			<footer>&copy; 2021 <a href="https://github.com/bambosan">bambosan</a></footer>
 		</div>
 		<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 		<script>

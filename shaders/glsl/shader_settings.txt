@@ -14,9 +14,9 @@ this is disabled
 
 **************************************/
 
-//#define ENABLE_DYNAMIC_LIGHT_ANGLE
+#define ENABLE_DYNAMIC_LIGHT_ANGLE
 #define ENABLE_CLOUD
-//#define ENABLE_REFLECTION
+#define ENABLE_REFLECTION
 //#define ENABLE_PARALLAX
 //#define ENABLE_PARALLAX_SHADOW
 
