@@ -1,8 +1,8 @@
 #version 300 es
 #include "uniformShaderConstants.h"
 #include "uniformPerFrameConstants.h"
-layout(binding = 0) uniform sampler2D atlast;
-layout(binding = 2) uniform sampler2D seasons;
+uniform sampler2D TEXTURE_0;
+uniform sampler2D TEXTURE_2;
 
 precision highp float;
 #ifndef BYPASS_PIXEL_SHADER
@@ -29,10 +29,10 @@ in float fogd;
 vec2 ruv(vec2 uv, vec2 ouv){ return uv - mod(uv, vec2(0.015625)) + mod(uv + ouv, vec2(0.015625)); }
 vec2 cpuv(vec3 vvec, vec2 uv, vec2 nuv){
 #if defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
-	if(textureLod(atlast, nuv, 0.0).a < 1.0){
+	if(textureLod(TEXTURE_0, nuv, 0.0).a < 1.0){
 		vec2 suv = vec2(0.0);
 		vvec.xy = vvec.xy / (-vvec.z) * PARALLAX_DEPTH;
-		for(int i = 0; i < PARALLAX_STEP && textureLod(atlast, ruv(nuv, suv), 0.0).a < 1.0 - float(i) * invtres; i++) suv += vvec.xy;
+		for(int i = 0; i < PARALLAX_STEP && textureLod(TEXTURE_0, ruv(nuv, suv), 0.0).a < 1.0 - float(i) * invtres; i++) suv += vvec.xy;
 		return ruv(uv, suv);
 	} else { return uv; }
 #endif
@@ -43,7 +43,7 @@ float cpsh(vec3 alp, vec2 puv){
 	float lo = 1.0;
 #if defined(ENABLE_PARALLAX_SHADOW) && defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
 	vec2 sof = vec2(0.0);
-	for(int i = 0; i < PSHADOW_STEP; i++, sof += alp.xy * PSHADOW_OFFSET) lo *= step(textureLod(atlast, ruv(puv, sof), 0.0).a - float(i) * invtres, textureLod(atlast, puv, 0.0).a);
+	for(int i = 0; i < PSHADOW_STEP; i++, sof += alp.xy * PSHADOW_OFFSET) lo *= step(textureLod(TEXTURE_0, ruv(puv, sof), 0.0).a - float(i) * invtres, textureLod(TEXTURE_0, puv, 0.0).a);
 #endif
 	return lo;
 }
@@ -117,13 +117,13 @@ void main(){
 	vec3 tl = normalize(vec3(dx * lcd.x + n * 0.07 + dy * lcd.y));
 	float met = 0.0, ems = 0.0, rough = 1.0, ssm = 0.0, por = 0.0;
 #ifdef PBR
-	vec4 stex = texture(atlast, cpuv(vvec, uv0 + vec2(0.03125, 0.0), nuv));
+	vec4 stex = texture(TEXTURE_0, cpuv(vvec, uv0 + vec2(0.03125, 0.0), nuv));
 #if PBR_FORMAT == 1
 	ellp(stex, met, ems, rough, ssm, por);
 #else
 	eolp(stex.rgb, met, ems, rough, ssm);
 #endif
-	vec3 ntex = texture(atlast, cpuv(vvec, nuv, nuv)).rgb;
+	vec3 ntex = texture(TEXTURE_0, cpuv(vvec, nuv, nuv)).rgb;
 		n.xy = ntex.rg * 2.0 - 1.0;
 		n.z = sqrt(1.0 - dot(n.xy, n.xy));
 		n.xy *= NORMAL_MAP_STRENGTH;
@@ -131,7 +131,7 @@ void main(){
 #endif
 	vec3 vdir = normalize(-wpos), hdir = normalize(vdir + tlpos);
 	float ndl = saturate(dot(tlpos, n)), ndv = saturate(dot(n, vdir)), ndh = saturate(dot(n, hdir));
-	fragcol = texture(atlast, cpuv(vvec, uv0, nuv));
+	fragcol = texture(TEXTURE_0, cpuv(vvec, uv0, nuv));
 #ifdef SEASONS_FAR
 	fragcol.a = 1.0;
 #endif
@@ -148,7 +148,7 @@ void main(){
 #endif
 	fragcol.rgb *= vcolor.rgb;
 #else
-	fragcol.rgb *= mix(vec3(1.0), texture(seasons, vcolor.rg).rgb * 2.0, vcolor.b);
+	fragcol.rgb *= mix(vec3(1.0), texture(TEXTURE_2, vcolor.rg).rgb * 2.0, vcolor.b);
 #endif
 	fragcol.rgb = pow(fragcol.rgb, vec3(2.2));
 	if(vcolor.a > 0.54 && vcolor.a < 0.67){ fragcol.a *= 0.5; met = 0.3, rough = 0.04, ssm = 1.0, por = 1.0; }

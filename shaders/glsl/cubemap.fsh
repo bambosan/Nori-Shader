@@ -1,6 +1,6 @@
 #version 300 es
 #include "uniformPerFrameConstants.h"
-layout(binding = 0) uniform sampler2D bluenoise;
+uniform sampler2D TEXTURE_0;
 precision highp float;
 in vec3 sunc;
 in vec3 moonc;
@@ -15,7 +15,7 @@ void main(){
 	fragcol = vec4(0.0, 0.0, 0.0, 1.0);
 	vec3 ajp = normalize(vec3(cpos.x, -cpos.y + 0.128, -cpos.z));
 	fragcol.rgb = csky(ajp, lpos, sunc, moonc);
-	float bdither = texture(bluenoise, gl_FragCoord.xy / 256.0).r;
+	float bdither = texture(TEXTURE_0, gl_FragCoord.xy / 256.0).r;
 	vec4 vc = ccv(ajp, tlpos, sunc, moonc, zcol, bdither);
 	fragcol.rgb = fragcol.rgb * vc.a + vc.rgb;
 	fragcol.rgb = colc(fragcol.rgb);
