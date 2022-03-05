@@ -1,10 +1,11 @@
-#version 310 es
+#version 300 es
 #include "uniformShaderConstants.h"
 #include "uniformPerFrameConstants.h"
 layout(binding = 0) uniform sampler2D atlast;
 layout(binding = 2) uniform sampler2D seasons;
 
 precision highp float;
+#ifndef BYPASS_PIXEL_SHADER
 in vec4 vcolor;
 in vec3 fogc;
 in vec3 sunc;
@@ -16,6 +17,7 @@ in vec3 lpos;
 in vec3 tlpos;
 in vec2 uv0;
 in vec2 uv1;
+#endif
 #ifdef FOG
 in float fogd;
 #endif
@@ -100,6 +102,10 @@ vec3 nttang(vec3 n){
 
 out vec4 fragcol;
 void main(){
+#ifdef BYPASS_PIXEL_SHADER
+	fragcol = vec4(0.0,0.0,0.0,0.0);
+	return;
+#else
 	vec3 dx = normalize(dFdx(cpos)), dy = normalize(dFdy(cpos));
 	vec3 n = normalize(cross(dx, dy));
 	vec3 t = nttang(n);
@@ -145,7 +151,7 @@ void main(){
 	fragcol.rgb *= mix(vec3(1.0), texture(seasons, vcolor.rg).rgb * 2.0, vcolor.b);
 #endif
 	fragcol.rgb = pow(fragcol.rgb, vec3(2.2));
-	if(vcolor.a > 0.54 && vcolor.a < 0.67){ met = 0.3, rough = 0.04, ssm = 1.0, por = 1.0; }
+	if(vcolor.a > 0.54 && vcolor.a < 0.67){ fragcol.a *= 0.5; met = 0.3, rough = 0.04, ssm = 1.0, por = 1.0; }
 	float alm = uv1.x * max(smoothstep(saturate(lpos.y) * uv1.y, 1.0, uv1.x), wrain * uv1.y), oud = smoothstep(0.845, 0.87, uv1.y);
 	float bl = saturate(dot(tl, n)) * alm + pow(alm, 5.0) * 2.0;
 	vec3 ambc = zcol * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * bl, abl = fragcol.rgb;
@@ -162,4 +168,5 @@ void main(){
 	fragcol.rgb = mix(fragcol.rgb, fogc, fogd);
 #endif
 	fragcol.rgb = colc(fragcol.rgb);
+#endif
 }

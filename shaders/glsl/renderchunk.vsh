@@ -1,10 +1,11 @@
-#version 310 es
+#version 300 es
 #include "uniformWorldConstants.h"
 #include "uniformPerFrameConstants.h"
 #include "uniformShaderConstants.h"
 #include "uniformRenderChunkConstants.h"
 
 precision highp float;
+#ifndef BYPASS_PIXEL_SHADER
 out vec4 vcolor;
 out vec3 fogc;
 out vec3 sunc;
@@ -16,6 +17,7 @@ out vec3 lpos;
 out vec3 tlpos;
 out vec2 uv0;
 out vec2 uv1;
+#endif
 #ifdef FOG
 out float fogd;
 #endif
@@ -38,6 +40,7 @@ void main(){
 	pos = PROJ * WORLDVIEW * vec4(worldPos.xyz, 1.0);
 #endif
 	gl_Position = pos;
+#ifndef BYPASS_PIXEL_SHADER
 	uv0 = TEXCOORD_0;
 	uv1 = TEXCOORD_1;
 	vcolor = COLOR;
@@ -52,6 +55,7 @@ void main(){
 	clpos(tlpos, lpos);
 	fogc = catm(normalize(wpos), lpos);
 	clig(lpos, sunc, moonc, zcol);
+#endif
 #ifdef FOG
 #ifdef FANCY
 	float camDepth = length(-worldPos.xyz);

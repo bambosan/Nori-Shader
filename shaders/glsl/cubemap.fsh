@@ -1,4 +1,4 @@
-#version 310 es
+#version 300 es
 #include "uniformPerFrameConstants.h"
 layout(binding = 0) uniform sampler2D bluenoise;
 precision highp float;
