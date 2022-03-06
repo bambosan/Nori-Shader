@@ -1,7 +1,7 @@
 #version 300 es
-#include "uniformWorldConstants.h"
-#include "uniformPerFrameConstants.h"
+
 precision highp float;
+uniform mat4 WORLDVIEWPROJ;
 in vec4 POSITION;
 out vec3 sunc;
 out vec3 moonc;

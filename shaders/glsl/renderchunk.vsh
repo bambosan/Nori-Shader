@@ -1,10 +1,16 @@
 #version 300 es
-#include "uniformWorldConstants.h"
-#include "uniformPerFrameConstants.h"
-#include "uniformShaderConstants.h"
-#include "uniformRenderChunkConstants.h"
+
+uniform float RENDER_DISTANCE;
+uniform float RENDER_CHUNK_FOG_ALPHA;
 
 precision highp float;
+
+uniform mat4 WORLDVIEWPROJ;
+uniform mat4 WORLD;
+uniform mat4 WORLDVIEW;
+uniform mat4 PROJ;
+uniform vec4 CHUNK_ORIGIN_AND_SCALE;
+
 #ifndef BYPASS_PIXEL_SHADER
 out vec4 vcolor;
 out vec3 fogc;
@@ -15,8 +21,8 @@ out vec3 cpos;
 out vec3 wpos;
 out vec3 lpos;
 out vec3 tlpos;
-out vec2 uv0;
-out vec2 uv1;
+centroid out vec2 uv0;
+centroid out vec2 uv1;
 #endif
 #ifdef FOG
 out float fogd;

@@ -1,5 +1,6 @@
 precision highp float;
 uniform float TOTAL_REAL_WORLD_TIME;
+uniform vec2 FOG_CONTROL;
 
 const float pi = 3.14159265;
 const float hpi = 1.57079633;
@@ -114,7 +115,8 @@ float ccd(vec3 pos){
 	if(pos.y < cminh || pos.y > cmaxh) return 0.0;
 	float hf = (pos.y - cminh) / CLOUD_THICKNESS;
 	float ha = saturate(map(hf, 0.0, 0.1, 0.0, 1.0) * map(hf, 0.9, 1.0, 1.0, 0.0));
-	return saturate(step(0.9, hash21(floor(pos.xz * 1.8e-3 + TOTAL_REAL_WORLD_TIME * 0.05))) * ha - 0.5) * 0.03;
+	float cm = hash21(floor(pos.xz * 1.8e-3 + TOTAL_REAL_WORLD_TIME * 0.05));
+	return saturate(step(0.9, cm) * ha - 0.5) * 0.03;
 }
 float mpc(float cost){
 	float mie1 = mp(cost, CLOUD_MIE_DIRECTIONAL_G), mie2 = mp(cost, -0.05);

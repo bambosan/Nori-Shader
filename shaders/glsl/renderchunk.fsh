@@ -1,6 +1,5 @@
 #version 300 es
-#include "uniformShaderConstants.h"
-#include "uniformPerFrameConstants.h"
+
 uniform sampler2D TEXTURE_0;
 uniform sampler2D TEXTURE_2;
 
@@ -15,8 +14,8 @@ in vec3 cpos;
 in vec3 wpos;
 in vec3 lpos;
 in vec3 tlpos;
-in vec2 uv0;
-in vec2 uv1;
+centroid in vec2 uv0;
+centroid in vec2 uv1;
 #endif
 #ifdef FOG
 in float fogd;
@@ -117,13 +116,13 @@ void main(){
 	vec3 tl = normalize(vec3(dx * lcd.x + n * 0.07 + dy * lcd.y));
 	float met = 0.0, ems = 0.0, rough = 1.0, ssm = 0.0, por = 0.0;
 #ifdef PBR
-	vec4 stex = texture(TEXTURE_0, cpuv(vvec, uv0 + vec2(0.03125, 0.0), nuv));
+	vec4 stex = textureLod(TEXTURE_0, cpuv(vvec, uv0 + vec2(0.03125, 0.0), nuv), 0.0);
 #if PBR_FORMAT == 1
 	ellp(stex, met, ems, rough, ssm, por);
 #else
 	eolp(stex.rgb, met, ems, rough, ssm);
 #endif
-	vec3 ntex = texture(TEXTURE_0, cpuv(vvec, nuv, nuv)).rgb;
+	vec3 ntex = textureGrad(TEXTURE_0, cpuv(vvec, nuv, nuv), dFdx(uv0), dFdy(uv0)).rgb;
 		n.xy = ntex.rg * 2.0 - 1.0;
 		n.z = sqrt(1.0 - dot(n.xy, n.xy));
 		n.xy *= NORMAL_MAP_STRENGTH;
@@ -131,7 +130,7 @@ void main(){
 #endif
 	vec3 vdir = normalize(-wpos), hdir = normalize(vdir + tlpos);
 	float ndl = saturate(dot(tlpos, n)), ndv = saturate(dot(n, vdir)), ndh = saturate(dot(n, hdir));
-	fragcol = texture(TEXTURE_0, cpuv(vvec, uv0, nuv));
+	fragcol = textureGrad(TEXTURE_0, cpuv(vvec, uv0, nuv), dFdx(uv0), dFdy(uv0));
 #ifdef SEASONS_FAR
 	fragcol.a = 1.0;
 #endif

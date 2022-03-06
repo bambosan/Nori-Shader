@@ -1,5 +1,5 @@
 #version 300 es
-#include "uniformPerFrameConstants.h"
+
 uniform sampler2D TEXTURE_0;
 precision highp float;
 in vec3 sunc;
