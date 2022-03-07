@@ -27,7 +27,7 @@ in float fogd;
 
 vec2 ruv(vec2 uv, vec2 ouv){ return uv - mod(uv, vec2(0.015625)) + mod(uv + ouv, vec2(0.015625)); }
 vec2 cpuv(vec3 vvec, vec2 uv, vec2 nuv){
-#if defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
+#if defined(ENABLE_PARALLAX) && defined(PBR) && !defined(ALPHA_TEST)
 	if(textureLod(TEXTURE_0, nuv, 0.0).a < 1.0){
 		vec2 suv = vec2(0.0);
 		vvec.xy = vvec.xy / (-vvec.z) * PARALLAX_DEPTH;
@@ -40,7 +40,7 @@ vec2 cpuv(vec3 vvec, vec2 uv, vec2 nuv){
 
 float cpsh(vec3 alp, vec2 puv){
 	float lo = 1.0;
-#if defined(ENABLE_PARALLAX_SHADOW) && defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
+#if defined(ENABLE_PARALLAX_SHADOW) && defined(PBR) && defined(ENABLE_PARALLAX) && !defined(ALPHA_TEST)
 	vec2 sof = vec2(0.0);
 	for(int i = 0; i < PSHADOW_STEP; i++, sof += alp.xy * PSHADOW_OFFSET) lo *= step(textureLod(TEXTURE_0, ruv(puv, sof), 0.0).a - float(i) * invtres, textureLod(TEXTURE_0, puv, 0.0).a);
 #endif
