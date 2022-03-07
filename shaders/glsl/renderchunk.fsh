@@ -5,7 +5,7 @@ uniform sampler2D TEXTURE_2;
 
 precision highp float;
 #ifndef BYPASS_PIXEL_SHADER
-in vec4 vcolor;
+in lowp vec4 vcolor;
 in vec3 fogc;
 in vec3 sunc;
 in vec3 moonc;
@@ -105,15 +105,14 @@ void main(){
 	fragcol = vec4(0.0,0.0,0.0,0.0);
 	return;
 #else
-	vec3 dx = normalize(dFdx(cpos)), dy = normalize(dFdy(cpos));
-	vec3 n = normalize(cross(dx, dy));
+	vec3 n = normalize(cross(dFdx(cpos), dFdy(cpos)));
 	vec3 t = nttang(n);
 	vec3 b = normalize(cross(t, n));
 	mat3 tbn = transpose(mat3(t, b, n));
 	vec3 vvec = normalize(tbn * wpos);
 	vec2 nuv = uv0 + vec2(0.015625, 0.0);
 	vec2 lcd = vec2(dFdx(uv1.x), dFdy(uv1.x)) / length(fwidth(cpos));
-	vec3 tl = normalize(vec3(dx * lcd.x + n * 0.07 + dy * lcd.y));
+	vec3 tl = normalize(vec3(normalize(dFdx(cpos)) * lcd.x + n * 0.07 + normalize(dFdy(cpos)) * lcd.y));
 	float met = 0.0, ems = 0.0, rough = 1.0, ssm = 0.0, por = 0.0;
 #ifdef PBR
 	vec4 stex = textureLod(TEXTURE_0, cpuv(vvec, uv0 + vec2(0.03125, 0.0), nuv), 0.0);

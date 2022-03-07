@@ -8,16 +8,16 @@
 	"header": {
 		"name": "Nori Shaders BE",
 		"description": "a shader for minecraft be",
-		"uuid": "27a88c89-6c17-447e-850c-6002ad7979bd",
-		"version": [1, 0, 0],
+		"uuid": "8186b9df-0cb0-4884-ba2e-c4d4b5dfc59b",
+		"version": [1, 1, 0],
 		"min_engine_version": [1, 16, 0]
 	},
 	"modules": [
 		{
 			"description": "a shader for minecraft be",
 			"type": "resources",
-			"uuid": "d9374f55-4528-4340-a39c-b79e11607ba3",
-			"version": [1, 0, 0]
+			"uuid": "9ce1be5b-405f-428c-a6f7-fb4b7f1f5c53",
+			"version": [1, 1, 0]
 		}
 	]
 }

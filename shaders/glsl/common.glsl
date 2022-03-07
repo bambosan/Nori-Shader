@@ -58,14 +58,6 @@ float lum(vec3 col){
 	return dot(col, vec3(0.2125, 0.7154, 0.0721));
 }
 const vec3 rco = vec3(SKY_COEFF_R, SKY_COEFF_G, SKY_COEFF_B);
-#define mco mix(SKY_MIE_COEFF, 0.5, wrain)
-#define scf(coeff, coeff2, d) (coeff * d + coeff2 * d)
-mat3 gab(vec3 od){
-#define ab(coeff, coeff2, d) exp(-scf(coeff, coeff2, d))
-	vec3 sab = ab(rco, mco, od.x), mab = ab(rco, mco, od.y), vab = ab(rco, mco, od.z);
-#undef ab
-	return mat3(sab, mab, vab);
-}
 vec2 pt(vec3 pos){
 	float d = -pos.y * 1500.0;
 	return vec2(sqrt(365e3 + d * d - 36e4) + d, sqrt(373e3 + d * d - 36e4) + d);
@@ -75,17 +67,25 @@ float mp(float cost, float g){
 	float g2 = g * g;
 	return (1.0 / 4.0 * pi) * ((1.0 - g2) / pow(1.0 + g2 - 2.0 * g * cost, 1.5));
 }
+vec3 scf(vec3 coeff, float coeff2, float d){ return (coeff * d + coeff2 * d); }
+vec3 ab(vec3 coeff, float coeff2, float d){ return exp(-scf(coeff, coeff2, d)); }
+mat3 gab(vec3 od){
+	float mco = mix(SKY_MIE_COEFF, 0.5, wrain);
+	vec3 sab = ab(rco, mco, od.x), mab = ab(rco, mco, od.y), vab = ab(rco, mco, od.z);
+	return mat3(sab, mab, vab);
+}
+vec3 gts(vec3 a, vec3 a2, vec3 s, vec3 s2, vec3 p){ return (abs(a - a2) / abs(s - s2)) * p; }
 vec3 catm(vec3 pos, vec3 spos, vec3 zc){
 	float mieg = mix(SKY_MIE_G, 0.3, wrain);
+	float mco = mix(SKY_MIE_COEFF, 0.5, wrain);
 	float scdist = saturate(1.0 - distance(pos, spos)), mcdist = saturate(1.0 - distance(pos, -spos));
 	float vod = pt(pos).x, sod = pt(spos).y, mood = pt(-spos).y;
+		mieg *= exp2(-vod * 0.005);
 	mat3 abc = gab(vec3(sod, mood, vod));
-#define tsc(a, a2, s, s2, p) (abs(a - a2) / abs(s - s2)) * p
-	float drp = rp(scdist), dmp = mp(scdist, 0.0 + mieg * exp2(-vod * 0.005));
-	vec3 dsc = tsc(abc[0], abc[2], scf(rco, mco, sod), scf(rco, mco, vod), scf(rco * drp, mco * dmp, vod)) * (zc + tau * exp2(-vod * 0.01));
-	float nrp = rp(mcdist), nmp = mp(mcdist, 0.0 + mieg * exp2(-vod * 0.005));
-	vec3 nsc = tsc(abc[1], abc[2], scf(rco, mco, mood), scf(rco, mco, vod), scf(rco * nrp, mco * nmp, vod)) * exp2(-vod * 0.01);
-#undef tsc
+	float drp = rp(scdist), dmp = mp(scdist, mieg);
+	vec3 dsc = gts(abc[0], abc[2], scf(rco, mco, sod), scf(rco, mco, vod), scf(rco * drp, mco * dmp, vod)) * (zc + tau * exp2(-vod * 0.01));
+	float nrp = rp(mcdist), nmp = mp(mcdist, mieg);
+	vec3 nsc = gts(abc[1], abc[2], scf(rco, mco, mood), scf(rco, mco, vod), scf(rco * nrp, mco * nmp, vod)) * exp2(-vod * 0.01);
 		nsc = mix(vec3(length(nsc)), nsc, SKY_NIGHT_SATURATION) * invpi;
 	return (dsc * 0.5 + zc * 0.5) + nsc;
 }
@@ -93,11 +93,7 @@ vec3 catm(vec3 pos, vec3 spos){
 	vec3 zc = catm(vec3(0,1,0), spos, vec3(0));
 	return catm(pos, spos, zc);
 }
-#undef scf
-float gdi(vec3 spos, vec3 dpos, float size){
-	float angle = saturate((1.0 - dot(spos, dpos)) * size);
-	return cos(angle * hpi);
-}
+float gdi(vec3 spos, vec3 dpos, float size){ return cos(saturate((1.0 - dot(spos, dpos)) * size) * hpi); }
 vec3 csky(vec3 pos, vec3 spos, vec3 sc, vec3 mc){
 	vec3 res = catm(pos, spos);
 		res += sc * 50.0 * gdi(pos, spos, 3e3);
