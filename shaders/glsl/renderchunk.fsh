@@ -4,8 +4,9 @@ uniform sampler2D TEXTURE_0;
 uniform sampler2D TEXTURE_2;
 
 precision highp float;
+precision highp int;
 #ifndef BYPASS_PIXEL_SHADER
-in lowp vec4 vcolor;
+in vec4 vcolor;
 in vec3 fogc;
 in vec3 sunc;
 in vec3 moonc;
@@ -128,6 +129,7 @@ void main(){
 		n.z = sqrt(1.0 - dot(n.xy, n.xy));
 		n.xy = n.xy * NORMAL_MAP_STRENGTH;
 		n = normalize(n * tbn);
+		n = clamp(n, -1.0, 1.0);
 #endif
 	vec3 vdir = normalize(-wpos), hdir = normalize(vdir + tlpos);
 	float ndl = saturate(dot(tlpos, n)), ndv = saturate(dot(n, vdir)), ndh = saturate(dot(n, hdir));

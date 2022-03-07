@@ -12,7 +12,7 @@ uniform mat4 PROJ;
 uniform vec4 CHUNK_ORIGIN_AND_SCALE;
 
 #ifndef BYPASS_PIXEL_SHADER
-out lowp vec4 vcolor;
+out vec4 vcolor;
 out vec3 fogc;
 out vec3 sunc;
 out vec3 moonc;
@@ -51,7 +51,7 @@ void main(){
 	uv1 = TEXCOORD_1;
 	vcolor = COLOR;
 	// thanks @GFPCoder for ao separator
-	lowp vec3 ncol = normalize(COLOR.rgb);
+	vec3 ncol = normalize(COLOR.rgb);
 	float ao = dot(vcolor.rgb, vec3(0.3333));
 	vcolor.rgb /= ao;
 		ao = max(ao, saturate((ncol.r + ncol.g + ncol.b) / 3.0 + float(ncol.r < 0.59 && ncol.g < 0.59 && ncol.b < 0.59)));

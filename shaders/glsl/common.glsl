@@ -1,4 +1,6 @@
 precision highp float;
+precision highp int;
+
 uniform float TOTAL_REAL_WORLD_TIME;
 uniform vec2 FOG_CONTROL;
 

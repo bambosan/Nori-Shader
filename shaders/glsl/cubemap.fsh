@@ -2,6 +2,7 @@
 
 uniform sampler2D TEXTURE_0;
 precision highp float;
+precision highp int;
 in vec3 sunc;
 in vec3 moonc;
 in vec3 zcol;
