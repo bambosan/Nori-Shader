@@ -106,8 +106,11 @@ void main(){
 	return;
 #else
 	vec3 n = normalize(cross(dFdx(cpos), dFdy(cpos)));
+		n = clamp(n, -1.0, 1.0);
 	vec3 t = nttang(n);
+		t = clamp(t, -1.0, 1.0);
 	vec3 b = normalize(cross(t, n));
+		b = clamp(b, -1.0, 1.0);
 	mat3 tbn = transpose(mat3(t, b, n));
 	vec3 vvec = normalize(tbn * wpos);
 	vec2 nuv = uv0 + vec2(0.015625, 0.0);
@@ -121,50 +124,50 @@ void main(){
 #else
 	eolp(stex.rgb, met, ems, rough, ssm);
 #endif
-	vec3 ntex = textureGrad(TEXTURE_0, cpuv(vvec, nuv, nuv), dFdx(uv0), dFdy(uv0)).rgb;
-		n.xy = ntex.rg * 2.0 - 1.0;
+		n.xy = textureGrad(TEXTURE_0, cpuv(vvec, nuv, nuv), dFdx(uv0), dFdy(uv0)).rg * 2.0 - 1.0;
 		n.z = sqrt(1.0 - dot(n.xy, n.xy));
-		n.xy *= NORMAL_MAP_STRENGTH;
+		n.xy = n.xy * NORMAL_MAP_STRENGTH;
 		n = normalize(n * tbn);
 #endif
 	vec3 vdir = normalize(-wpos), hdir = normalize(vdir + tlpos);
 	float ndl = saturate(dot(tlpos, n)), ndv = saturate(dot(n, vdir)), ndh = saturate(dot(n, hdir));
-	fragcol = textureGrad(TEXTURE_0, cpuv(vvec, uv0, nuv), dFdx(uv0), dFdy(uv0));
+	vec4 tex = textureGrad(TEXTURE_0, cpuv(vvec, uv0, nuv), dFdx(uv0), dFdy(uv0));
 #ifdef SEASONS_FAR
-	fragcol.a = 1.0;
+	tex.a = 1.0;
 #endif
 #ifdef ALPHA_TEST
 #ifdef ALPHA_TO_COVERAGE
-	if(fragcol.a < 0.05) discard;
+	if(tex.a < 0.05) discard;
 #else
-	if(fragcol.a < 0.5) discard;
+	if(tex.a < 0.5) discard;
 #endif
 #endif
 #ifndef SEASONS
 #if !defined(ALPHA_TEST) && !defined(BLEND)
-	fragcol.a = vcolor.a;
+	tex.a = vcolor.a;
 #endif
-	fragcol.rgb *= vcolor.rgb;
+	tex.rgb *= vcolor.rgb;
 #else
-	fragcol.rgb *= mix(vec3(1.0), texture(TEXTURE_2, vcolor.rg).rgb * 2.0, vcolor.b);
+	tex.rgb *= mix(vec3(1.0), texture(TEXTURE_2, vcolor.rg).rgb * 2.0, vcolor.b);
 #endif
-	fragcol.rgb = pow(fragcol.rgb, vec3(2.2));
-	if(vcolor.a > 0.54 && vcolor.a < 0.67){ fragcol.a *= 0.5; met = 0.3, rough = 0.04, ssm = 1.0, por = 1.0; }
+	tex.rgb = pow(tex.rgb, vec3(2.2));
+	if(vcolor.a > 0.54 && vcolor.a < 0.67){ tex.a *= 0.5; met = 0.3, rough = 0.04, ssm = 1.0, por = 1.0; }
 	float alm = uv1.x * max(smoothstep(saturate(lpos.y) * uv1.y, 1.0, uv1.x), wrain * uv1.y), oud = smoothstep(0.845, 0.87, uv1.y);
 	float bl = saturate(dot(tl, n)) * alm + pow(alm, 5.0) * 2.0;
-	vec3 ambc = zcol * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * bl, abl = fragcol.rgb;
+	vec3 ambc = zcol * uv1.y + vec3(BLOCK_LIGHT_C_R, BLOCK_LIGHT_C_G, BLOCK_LIGHT_C_B) * bl, abl = tex.rgb;
 	float psh = cpsh(tbn * tlpos, cpuv(vvec, nuv, nuv));
 		psh *= ndl;
 		ambc += (sunc + moonc) * psh * oud * (1.0 - wrain);
-	fragcol.rgb = (fragcol.rgb * ambc) + (ems * abl * 6.0);
+	tex.rgb = (tex.rgb * ambc) + (ems * abl * 6.0);
 #ifdef ENABLE_REFLECTION
-	fragcol = refl(fragcol, n, abl, met, ssm, por, oud, ndv);
+	tex = refl(tex, n, abl, met, ssm, por, oud, ndv);
 #endif
 	float spl = sggx(hdir, psh, ndv, ndh, rough, met);
-	fragcol += vec4(sunc + moonc, 1.0) * spl * oud * (1.0 - wrain);
+	tex += vec4(sunc + moonc, 1.0) * spl * oud * (1.0 - wrain);
 #ifdef FOG
-	fragcol.rgb = mix(fragcol.rgb, fogc, fogd);
+	tex.rgb = mix(tex.rgb, fogc, fogd);
 #endif
-	fragcol.rgb = colc(fragcol.rgb);
+	tex.rgb = colc(tex.rgb);
+	fragcol = tex;
 #endif
 }
