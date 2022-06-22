@@ -1,192 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Nori Shaders BE</title>
-		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
-		<script src="https://kit.fontawesome.com/1bdb927010.js"></script>
-		<link href="https://unpkg.com/swiper/swiper-bundle.min.css" rel="stylesheet">
-		<style media="screen">
-			*{margin: 0; padding: 0}
-			a{color: #bbb; text-decoration: none}
-			a:hover{color: #C70500}
-			body{
-				font-family:Open Sans;
-				color: #bbb;
-				background: black;
-				-webkit-tap-highlight-color: transparent;
-				margin: auto;
-			}
-			header{
-				padding: 46vh 15% 0 15%;
-				text-align: left;
-				font-size: 4em;
-				text-shadow: 0 0 10px black
-			}
-			footer{
-				padding: 60px;
-				text-align: center;
-				font-size: 0.9em
-			}
-			p{
-				font-size: 1.1em;
-				text-align: justify;
-				line-height: 30px;
-				padding: 2px
-			}
-			ul{padding: 15px}
-			ul li{font-size: 1.1em; line-height: 28px; text-align: justify}
-			.name{
-				padding: 10px 15% 0 15%;
-				text-align: left;
-				font-size: 1.5em
-			}
-			.col{
-				padding: 0 15% 0 15%;
-			}
-			.colbg{
-				background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./pic/ss2.jpg');
-				background-repeat: no-repeat;
-				background-size: cover;
-			}
-			.infpack{font-size: 0.8em}
-			@media (max-width: 1000px){header{font-size: 3.5em}}
-			@media (max-width: 900px){header{padding: 35vh 15% 0 15%}}
-			@media (max-width: 720px){
-				header{font-size: 3em; padding: 30vh 5% 0 5%}
-				p{font-size: 1.1em}
-				.name{font-size: 1.3em; padding: 10px 5% 0 5%}
-				.col{padding: 0 5% 0 5%}
-			}
-			@media (max-width: 512px){
-				header{font-size: 2.3em; padding: 20vh 2% 0 2%}
-				p{font-size: 1em}
-				ul li{font-size: 1em}
-				.name{font-size: 1.3em; padding: 10px 2% 0 2%}
-				.col{padding: 0 2% 0 2%}
-			}
-			.swiper-slide img{
-				display: block;
-				width: 100%;
-				height: 100%;
-				object-fit: cover
-			}
-			.imh{padding: inherit}
-			.imh img{
-				width: 100%;
-				height: 100%;
-				object-fit: cover
-			}
-		</style>
-		<script>
-			async function load(url, sel){
-				const obj = await (await fetch(url)).json();
-				if(obj == 0){ return "not released"; } else {
-					switch(sel){
-						case 1: let uval = obj[0].assets[0].updated_at;
-							return uval.slice(0,10); break;
-						case 2: let fsval = obj[0].assets[0].size;
-							return (Math.round((fsval/1e6)*1000)/1000)+" MB"; break;
-						case 3: return obj[0].assets[0].download_count; break;
-					}
-				}
-			}
-			const mirai = 'https://api.github.com/repos/bambosan/Nori-Shaders-BE/releases';
-			load(mirai,1).then(val => { mirai_lu.innerHTML = val});
-			load(mirai,2).then(val => { mirai_sf.innerHTML = val});
-			load(mirai,3).then(val => { mirai_td.innerHTML = val});
-		</script>
-	</head>
-	<body>
-		<div class="colbg">
-			<p class="name"><a href="https://github.com/bambosan/Nori-Shaders-BE"><i class="fab fa-github"></i> bambosan repositories</a></p>
-			<header><strong>Nori Shaders BE</strong></header>
-		</div>
-		<div class="col"><br>
-			<p>Nori shader is one of the Minecraft BE shaders that have PBR features and blocky clouds because it have PBR, it is certain this shader also has a feature like the reflection on the block, bump map and also I added a step parallax mapping with self shadow<p><br>
-			<div class="swiper mySwiper">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>mirai shaders be</title>
+  <script src="https://kit.fontawesome.com/1bdb927010.js"></script>
+  <link href="https://unpkg.com/swiper/swiper-bundle.min.css" rel="stylesheet">
+  <style>
+    *{ margin: 0; padding: 0 }
+    body{
+        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        color: #dfdfdf;
+        background-color: #1f1f1f;
+        -webkit-tap-highlight-color: transparent;
+    }
+    a{
+        color: #dfdfdf;
+        text-decoration: none;
+        transition: all 0.3s
+    }
+    a:hover{ color: red; }
+    #contain{
+        margin: 0 auto;
+        padding: 0 0 20px;
+        width: 70vw;
+    }
+    #headers {
+      position: relative;
+      padding: 0;
+      background: linear-gradient(rgba(0.0, 0.0, 0.0, 0.5), rgba(0.0, 0.0, 0.0, 0.5)), url("./pic/ss1.jpg");
+      background-size: cover;
+      width: 100%;
+      height: 50vh;
+      box-shadow: 4px 4px 5px 1px black
+    }
+    #headers #tithead{
+      position: absolute;
+      top: 35vh;
+      left: 20px;
+      font-size: 3.5em;
+      text-shadow: 4px 4px 10px black
+    }
+    #headers #labout{ text-shadow: 2px 2px 5px black }
+    #headers #labout{ font-size: 14px }
+    #chead{
+        margin-bottom: 10px;
+        font-size: 1.8em;
+        text-shadow: 3px 3px 6px black
+    }
+    #box1{
+        padding: 10px;
+        line-height: 25px;
+        background-color: #1a1a1a;
+        box-shadow: 4px 4px 5px 1px black
+    }
+    #box1 a{ font-size: 1.5em;}
+    #box1 p{ font-size: 1em }
+    #box1 ul{ margin-left: 20px; font-size: 1em }
+	#box1 img{ image-rendering: pixelated; max-width: 100%;}
+    #box2{
+        padding: 10px;
+        width: 18vw;
+        line-height: 30px;
+        background-color: #1a1a1a;
+        box-shadow: 4px 4px 5px 1px black
+    }
+    #box2 a{ font-size: 1.2em }
+    footer{ padding: 80px 0 20px 0 }
+    footer p{ text-shadow: 3px 3px 4px black }
+    #box1 .swiper-slide img{
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover
+    }
+    @media (max-width: 850px){
+        #contain{
+            margin: 0 auto;
+            padding: 15px;
+            width: 90vw
+        }
+        #box2{ width: 25vw }
+    }
+    @media (max-width: 658px){
+        #contain{
+            margin: 0 auto;
+            padding: 15px;
+            width: 90vw
+        }
+        #headers { height: 30vh }
+        #headers #tithead{
+          position: absolute;
+          top: 21vh;
+          left: 16px;
+          font-size: 2.5em;
+          text-shadow: 4px 4px 10px black
+        }
+        #chead{ font-size: 1.5em }
+        #box1 a{ font-size: 1.2em }
+    }
+    @media (max-width: 500px){
+        #contain{
+            margin: 0 auto;
+            padding: 10px;
+            width: 95vw
+        }
+        #box2{ width: 35vw }
+    }
+  </style>
+  <script>
+    const loadd = async() => { return (await (await fetch("https://api.github.com/repos/bambosan/Nori-Shaders-BE/releases")).json()) }
+    loadd().then(res => {
+      uinfo.innerHTML = (res[0].assets[0].updated_at).slice(0,10);
+      fsize.innerHTML = (Math.round(((res[0].assets[0].size)/1e6)*1e3)/1e3)+" MB";
+      dcount.innerHTML = res[0].assets[0].download_count;
+    })
+  </script>
+</head>
+<body>
+  <div id="contain">
+    <div id="headers">
+      <p id="tithead">Nori Shaders BE</p>
+    </div><br>
+    <div id="box1">
+      <p>A shaders for Minecraft: Bedrock edition with realistic theme and have some features like 3D volumetric and 2D plane clouds, atmospheric scattering, waterbump, underwater caustic etc..</p><br>
+      <div class="swiper mySwiper">
 				<div class="swiper-wrapper">
-					<div class="swiper-slide"><img src="./pic/ss1.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss2.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss3.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss4.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss5.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss6.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss7.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss8.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss9.jpg" alt="nori-shaders-be"></div>
-					<div class="swiper-slide"><img src="./pic/ss10.jpg" alt="nori-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss1.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss2.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss3.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss4.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss5.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss6.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss7.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss8.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss9.jpg" alt="mirai-shaders-be"></div>
+					<div class="swiper-slide"><img src="./pic/ss10.jpg" alt="mirai-shaders-be"></div>
 				</div>
-				<div class="swiper-button-next" style="color: #bbb"></div>
-				<div class="swiper-button-prev" style="color: #bbb"></div>
-			</div><br><br>
-			<h2>Changelog</h2>
-			<p>there's nothing changed and added in this version, just some fix bug (maybe not completely)</p>
-			<br>
-			<h2>Shader Settings</h2>
-			<p>to make some changes in the shader go to <strong>root directory of this shader > shaders > glsl > shader_settings.txt</strong><br>You can also change the time cycle or position of sun</p><br>
-			<h2>PBR</h2>
-			<p>by default the PBR feature in this shader is off / nonactive and to activate it Install the Nori PBR Base resource pack on top of the shader, then on top of that, install another texture that has the PBR feature</p><br>
-			<div class="imh"><img src="./pic/ss11.jpg" alt="nori-shaders-be"></div><br><p>don't forget to set the texture resolution on Nori PBR Base match to another PBR texture resolution used on it and also <strong>restart minecraft to apply changes</strong></p><br><div class="imh"><img src="./pic/ss12.jpg" alt="nori-shaders-be"></div><br><br>
-			<h3>for texture pack creator</h3>
-			<ul>
-				<li>This shader use minecraft Java edition PBR with oldPBR or labPBR format</li>
-				<li>don't create or add terrain_texture.json in the texture pack</li>
-				<li>each texture pack must have a PBR configuration file for nori shaders and stored in the <strong>root directory texture pack > shaders > glsl > nori_pbr_set.txt</strong></li>
-			</ul>
-			<div class="imh"><img src="./pic/ss15.jpg" alt="nori-shaders-be"></div><br>
-			<ul><li>grass_side_n and grass_side_s texture must be duplicated 16x and starting from grass_side0_n/_s, no grass_side_n/_s<br>and also if there is grass_side_snowed.tga and grass_side_snowed.png in this one directory, delete one of them</li></ul>
-			<div class="imh"><img src="./pic/ss14.jpg" alt="nori-shaders-be"></div><br>
-			<ul><li>each flipbook texture must have the same resolution (frame) as the normal map and specularity texture</li></ul>
-			<div class="imh"><img src="./pic/ss13.jpg" alt="nori-shaders-be"></div><br><br>
-			<h2>Note !</h2>
-			<ul>
-				<li>This shader is only recommended for high-end devices</li>
-				<li>This shader is not support minecraft bedrock windows 10 32bit (not renderdragon version)</li>
-				<li>This shader is not playable and the time cycle is not matched with minecraft default time, so this shader is not survival friendly.</li>
-				<li>if you see weird lines between textures/blocks, of course i know that too and for now i can't fix that or maybe it can't be fixed</li>
-				<li>the underwater part of this shader is still not changed</li>
-				<li>Don't reupload the shader file, if you want to share it, just use this github page link</li>
-				<li>Don't make this github page link or download link as a shortlink and activate some payment method on the shortlink</li>
-			</ul><br><br>
-			<h2>Download</h2>
-			<p class="infpack">
-				<i class="far fa-calendar-check"></i>&nbsp;<span id="mirai_lu"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-file"></i>&nbsp;<span id="mirai_sf"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-download"></i>&nbsp;<span id="mirai_td"></span>&nbsp;&nbsp;&nbsp;<strong>download count is shaders only and currently version 1.1.0 (latest)</strong>
-			</p><br>
-			<a href="https://github.com/bambosan/Nori-Shaders-BE/releases/download/1.1.0/Nori-Shaders-BE.mcpack" style="padding: 8px; border: 1px solid #888">Nori Shaders BE</a>
-			<br><br>
-			<a href="https://github.com/bambosan/Nori-PBR-Base/releases/download/0.0.1/Nori-PBR-Base.mcpack" style="padding: 8px; border: 1px solid #888">Nori PBR Base</a>
-			<br><br>
-			<a href="https://github.com/bambosan/example-nori-pbr-VNR-edit/releases/download/1.0.4/example-nori-pbr-VNR-edit.mcpack" style="padding: 8px; border: 1px solid #888">Example Nori PBR (VNR edit)</a>
-			<br><br><br><a href="https://github.com/bambosan/Nori-Shaders-BE/releases" style="padding: 8px; border: 1px solid #888">another version of shader is here</a><br><br><br>
-			<h2>Support Me</h2><br>
-			<a href="https://www.patreon.com/posts/nori-shaders-be-63488469?utm_medium=clipboard_copy&utm_source=copy_to_clipboard&utm_campaign=postshare" style="padding: 8px; border: 1px solid #888">patreon</a>&nbsp;&nbsp;<a href="https://saweria.co/bambosan" style="padding: 8px; border: 1px solid #888">saweria</a>
-			<br><br>
-			<footer>&copy; 2022 <a href="https://github.com/bambosan">bambosan</a></footer>
-		</div>
-		<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-		<script>
-			var swiper = new Swiper(".mySwiper", {
-				loop: true,
-				centeredSlides: true,
-				autoplay: {
-					delay: 2000,
-					disableOnInteraction: true,
-				},
-				navigation: {
-					nextEl: ".swiper-button-next",
-					prevEl: ".swiper-button-prev",
-				},
-				slidesPerView: 1,
-				spaceBetween: 10,
-				breakpoints: {
-          720: {
-            slidesPerView: 2,
-            spaceBetween: 20,
-          }
-				}
-			});
-		</script>
-	</body>
+				<div class="swiper-button-next" style="color: #dfdfdf"></div>
+				<div class="swiper-button-prev" style="color: #dfdfdf"></div>
+			</div>
+    </div>
+    <br><br>
+    <p id="chead">Changelog</p>
+    <div id="box1">
+      <p>there's nothing changed and added just some fix bug (maybe not completely)</p>
+    </div>
+    <br><br>
+    <p id="chead">Shader Settings / Configuration</p>
+    <div id="box1">
+      <p>you can configure the shader in "shader_settings.txt" file<br>which is located in the shaders/glsl folder</p>
+    </div>
+    <br><br>
+    <p id="chead">PBR Configuration</p>
+    <div id="box1">
+      <p>by default the PBR feature in this shader is off / nonactive and to activate it Install the Nori PBR Base resource pack on top of the shader, then on top of that, install another texture that has the PBR feature</p>
+      <img src="./pic/ss11.jpg" alt="nori-shaders-be">
+      <br><br>
+      <p>don't forget to set the texture resolution on Nori PBR Base match to another PBR texture resolution used on it and also <strong>restart minecraft to apply changes</strong></p>
+      <img src="./pic/ss12.jpg" alt="nori-shaders-be">
+      <br><br>
+      <h3>for texture pack creator</h3>
+      <ul>
+        <li>This shader use minecraft Java edition PBR with oldPBR or labPBR format</li>
+        <li>don't create or add terrain_texture.json in the texture pack</li>
+        <li>each texture pack must have a PBR configuration file for nori shaders and stored in the <strong>root directory texture pack > shaders > glsl > nori_pbr_set.txt</strong></li>
+      </ul>
+      <img src="./pic/ss15.jpg" alt="nori-shaders-be"><br><br>
+      <ul>
+        <li>grass_side_n and grass_side_s texture must be duplicated 16x and starting from grass_side0_n/_s and also if there is grass_side_snowed.tga and grass_side_snowed.png in this one directory, delete one of them</li>
+      </ul>
+      <img src="./pic/ss14.jpg" alt="nori-shaders-be"><br><br>
+      <ul>
+        <li>each flipbook texture must have the same resolution (frame) as the normal map and specularity texture</li>
+      </ul>
+      <img src="./pic/ss13.jpg" alt="nori-shaders-be">
+    </div>
+    <br><br>
+    <p id="chead">Note</p>
+    <div id="box1">
+      <ul>
+		<li>This shader is only recommended for high-end devices</li>
+		<li>This shader is not support minecraft bedrock windows 10 32bit (not renderdragon version)</li>
+		<li>This shader is not playable and the time cycle is not matched with minecraft default time, so this shader is not survival friendly.</li>
+    <li>if you see weird lines between textures/blocks, of course i know that too and for now i can't fix that or maybe it can't be fixed</li>
+		<li>the underwater part of this shader is still not changed</li>
+		<li>Don't reupload the shader file, if you want to share it, just use this github page link</li>
+		<li>Don't make this github page link or download link as a shortlink and activate some payment method on the shortlink</li>
+	</ul>
+    </div>
+    <br><br>
+    <p id="chead">Download Shader</p>
+    <div id="box1">
+      <a href="https://github.com/bambosan/Nori-Shaders-BE/releases/download/1.1.0/Nori-Shaders-BE.mcpack"><i class="fas fa-download"></i> Download</a>
+      <p><br>
+        <i class="far fa-calendar-check"></i>&nbsp;<span id="uinfo"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-file"></i>&nbsp;<span id="fsize"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-download"></i>&nbsp;<span id="dcount"></span>
+      </p>
+    </div>
+    <br><br>
+    <p id="chead">See My Activity on</p>
+    <div id="box2">
+      <a href="https://github.com/bambosan" target="_blank"><i class="fab fa-github"></i> Github</a>
+      <br>
+      <a href="https://twitter.com/bambo_san" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
+      <br>
+      <a href="https://www.youtube.com/channel/UCVhl5xGvRnlbIrb6K3CmCHA" target="_blank"><i class="fab fa-youtube" target="_blank"></i> YouTube</a>
+    </div>
+    <footer>
+      <p>Github page<br>by bambosan 2022</p>
+    </footer>
+  </div>
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+	<script>
+	  var swiper = new Swiper(".mySwiper", {
+      spaceBetween: 5,
+      centeredSlides: true,
+			loop: true,
+			autoplay: {
+				delay: 2000,
+				disableOnInteraction: true,
+			},
+			navigation: {
+				nextEl: ".swiper-button-next",
+				prevEl: ".swiper-button-prev",
+			},
+      breakpoints: {
+        700: {
+          spaceBetween: 20,
+          slidesPerView: 2,
+        }
+      }
+    });
+	</script>
+</body>
 </html>
