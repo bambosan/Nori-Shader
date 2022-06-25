@@ -7,105 +7,118 @@
   <script src="https://kit.fontawesome.com/1bdb927010.js"></script>
   <link href="https://unpkg.com/swiper/swiper-bundle.min.css" rel="stylesheet">
   <style>
-    *{ margin: 0; padding: 0 }
+    *{
+      --fgc: #dfdfdf;
+      --anc: #dfdfdf;
+      --aac: red;
+      --bgc: linear-gradient(rgb(18, 28, 53), rgb(61, 69, 104));
+      --acc: #222222;
+      --hrc: #8c7bac;
+      margin: 0;
+      padding: 0
+    }
+    @keyframes anim1{
+      from{
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to{
+        opacity: 1;
+        transform: translateY(0px);
+      }
+    }
+    @keyframes anim2{
+      from{
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to{
+        opacity: 1;
+        transform: translateX(0px);
+      }
+    }
+    @keyframes anim3{
+      from{
+        width: 0;
+      }
+      to{
+        width: 100%;
+      }
+    }
     body{
-        font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-        color: #dfdfdf;
-        background-color: #1f1f1f;
-        -webkit-tap-highlight-color: transparent;
+      font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+      color: var(--fgc);
+      background: var(--bgc);
+      background-attachment: fixed;
+      -webkit-tap-highlight-color: transparent
     }
     a{
-        color: #dfdfdf;
-        text-decoration: none;
-        transition: all 0.3s
+      color: var(--anc);
+      text-decoration: none;
+      transition: all 0.3s
     }
-    a:hover{ color: red; }
-    #contain{
-        margin: 0 auto;
-        padding: 0 0 20px;
-        width: 70vw;
+    hr{
+      height: 1px;
+      background-color: var(--hrc);
+      border: none;
+      animation-name: anim3;
+      animation-duration: 1s;
     }
-    #headers {
-      position: relative;
-      padding: 0;
-      background: linear-gradient(rgba(0.0, 0.0, 0.0, 0.5), rgba(0.0, 0.0, 0.0, 0.5)), url("./pic/ss1.jpg");
-      background-size: cover;
-      width: 100%;
-      height: 50vh;
-      box-shadow: 4px 4px 5px 1px black
+    a:hover{ color: var(--aac) }
+    #con{
+      margin: 0 auto;
+      padding: 0 0 20px;
+      width: 70vw
     }
-    #headers #tithead{
-      position: absolute;
-      top: 35vh;
-      left: 20px;
-      font-size: 3.5em;
-      text-shadow: 4px 4px 10px black
+    #tith{
+      margin: 150px 0 30px 0;
+      font-size: 2.6em;
+      line-height: 20px;
+      animation-name: anim2;
+      animation-duration: 0.5s
     }
-    #headers #labout{ text-shadow: 2px 2px 5px black }
-    #headers #labout{ font-size: 14px }
-    #chead{
-        margin-bottom: 10px;
-        font-size: 1.8em;
-        text-shadow: 3px 3px 6px black
+    #tith #abo{ font-size: 16px; line-height: 0 }
+    #he2{
+      margin-bottom: 5px;
+      font-size: 1.8em;
+      animation-name: anim2;
+      animation-duration: 0.5s
     }
-    #box1{
+    #box{
+      display: inline-block;
+      max-width: 95%;
+      margin-bottom: 10px;
+      padding: 10px;
+      line-height: 25px;
+      background-color: var(--acc);
+      animation-name: anim1;
+      animation-duration: 2s
+    }
+    #box a{ font-size: 1.5em }
+    #box p{ font-size: 1em }
+    #box ul{ margin-left: 20px; font-size: 1em }
+    #box:last-of-type{ line-height: 35px; }
+    #box:last-of-type a{ font-size: 1.2em }
+    footer{ padding: 50px 0 20px 0 }
+    @media (max-width: 850px){ #con{ width: 90vw } }
+    @media (max-width: 658px){
+      #con{ width: 90vw }
+      #tith{ margin: 70px 0 30px 0; font-size: 2.2em }
+      #tith #abo{ font-size: 14px; line-height: 0 }
+      #he2{ font-size: 1.5em }
+      #box a{ font-size: 1.2em }
+    }
+    @media (max-width: 500px){
+      #con{
         padding: 10px;
-        line-height: 25px;
-        background-color: #1a1a1a;
-        box-shadow: 4px 4px 5px 1px black
+        width: 95vw
+      }
     }
-    #box1 a{ font-size: 1.5em;}
-    #box1 p{ font-size: 1em }
-    #box1 ul{ margin-left: 20px; font-size: 1em }
-	#box1 img{ image-rendering: pixelated; max-width: 100%;}
-    #box2{
-        padding: 10px;
-        width: 18vw;
-        line-height: 30px;
-        background-color: #1a1a1a;
-        box-shadow: 4px 4px 5px 1px black
-    }
-    #box2 a{ font-size: 1.2em }
-    footer{ padding: 80px 0 20px 0 }
-    footer p{ text-shadow: 3px 3px 4px black }
-    #box1 .swiper-slide img{
+    #box .swiper-slide img{
         display: block;
         width: 100%;
         height: 100%;
         object-fit: cover
-    }
-    @media (max-width: 850px){
-        #contain{
-            margin: 0 auto;
-            padding: 15px;
-            width: 90vw
-        }
-        #box2{ width: 25vw }
-    }
-    @media (max-width: 658px){
-        #contain{
-            margin: 0 auto;
-            padding: 15px;
-            width: 90vw
-        }
-        #headers { height: 30vh }
-        #headers #tithead{
-          position: absolute;
-          top: 21vh;
-          left: 16px;
-          font-size: 2.5em;
-          text-shadow: 4px 4px 10px black
-        }
-        #chead{ font-size: 1.5em }
-        #box1 a{ font-size: 1.2em }
-    }
-    @media (max-width: 500px){
-        #contain{
-            margin: 0 auto;
-            padding: 10px;
-            width: 95vw
-        }
-        #box2{ width: 35vw }
     }
   </style>
   <script>
@@ -118,11 +131,9 @@
   </script>
 </head>
 <body>
-  <div id="contain">
-    <div id="headers">
-      <p id="tithead">Nori Shaders BE</p>
-    </div><br>
-    <div id="box1">
+  <div id="con">
+    <p id="tith">Nori Shaders BE</p>
+    <div id="box">
       <p>A shaders for Minecraft: Bedrock edition with realistic theme and have some features like 3D volumetric and 2D plane clouds, atmospheric scattering, waterbump, underwater caustic etc..</p><br>
       <div class="swiper mySwiper">
 				<div class="swiper-wrapper">
@@ -142,18 +153,18 @@
 			</div>
     </div>
     <br><br>
-    <p id="chead">Changelog</p>
-    <div id="box1">
+    <p id="chead">Changelog</p><hr><br>
+    <div id="box">
       <p>there's nothing changed and added just some fix bug (maybe not completely)</p>
     </div>
     <br><br>
-    <p id="chead">Shader Settings / Configuration</p>
-    <div id="box1">
+    <p id="chead">Shader Settings / Configuration</p><hr><br>
+    <div id="box">
       <p>you can configure the shader in "shader_settings.txt" file<br>which is located in the shaders/glsl folder</p>
     </div>
     <br><br>
-    <p id="chead">PBR Configuration</p>
-    <div id="box1">
+    <p id="chead">PBR Configuration</p><hr><br>
+    <div id="box">
       <p>by default the PBR feature in this shader is off / nonactive and to activate it Install the Nori PBR Base resource pack on top of the shader, then on top of that, install another texture that has the PBR feature</p>
       <img src="./pic/ss11.jpg" alt="nori-shaders-be">
       <br><br>
@@ -177,8 +188,8 @@
       <img src="./pic/ss13.jpg" alt="nori-shaders-be">
     </div>
     <br><br>
-    <p id="chead">Note</p>
-    <div id="box1">
+    <p id="chead">Note</p><hr><br>
+    <div id="box">
       <ul>
 		<li>This shader is only recommended for high-end devices</li>
 		<li>This shader is not support minecraft bedrock windows 10 32bit (not renderdragon version)</li>
@@ -190,25 +201,23 @@
 	</ul>
     </div>
     <br><br>
-    <p id="chead">Download Shader</p>
-    <div id="box1">
+    <p id="chead">Download Shader</p><hr><br>
+    <div id="box">
       <a href="https://github.com/bambosan/Nori-Shaders-BE/releases/download/1.1.0/Nori-Shaders-BE.mcpack"><i class="fas fa-download"></i> Download</a>
       <p><br>
         <i class="far fa-calendar-check"></i>&nbsp;<span id="uinfo"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="far fa-file"></i>&nbsp;<span id="fsize"></span>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-download"></i>&nbsp;<span id="dcount"></span>
       </p>
     </div>
     <br><br>
-    <p id="chead">See My Activity on</p>
-    <div id="box2">
+    <p id="chead">See My Activity on</p><hr><br>
+    <div id="box">
       <a href="https://github.com/bambosan" target="_blank"><i class="fab fa-github"></i> Github</a>
       <br>
       <a href="https://twitter.com/bambo_san" target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
       <br>
       <a href="https://www.youtube.com/channel/UCVhl5xGvRnlbIrb6K3CmCHA" target="_blank"><i class="fab fa-youtube" target="_blank"></i> YouTube</a>
     </div>
-    <footer>
-      <p>Github page<br>by bambosan 2022</p>
-    </footer>
+    <footer>bambosan 2022</footer>
   </div>
   <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 	<script>
