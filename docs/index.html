@@ -99,6 +99,13 @@
     #box ul{ margin-left: 20px; font-size: 1em }
     #box:last-of-type{ line-height: 35px; }
     #box:last-of-type a{ font-size: 1.2em }
+    #box .swiper-slide img{
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover
+    }
+    #box img{ width: 100% }
     footer{ padding: 50px 0 20px 0 }
     @media (max-width: 850px){ #con{ width: 90vw } }
     @media (max-width: 658px){
@@ -113,12 +120,6 @@
         padding: 10px;
         width: 95vw
       }
-    }
-    #box .swiper-slide img{
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover
     }
   </style>
   <script>
